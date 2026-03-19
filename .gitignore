@@ -41,3 +41,4 @@ uvicorn.log
 # Apify / API keys (never commit)
 apify_token.txt
 secrets.json
+.vercel

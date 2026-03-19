@@ -409,8 +409,8 @@ function renderCard(inf, i){
     ? `<span style="font-size:9px;padding:2px 6px;border-radius:3px;background:var(--accent-lo);border:1px solid var(--accent-mid);color:var(--accent);letter-spacing:.04em">LIVE API</span>`
     : '';
   const detailHref = inf.fromApi
-    ? `influencer.html?handle=${encodeURIComponent(inf.handle)}`
-    : `influencer.html?id=${inf.id}`;
+    ? `/influencer.html?handle=${encodeURIComponent(inf.handle)}`
+    : `/influencer.html?id=${inf.id}`;
 
   return `<div class="inf-card fadeup" style="animation-delay:${i*.04}s;opacity:0;border-left:2px solid ${scHex(inf.score)}33" onclick="window.location.href='${detailHref}'">
     <div class="inf-card-top">
@@ -463,7 +463,7 @@ function filterCards(){
   document.querySelectorAll(".inf-card").forEach(c=>{c.style.display=c.textContent.toLowerCase().includes(q)?"":"none";});
 }
 
-function openDetail(id){window.location.href=`influencer.html?id=${id}`;}
+function openDetail(id){window.location.href=`/influencer.html?id=${id}`;}
 
 function goOutreach(id){
   selOutreach=id;
