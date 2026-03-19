@@ -55,7 +55,7 @@ def _fetch_apify(handle):
 
         avg_likes = sum(p.get("likesCount") or 0 for p in posts) / len(posts) if posts else 0
         engagement_rate = (avg_likes / followers * 100) if followers > 0 else 0
-        audience_fit = min(100, int(engagement_rate * 15))
+        audience_fit = min(100, max(1, int(engagement_rate * 25))) if followers < 100000 else min(100, max(1, int(engagement_rate * 5)))
 
         return {
             "handle": f'@{handle.lstrip("@")}',
