@@ -215,10 +215,13 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
 .fcopy{font-size:11px;color:var(--ink3)}
 
 /* LANG SWITCHER - injected */
-.lang-switcher{display:flex;gap:2px;background:var(--s2);border:1px solid var(--b1);border-radius:6px;padding:2px;margin-right:8px}
-.lang-btn{padding:3px 7px;border:none;background:transparent;color:var(--ink3);font-size:11px;font-weight:500;cursor:pointer;border-radius:4px;font-family:var(--sans);transition:all .15s}
-.lang-btn:hover{color:var(--ink2)}
-.lang-btn.active{background:var(--accent);color:#fff}
+.lang-drop{position:relative;margin-right:8px}
+.lang-drop-btn{display:flex;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--b1);border-radius:6px;padding:4px 10px;color:var(--ink2);font-size:12px;font-weight:500;cursor:pointer;font-family:var(--sans);transition:all .15s}
+.lang-drop-btn:hover{border-color:var(--b2);color:var(--ink)}
+.lang-menu{display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--s1);border:1px solid var(--b2);border-radius:8px;padding:4px;min-width:130px;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.lang-menu.open{display:flex;flex-direction:column}
+.lang-option{display:flex;align-items:center;gap:8px;padding:7px 10px;border:none;background:transparent;color:var(--ink2);font-size:12px;font-weight:400;cursor:pointer;border-radius:5px;font-family:var(--sans);text-align:left;transition:all .15s}
+.lang-option:hover{background:var(--s2);color:var(--ink)}
 </style>
 <script src="/i18n.js"></script>
 </head>
@@ -235,7 +238,19 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
     <a class="nav-a" href="#scoring"><span data-i18n="nav_scoring">Scoring</span></a>
     <a class="nav-a" href="#pricing"><span data-i18n="nav_pricing">Pricing</span></a>
   </div>
-  <div class="lang-switcher"><button class="lang-btn active" data-lang="en" onclick="I18N.set('en')">EN</button><button class="lang-btn" data-lang="tr" onclick="I18N.set('tr')">TR</button><button class="lang-btn" data-lang="ru" onclick="I18N.set('ru')">RU</button><button class="lang-btn" data-lang="fr" onclick="I18N.set('fr')">FR</button></div><div class="nav-r">
+  <div class="lang-drop" id="lang-drop">
+  <button class="lang-drop-btn" onclick="document.getElementById('lang-menu').classList.toggle('open')">
+    <span id="lang-current-flag">🇬🇧</span>
+    <span id="lang-current-code">EN</span>
+    <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+  </button>
+  <div class="lang-menu" id="lang-menu">
+    <button class="lang-option" onclick="setLang('en','🇬🇧','EN')">🇬🇧 English</button>
+    <button class="lang-option" onclick="setLang('tr','🇹🇷','TR')">🇹🇷 Türkçe</button>
+    <button class="lang-option" onclick="setLang('ru','🇷🇺','RU')">🇷🇺 Русский</button>
+    <button class="lang-option" onclick="setLang('fr','🇫🇷','FR')">🇫🇷 Français</button>
+  </div>
+</div><div class="nav-r">
     <button class="btn btn-ghost"><span data-i18n="nav_signin">Sign in</span></button>
     <a href="/dashboard.html" class="btn btn-solid"><span data-i18n="nav_start">Start free →</span></a>
   </div>
