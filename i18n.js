@@ -348,3 +348,28 @@ const langSwitcherCSS = `
 .lang-btn:hover{color:var(--ink2)}
 .lang-btn.active{background:var(--accent);color:#fff}
 `;
+
+function setLang(code, flag, label) {
+  var ef = document.getElementById('lang-current-flag');
+  var ec = document.getElementById('lang-current-code');
+  var menu = document.getElementById('lang-menu');
+  if(ef) ef.textContent = flag;
+  if(ec) ec.textContent = label;
+  if(menu) menu.classList.remove('open');
+  I18N.set(code);
+}
+document.addEventListener('DOMContentLoaded', function() {
+  var saved = localStorage.getItem('vettly_lang') || 'en';
+  var flags = {en:'EN',tr:'TR',ru:'RU',fr:'FR'};
+  var emojis = {en:'EN',tr:'TR',ru:'RU',fr:'FR'};
+  var ef = document.getElementById('lang-current-flag');
+  var ec = document.getElementById('lang-current-code');
+  if(ef) ef.textContent = emojis[saved] || 'EN';
+  if(ec) ec.textContent = flags[saved] || 'EN';
+  document.addEventListener('click', function(e) {
+    var drop = document.getElementById('lang-drop');
+    var menu = document.getElementById('lang-menu');
+    if(drop && menu && !drop.contains(e.target)) menu.classList.remove('open');
+  });
+  I18N.apply();
+});
