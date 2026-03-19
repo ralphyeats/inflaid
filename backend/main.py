@@ -104,8 +104,8 @@ def debug(req: ScoreRequest):
     from apify_client import ApifyClient
     token = os.getenv("APIFY_TOKEN")
     client = ApifyClient(token)
-    run = client.actor("apify/instagram-scraper").call(
-        run_input={"usernames": [req.handle.lstrip("@")], "resultsLimit": 3}
+    run = client.actor("apify/instagram-profile-scraper").call(
+        run_input={"usernames": [req.handle.lstrip("@")]}
     )
     items = list(client.dataset(run["defaultDatasetId"]).iterate_items())
     if items:
