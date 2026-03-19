@@ -222,6 +222,40 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
 .lang-menu.open{display:flex;flex-direction:column}
 .lang-option{display:flex;align-items:center;gap:8px;padding:7px 10px;border:none;background:transparent;color:var(--ink2);font-size:12px;font-weight:400;cursor:pointer;border-radius:5px;font-family:var(--sans);text-align:left;transition:all .15s}
 .lang-option:hover{background:var(--s2);color:var(--ink)}
+
+@media(max-width:768px){
+  nav{padding:0 16px}
+  .nav-links{display:none}
+  .nav-r .btn-ghost{display:none}
+  .hero{padding:48px 20px 36px}
+  h1{font-size:36px}
+  .hero-sub{font-size:14px}
+  .hero-btns{flex-direction:column;align-items:center}
+  .btn-lg{padding:12px 20px;width:100%;text-align:center}
+  .dash-section{padding:0 16px 48px}
+  .dash-body{height:320px}
+  .dash-side{display:none}
+  .dash-grid{grid-template-columns:1fr}
+  .proof-row{flex-direction:column}
+  .proof-item{border-right:none;border-bottom:1px solid var(--b1);padding:16px 20px}
+  .proof-item:last-child{border-bottom:none}
+  .sec{padding:0 20px;margin-top:56px}
+  .sec-h{font-size:26px}
+  .feat-grid{grid-template-columns:1fr}
+  .scoring-wrap{grid-template-columns:1fr;gap:24px}
+  .quote-grid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr}
+  .cta-wrap{padding:0 20px;margin:48px auto}
+  .cta{padding:36px 20px}
+  .cta-h{font-size:30px}
+  .cta-btns{flex-direction:column}
+  .footer-border{padding:0 20px}
+  footer{flex-direction:column;align-items:flex-start;gap:16px}
+}
+@media(max-width:480px){
+  h1{font-size:28px}
+  .cta-h{font-size:24px}
+}
 </style>
 
 </head>
