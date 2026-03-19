@@ -213,7 +213,10 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
 .flink{font-size:12px;color:var(--ink3);text-decoration:none;transition:color .15s}
 .flink:hover{color:var(--ink2)}
 .fcopy{font-size:11px;color:var(--ink3)}
+
+/* LANG SWITCHER - injected */
 </style>
+<script src="/i18n.js"></script>
 </head>
 <body>
 
@@ -224,26 +227,26 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
     <span class="logo-text">Vettly</span>
   </a>
   <div class="nav-links">
-    <a class="nav-a" href="#features">Features</a>
-    <a class="nav-a" href="#scoring">Scoring</a>
-    <a class="nav-a" href="#pricing">Pricing</a>
+    <a class="nav-a" href="#features"><span data-i18n="nav_features">Features</span></a>
+    <a class="nav-a" href="#scoring"><span data-i18n="nav_scoring">Scoring</span></a>
+    <a class="nav-a" href="#pricing"><span data-i18n="nav_pricing">Pricing</span></a>
   </div>
-  <div class="nav-r">
-    <button class="btn btn-ghost">Sign in</button>
-    <a href="/dashboard.html" class="btn btn-solid">Start free →</a>
+  <div class="nav-r" id="lang-switcher-nav"></div><div class="nav-r">
+    <button class="btn btn-ghost"><span data-i18n="nav_signin">Sign in</span></button>
+    <a href="/dashboard.html" class="btn btn-solid"><span data-i18n="nav_start">Start free →</span></a>
   </div>
 </nav>
 
 <!-- HERO — centered -->
 <div class="hero">
-  <div class="badge rise"><div class="badge-dot"></div>Influencer ROI Intelligence</div>
-  <h1 class="rise d1">Stop guessing.<br>Start <span>knowing.</span></h1>
-  <p class="hero-sub rise d2">Vettly scores influencers on 5 conversion signals — so you know who drives real sales before you spend a dollar.</p>
+  <div class="badge rise"><div class="badge-dot"></div><span data-i18n="hero_badge">Influencer ROI Intelligence</span></div>
+  <h1 class="rise d1"><span data-i18n="hero_h1_1">Stop guessing.</span><br><span data-i18n="hero_h1_2">Start</span> <span><span data-i18n="hero_h1_accent">knowing.</span></span></h1>
+  <p class="hero-sub rise d2"><span data-i18n="hero_sub">Vettly scores influencers on 5 conversion signals — so you know who drives real sales before you spend a dollar.</span></p>
   <div class="hero-btns rise d3">
-    <a href="/dashboard.html" class="btn btn-solid btn-lg">Start free →</a>
-    <button class="btn btn-ghost btn-lg">See how it works</button>
+    <a href="/dashboard.html" class="btn btn-solid btn-lg"><span data-i18n="hero_cta1">Start free →</span></a>
+    <button class="btn btn-ghost btn-lg"><span data-i18n="hero_cta2">See how it works</span></button>
   </div>
-  <p class="hero-fine rise d4">No credit card &nbsp;·&nbsp; Free tier available &nbsp;·&nbsp; Any niche</p>
+  <p class="hero-fine rise d4"><span data-i18n="hero_fine">No credit card · Free tier available · Any niche</span></p>
 </div>
 
 <!-- FULL DASHBOARD -->
@@ -388,9 +391,9 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
 <!-- PROOF -->
 <div class="proof" style="margin-top:0">
   <div class="proof-row">
-    <div class="proof-item"><div class="proof-n"><span>240</span>+</div><div class="proof-l">brands using Vettly</div></div>
-    <div class="proof-item"><div class="proof-n"><span>4.6</span>×</div><div class="proof-l">higher ROI vs. follower-based picks</div></div>
-    <div class="proof-item"><div class="proof-n"><span>60</span>s</div><div class="proof-l">to get a full conversion verdict</div></div>
+    <div class="proof-item"><div class="proof-n"><span>240</span>+</div><div class="proof-l"><span data-i18n="proof_1l">brands using Vettly</span></div></div>
+    <div class="proof-item"><div class="proof-n"><span>4.6</span>×</div><div class="proof-l"><span data-i18n="proof_2l">higher ROI vs. follower-based picks</span></div></div>
+    <div class="proof-item"><div class="proof-n"><span>60</span>s</div><div class="proof-l"><span data-i18n="proof_3l">to get a full conversion verdict</span></div></div>
     <div class="proof-item"><div class="proof-n" style="font-size:20px;padding-top:3px">Any niche</div><div class="proof-l">beauty, fashion, fitness & more</div></div>
   </div>
 </div>
@@ -398,8 +401,8 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
 <!-- FEATURES -->
 <section id="features">
   <div class="sec">
-    <div class="sec-tag">Features</div>
-    <div class="sec-h">Everything in one place.</div>
+    <div class="sec-tag"><span data-i18n="nav_features">Features</span></div>
+    <div class="sec-h"><span data-i18n="feat_h">Everything in one place.</span></div>
     <div class="feat-grid">
       <div class="feat-cell">
         <div class="feat-cell-title">ROI scoring</div>
@@ -509,7 +512,7 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
 <!-- PRICING -->
 <section id="pricing">
   <div class="sec">
-    <div class="sec-tag">Pricing</div>
+    <div class="sec-tag"><span data-i18n="nav_pricing">Pricing</span></div>
     <div class="sec-h">Start free. Scale when ready.</div>
     <div class="pricing-grid">
       <div class="plan">
@@ -524,7 +527,7 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
           <li><span class="foff">–</span> <span style="color:var(--ink3)">Outreach templates</span></li>
           <li><span class="foff">–</span> <span style="color:var(--ink3)">Campaign tracker</span></li>
         </ul>
-        <a href="/dashboard.html" class="btn btn-ghost" style="width:100%;padding:10px;text-align:center">Get started free</a>
+        <a href="/dashboard.html" class="btn btn-ghost" style="width:100%;padding:10px;text-align:center"><span data-i18n="btn_free">Get started free</span></a>
       </div>
       <div class="plan pop">
         <div class="pbadge">POPULAR</div>
@@ -539,7 +542,7 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
           <li><span class="fon">✓</span> Campaign tracker</li>
           <li><span class="fon">✓</span> Weekly score alerts</li>
         </ul>
-        <button class="btn btn-solid" style="width:100%;padding:10px">Start Pro →</button>
+        <button class="btn btn-solid" style="width:100%;padding:10px"><span data-i18n="btn_pro">Start Pro →</span></button>
       </div>
       <div class="plan">
         <div class="ptier">Growth</div>
@@ -553,7 +556,7 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
           <li><span class="fon">✓</span> Pattern insights</li>
           <li><span class="fon">✓</span> CSV export · 3 seats</li>
         </ul>
-        <button class="btn btn-ghost" style="width:100%;padding:10px">Start Growth →</button>
+        <button class="btn btn-ghost" style="width:100%;padding:10px"><span data-i18n="btn_growth">Start Growth →</span></button>
       </div>
     </div>
   </div>
@@ -565,8 +568,8 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
     <div class="cta-h">Know before<br>you <span>spend.</span></div>
     <div class="cta-sub">The only influencer tool that explains its reasoning. Start free in 60 seconds.</div>
     <div class="cta-btns">
-      <a href="/dashboard.html" class="btn btn-solid btn-lg">Start free — no card needed</a>
-      <button class="btn btn-ghost btn-lg">Book a demo</button>
+      <a href="/dashboard.html" class="btn btn-solid btn-lg"><span data-i18n="cta_btn1">Start free — no card needed</span></a>
+      <button class="btn btn-ghost btn-lg"><span data-i18n="cta_btn2">Book a demo</span></button>
     </div>
   </div>
 </div>
@@ -576,8 +579,8 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
   <footer>
     <div class="flogo">Vettly</div>
     <div class="flinks">
-      <a class="flink" href="#">Features</a>
-      <a class="flink" href="#">Pricing</a>
+      <a class="flink" href="#"><span data-i18n="nav_features">Features</span></a>
+      <a class="flink" href="#"><span data-i18n="nav_pricing">Pricing</span></a>
       <a class="flink" href="#">Privacy</a>
       <a class="flink" href="#">Terms</a>
     </div>
@@ -585,5 +588,11 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
   </footer>
 </div>
 
+<script>
+// Insert lang switcher
+document.getElementById("lang-switcher-nav").innerHTML = langSwitcherHTML();
+// Apply translations on load
+I18N.apply();
+</script>
 </body>
 </html>
