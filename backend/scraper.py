@@ -28,31 +28,45 @@ def _fetch_apify(handle):
         items = list(client.dataset(run["defaultDatasetId"]).iterate_items())
         if not items:
             return None
-        profile = items[0]
-        posts = items[1:] if len(items) > 1 else []
-        followers = profile.get("followersCount", 10000)
+
+        # All items are posts — profile data is embedded in each post
+        posts = items
+        first = posts[0]
+
+        # Profile data from first post
+        followers = first.get("followersCount") or first.get("ownerFollowersCount") or 10000
+        name = first.get("ownerFullName") or first.get("fullName") or handle
+
+        # Comment quality
         product_keywords = ["where", "link", "buy", "price", "how much", "shop", "use", "work", "worth"]
         total_comments = 0
         product_comments = 0
         for post in posts:
             for c in post.get("latestComments", []):
-                text = c.get("text", "").lower()
+                text = (c.get("text") or "").lower()
                 total_comments += 1
                 if any(k in text for k in product_keywords) or "?" in text:
                     product_comments += 1
-        comment_quality = int((product_comments / total_comments * 100)) if total_comments > 0 else 50
+        comment_quality = int(product_comments / total_comments * 100) if total_comments > 0 else 40
+
+        # Before/after ratio
         ba_keywords = ["before", "after", "results", "transformation", "progress", "difference"]
         ba_count = sum(1 for p in posts if any(k in (p.get("caption") or "").lower() for k in ba_keywords))
-        before_after_ratio = int(ba_count / len(posts) * 100) if posts else 50
+        before_after_ratio = int(ba_count / len(posts) * 100) if posts else 40
+
+        # Niche consistency
         beauty_keywords = ["skincare", "makeup", "beauty", "skin", "glow", "routine", "serum", "moisturizer", "foundation", "lipstick", "hair"]
         niche_count = sum(1 for p in posts if any(k in (p.get("caption") or "").lower() for k in beauty_keywords))
-        niche_consistency = int(niche_count / len(posts) * 100) if posts else 50
-        avg_likes = sum(p.get("likesCount", 0) for p in posts) / len(posts) if posts else 0
+        niche_consistency = int(niche_count / len(posts) * 100) if posts else 40
+
+        # Audience fit via engagement rate
+        avg_likes = sum(p.get("likesCount") or 0 for p in posts) / len(posts) if posts else 0
         engagement_rate = (avg_likes / followers * 100) if followers > 0 else 0
-        audience_fit = min(100, int(engagement_rate * 10))
+        audience_fit = min(100, int(engagement_rate * 15))
+
         return {
             "handle": f'@{handle.lstrip("@")}',
-            "name": profile.get("fullName", handle),
+            "name": name,
             "followers": followers,
             "platform": "instagram",
             "category": "beauty",
