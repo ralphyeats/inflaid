@@ -93,3 +93,7 @@ def score(req: ScoreRequest):
         insight=result.insight,
         mock=raw.get("mock", True),
     )
+
+@app.post("/test")
+def test_post():
+    return {"status": "ok", "method": "POST"}
