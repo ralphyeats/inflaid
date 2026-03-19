@@ -58,11 +58,28 @@ def _fetch_apify(handle):
         before_after_ratio = int(ba_count / len(posts) * 100) if posts else 30
 
         # Niche consistency: use hashtags + mentions (language-independent)
-        beauty_keywords = ["skincare", "makeup", "beauty", "skin", "glow", "routine", "serum",
-                           "moisturizer", "foundation", "lipstick", "hair", "cosmetic", "beauty",
-                           "макияж", "красота", "уход", "косметика", "мода", "стиль", "style", "fashion"]
-        beauty_hashtags = ["makeup", "beauty", "skincare", "cosmetics", "makeuptutorial", "beautytips",
-                           "makeupartist", "glowup", "skincareroutine", "beautyinfluencer"]
+        beauty_keywords = [
+            # English
+            "skincare", "makeup", "beauty", "skin", "glow", "routine", "serum",
+            "moisturizer", "foundation", "lipstick", "hair", "cosmetic", "fashion", "style",
+            "eyeshadow", "blush", "concealer", "primer", "toner", "cleanser",
+            # Turkish
+            "cilt", "makyaj", "güzellik", "saç", "ruj", "fondöten", "nemlendirici",
+            "kozmetik", "bakım", "göz", "kaş", "kirpik", "moda", "stil",
+            # Russian/Ukrainian
+            "макияж", "красота", "уход", "косметика", "мода", "стиль", "кожа",
+            "помада", "тушь", "тональный", "увлажнение", "волосы",
+            # French
+            "beauté", "maquillage", "soin", "peau", "cheveux", "rouge", "fond de teint",
+            # Spanish
+            "belleza", "maquillaje", "piel", "cabello", "labial", "cuidado"
+        ]
+        beauty_hashtags = [
+            "makeup", "beauty", "skincare", "cosmetics", "makeuptutorial", "beautytips",
+            "makeupartist", "glowup", "skincareroutine", "beautyinfluencer",
+            "makyaj", "guzellik", "ciltbakimi", "moda", "style", "fashion",
+            "макияж", "красота", "уход", "beaute", "maquillage", "belleza"
+        ]
         niche_count = 0
         for p in posts:
             caption = (p.get("caption") or "").lower()
