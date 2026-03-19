@@ -97,3 +97,17 @@ def score(req: ScoreRequest):
 @app.post("/test")
 def test_post():
     return {"status": "ok", "method": "POST"}
+
+@app.post("/debug")
+def debug(req: ScoreRequest):
+    import os
+    from apify_client import ApifyClient
+    token = os.getenv("APIFY_TOKEN")
+    client = ApifyClient(token)
+    run = client.actor("apify/instagram-scraper").call(
+        run_input={"usernames": [req.handle.lstrip("@")], "resultsLimit": 3}
+    )
+    items = list(client.dataset(run["defaultDatasetId"]).iterate_items())
+    if items:
+        return {"keys": list(items[0].keys()), "sample": items[0]}
+    return {"error": "no items"}
