@@ -223,7 +223,7 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
 .lang-option{display:flex;align-items:center;gap:8px;padding:7px 10px;border:none;background:transparent;color:var(--ink2);font-size:12px;font-weight:400;cursor:pointer;border-radius:5px;font-family:var(--sans);text-align:left;transition:all .15s}
 .lang-option:hover{background:var(--s2);color:var(--ink)}
 </style>
-<script src="/i18n.js"></script>
+
 </head>
 <body>
 
@@ -239,7 +239,7 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
     <a class="nav-a" href="#pricing"><span data-i18n="nav_pricing">Pricing</span></a>
   </div>
   <div class="lang-drop" id="lang-drop">
-  <button class="lang-drop-btn" onclick="document.getElementById('lang-menu').classList.toggle('open')">
+  <button class="lang-drop-btn" onclick="toggleLangMenu()">
     <span id="lang-current-flag">🇬🇧</span>
     <span id="lang-current-code">EN</span>
     <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -611,5 +611,54 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
 // Insert lang switcher
 I18N.apply();
 </script>
+
+<script>
+var TRANSLATIONS = {
+  en: { hero_h1_1:"Stop guessing.", hero_h1_2:"Start", hero_h1_accent:"knowing.", hero_sub:"Vettly scores influencers on 5 conversion signals — so you know who drives real sales before you spend a dollar.", nav_features:"Features", nav_scoring:"Scoring", nav_pricing:"Pricing", nav_signin:"Sign in", nav_start:"Start free →", hero_cta1:"Start free →", hero_cta2:"See how it works", hero_fine:"No credit card · Free tier available · Any niche", btn_free:"Get started free", btn_pro:"Start Pro →", btn_growth:"Start Growth →", feat_h:"Everything in one place.", proof_1l:"brands using Vettly", proof_2l:"higher ROI vs. follower-based picks", proof_3l:"to get a full conversion verdict", cta_btn1:"Start free — no card needed", cta_btn2:"Book a demo" },
+  tr: { hero_h1_1:"Tahmin etmeyi bırak.", hero_h1_2:"Gerçeği", hero_h1_accent:"öğren.", hero_sub:"Vettly, influencer'ları 5 dönüşüm sinyaline göre puanlar — bir kuruş harcamadan kimin gerçek satış getirdiğini öğren.", nav_features:"Özellikler", nav_scoring:"Puanlama", nav_pricing:"Fiyatlar", nav_signin:"Giriş yap", nav_start:"Ücretsiz başla →", hero_cta1:"Ücretsiz başla →", hero_cta2:"Nasıl çalışır", hero_fine:"Kredi kartı gerekmez · Ücretsiz plan mevcut · Her niş", btn_free:"Ücretsiz başla", btn_pro:"Pro'ya başla →", btn_growth:"Büyüme'ye başla →", feat_h:"Her şey tek yerde.", proof_1l:"Vettly kullanan marka", proof_2l:"Takipçi bazlı seçime kıyasla yüksek ROI", proof_3l:"Tam dönüşüm kararı için", cta_btn1:"Ücretsiz başla — kart gerekmez", cta_btn2:"Demo al" },
+  ru: { hero_h1_1:"Прекрати угадывать.", hero_h1_2:"Начни", hero_h1_accent:"знать.", hero_sub:"Vettly оценивает инфлюенсеров по 5 сигналам конверсии — узнай, кто приносит реальные продажи, до того как потратишь деньги.", nav_features:"Функции", nav_scoring:"Оценка", nav_pricing:"Цены", nav_signin:"Войти", nav_start:"Начать бесплатно →", hero_cta1:"Начать бесплатно →", hero_cta2:"Как это работает", hero_fine:"Без кредитной карты · Бесплатный тариф · Любая ниша", btn_free:"Начать бесплатно", btn_pro:"Начать Про →", btn_growth:"Начать Рост →", feat_h:"Всё в одном месте.", proof_1l:"брендов используют Vettly", proof_2l:"выше ROI vs выбор по подписчикам", proof_3l:"для полного вердикта конверсии", cta_btn1:"Начать бесплатно — карта не нужна", cta_btn2:"Заказать демо" },
+  fr: { hero_h1_1:"Arrête de deviner.", hero_h1_2:"Commence à", hero_h1_accent:"savoir.", hero_sub:"Vettly évalue les influenceurs sur 5 signaux de conversion — sache qui génère de vraies ventes avant de dépenser un centime.", nav_features:"Fonctionnalités", nav_scoring:"Notation", nav_pricing:"Tarifs", nav_signin:"Se connecter", nav_start:"Commencer gratuitement →", hero_cta1:"Commencer gratuitement →", hero_cta2:"Voir comment ça marche", hero_fine:"Pas de carte bancaire · Offre gratuite · Toute niche", btn_free:"Commencer gratuitement", btn_pro:"Démarrer Pro →", btn_growth:"Démarrer Croissance →", feat_h:"Tout au même endroit.", proof_1l:"marques utilisent Vettly", proof_2l:"ROI plus élevé vs sélection par abonnés", proof_3l:"pour un verdict de conversion complet", cta_btn1:"Commencer gratuitement — sans carte", cta_btn2:"Réserver une démo" }
+};
+
+var currentLang = localStorage.getItem('vettly_lang') || 'en';
+
+function applyLang(lang) {
+  var t = TRANSLATIONS[lang];
+  if (!t) return;
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (t[key]) el.textContent = t[key];
+  });
+}
+
+function setLang(code, flag, label) {
+  currentLang = code;
+  localStorage.setItem('vettly_lang', code);
+  document.getElementById('lang-current-flag').textContent = flag;
+  document.getElementById('lang-current-code').textContent = label;
+  document.getElementById('lang-menu').classList.remove('open');
+  applyLang(code);
+}
+
+function toggleLangMenu() {
+  document.getElementById('lang-menu').classList.toggle('open');
+}
+
+document.addEventListener('click', function(e) {
+  var drop = document.getElementById('lang-drop');
+  if (drop && !drop.contains(e.target)) {
+    var menu = document.getElementById('lang-menu');
+    if (menu) menu.classList.remove('open');
+  }
+});
+
+// Apply on load
+var flags = {en:'🇬🇧',tr:'🇹🇷',ru:'🇷🇺',fr:'🇫🇷'};
+var codes = {en:'EN',tr:'TR',ru:'RU',fr:'FR'};
+document.getElementById('lang-current-flag').textContent = flags[currentLang] || '🇬🇧';
+document.getElementById('lang-current-code').textContent = codes[currentLang] || 'EN';
+applyLang(currentLang);
+</script>
+
 </body>
 </html>
