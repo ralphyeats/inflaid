@@ -235,7 +235,7 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
     <a class="nav-a" href="#scoring"><span data-i18n="nav_scoring">Scoring</span></a>
     <a class="nav-a" href="#pricing"><span data-i18n="nav_pricing">Pricing</span></a>
   </div>
-  <div class="nav-r" id="lang-switcher-nav"></div><div class="nav-r">
+  <div class="lang-switcher"><button class="lang-btn active" data-lang="en" onclick="I18N.set('en')">EN</button><button class="lang-btn" data-lang="tr" onclick="I18N.set('tr')">TR</button><button class="lang-btn" data-lang="ru" onclick="I18N.set('ru')">RU</button><button class="lang-btn" data-lang="fr" onclick="I18N.set('fr')">FR</button></div><div class="nav-r">
     <button class="btn btn-ghost"><span data-i18n="nav_signin">Sign in</span></button>
     <a href="/dashboard.html" class="btn btn-solid"><span data-i18n="nav_start">Start free →</span></a>
   </div>
@@ -594,8 +594,6 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
 
 <script>
 // Insert lang switcher
-document.getElementById("lang-switcher-nav").innerHTML = langSwitcherHTML();
-// Apply translations on load
 I18N.apply();
 </script>
 </body>
