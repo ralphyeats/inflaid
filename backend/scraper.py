@@ -29,75 +29,90 @@ def _fetch_apify(handle):
         if not items:
             return None
 
-        profile = items[0]
-        followers = profile.get("followersCount") or 10000
-        name = profile.get("fullName") or handle
-        posts = profile.get("latestPosts") or []
+        p = items[0]
+        followers = p.get("followersCount") or 1
+        following = p.get("followsCount") or 1
+        posts_count = p.get("postsCount") or 0
+        posts = p.get("latestPosts") or []
+        is_business = p.get("isBusinessAccount") or False
 
-        product_keywords = ["where", "link", "buy", "price", "how much", "shop", "use", "work", "worth"]
-        total_comments = 0
-        product_comments = 0
-        for post in posts:
-            for c in post.get("latestComments", []):
-                text = (c.get("text") or "").lower()
-                total_comments += 1
-                if any(k in text for k in product_keywords) or "?" in text:
-                    product_comments += 1
-        comment_quality = int(product_comments / total_comments * 100) if total_comments > 0 else 40
+        # 1. ENGAGEMENT RATE (35%)
+        # Micro-influencer benchmark: 3-6% good, >6% excellent, <2% poor
+        total_likes = sum(post.get("likesCount") or 0 for post in posts)
+        total_comments = sum(post.get("commentsCount") or 0 for post in posts)
+        total_views = sum(post.get("videoViewCount") or 0 for post in posts)
+        n = len(posts) if posts else 1
+        avg_engagement = (total_likes + total_comments) / n
+        engagement_rate = (avg_engagement / followers * 100) if followers > 0 else 0
+        # Score: 0-1% = 20, 1-2% = 40, 2-4% = 60, 4-6% = 80, 6%+ = 100
+        if engagement_rate >= 6:
+            comment_quality = 100
+        elif engagement_rate >= 4:
+            comment_quality = 80
+        elif engagement_rate >= 2:
+            comment_quality = 60
+        elif engagement_rate >= 1:
+            comment_quality = 40
+        else:
+            comment_quality = 20
 
-        # Before/after: check hashtags too (language-independent)
-        ba_keywords = ["before", "after", "results", "transformation", "progress", "difference",
-                       "до", "после", "result", "beforeafter", "transformation", "glow"]
-        ba_hashtags = ["beforeafter", "transformation", "glowup", "results", "skincareroutine"]
-        ba_count = 0
-        for p in posts:
-            caption = (p.get("caption") or "").lower()
-            hashtags = [h.lower() for h in (p.get("hashtags") or [])]
-            if any(k in caption for k in ba_keywords) or any(h in ba_hashtags for h in hashtags):
-                ba_count += 1
-        before_after_ratio = int(ba_count / len(posts) * 100) if posts else 30
+        # 2. CONTENT CONSISTENCY - posts per week (25%)
+        # Check how recently they posted
+        recent_posts = len(posts)
+        if recent_posts >= 20:
+            before_after_ratio = 90
+        elif recent_posts >= 12:
+            before_after_ratio = 70
+        elif recent_posts >= 6:
+            before_after_ratio = 50
+        else:
+            before_after_ratio = 30
 
-        # Niche consistency: use hashtags + mentions (language-independent)
+        # 3. AUDIENCE QUALITY - follower/following ratio (20%)
+        ff_ratio = followers / following if following > 0 else 1
+        if ff_ratio >= 10:
+            audience_fit = 95
+        elif ff_ratio >= 5:
+            audience_fit = 80
+        elif ff_ratio >= 2:
+            audience_fit = 65
+        elif ff_ratio >= 1:
+            audience_fit = 50
+        else:
+            audience_fit = 30
+
+        # 4. NICHE CONSISTENCY - hashtag analysis (15%)
         beauty_keywords = [
-            # English
             "skincare", "makeup", "beauty", "skin", "glow", "routine", "serum",
             "moisturizer", "foundation", "lipstick", "hair", "cosmetic", "fashion", "style",
-            "eyeshadow", "blush", "concealer", "primer", "toner", "cleanser",
-            # Turkish
-            "cilt", "makyaj", "güzellik", "saç", "ruj", "fondöten", "nemlendirici",
-            "kozmetik", "bakım", "göz", "kaş", "kirpik", "moda", "stil",
-            # Russian/Ukrainian
-            "макияж", "красота", "уход", "косметика", "мода", "стиль", "кожа",
-            "помада", "тушь", "тональный", "увлажнение", "волосы",
-            # French
-            "beauté", "maquillage", "soin", "peau", "cheveux", "rouge", "fond de teint",
-            # Spanish
-            "belleza", "maquillaje", "piel", "cabello", "labial", "cuidado"
-        ]
-        beauty_hashtags = [
-            "makeup", "beauty", "skincare", "cosmetics", "makeuptutorial", "beautytips",
-            "makeupartist", "glowup", "skincareroutine", "beautyinfluencer",
-            "makyaj", "guzellik", "ciltbakimi", "moda", "style", "fashion",
-            "макияж", "красота", "уход", "beaute", "maquillage", "belleza"
+            "makyaj", "guzellik", "cilt", "ruj", "fondoten", "kirpik", "kas", "sac",
+            "макияж", "красота", "уход", "косметика", "кожа", "помада",
+            "beaute", "maquillage", "soin", "cheveux",
+            "belleza", "maquillaje", "cabello"
         ]
         niche_count = 0
-        for p in posts:
-            caption = (p.get("caption") or "").lower()
-            hashtags = [h.lower() for h in (p.get("hashtags") or [])]
-            mentions = [m.lower() for m in (p.get("mentions") or [])]
-            if (any(k in caption for k in beauty_keywords) or 
-                any(h in beauty_hashtags for h in hashtags) or
-                any("beauty" in m or "makeup" in m or "cosmetic" in m for m in mentions)):
+        for post in posts:
+            caption = (post.get("caption") or "").lower()
+            hashtags = [h.lower() for h in (post.get("hashtags") or [])]
+            all_text = caption + " " + " ".join(hashtags)
+            if any(k in all_text for k in beauty_keywords):
                 niche_count += 1
-        niche_consistency = int(niche_count / len(posts) * 100) if posts else 30
+        niche_consistency = int(niche_count / len(posts) * 100) if posts else 50
 
-        avg_likes = sum(p.get("likesCount") or 0 for p in posts) / len(posts) if posts else 0
-        engagement_rate = (avg_likes / followers * 100) if followers > 0 else 0
-        audience_fit = min(100, max(1, int(engagement_rate * 25))) if followers < 100000 else min(100, max(1, int(engagement_rate * 5)))
+        # 5. AUTHENTICITY (penalty -5%)
+        # Business account + verified + good follower ratio = authentic
+        auth_score = 85
+        if is_business:
+            auth_score += 5
+        if p.get("verified"):
+            auth_score += 5
+        if ff_ratio >= 5:
+            auth_score += 5
+        auth_score = min(100, auth_score)
 
         return {
             "handle": f'@{handle.lstrip("@")}',
-            "name": name,
+            "name": p.get("fullName") or handle,
             "followers": followers,
             "platform": "instagram",
             "category": "beauty",
@@ -105,7 +120,7 @@ def _fetch_apify(handle):
             "before_after_ratio": before_after_ratio,
             "audience_fit": audience_fit,
             "niche_consistency": niche_consistency,
-            "authenticity_penalty": 85,
+            "authenticity_penalty": auth_score,
             "mock": False,
         }
     except Exception as e:
