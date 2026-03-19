@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vettly — Influencer Detail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090D;--s1:#0B0F16;--s2:#0F1520;--s3:#131A26;
+  --b1:#1C2638;--b2:#24304A;--b3:#2E3C56;
+  --accent:#4F8CF5;--accent-lo:rgba(79,140,245,.08);--accent-mid:rgba(79,140,245,.22);
+  --green:#34C77A;--green-lo:rgba(52,199,122,.08);--green-mid:rgba(52,199,122,.2);
+  --amber:#E8962A;--amber-lo:rgba(232,150,42,.08);--amber-mid:rgba(232,150,42,.2);
+  --red:#D95050;--red-lo:rgba(217,80,80,.08);--red-mid:rgba(217,80,80,.2);
+  --ink:#DDE4F0;--ink2:#8896B0;--ink3:#3D4E68;
+  --syne:'Syne',sans-serif;--sans:'Geist',-apple-system,sans-serif;
+  --sidebar:220px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;display:flex;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fadeup{animation:fadeUp .4s cubic-bezier(.22,1,.36,1) both}
+.d1{animation-delay:.05s}.d2{animation-delay:.10s}.d3{animation-delay:.15s}.d4{animation-delay:.20s}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);flex-shrink:0;background:var(--s1);border-right:1px solid var(--b1);display:flex;flex-direction:column;height:100vh}
+.sb-logo{display:flex;align-items:center;gap:9px;padding:18px 20px;border-bottom:1px solid var(--b1)}
+.logo-mark{width:22px;height:22px;background:var(--accent);border-radius:5px;position:relative;flex-shrink:0}
+.logo-mark::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:7px;height:7px;background:#fff;border-radius:50%}
+.logo-text{font-family:var(--syne);font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.02em}
+.sb-nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:1px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:7px;font-size:13px;color:var(--ink3);cursor:pointer;transition:all .15s;border:1px solid transparent;text-decoration:none}
+.nav-item:hover{background:var(--s2);color:var(--ink2)}
+.nav-item.active{background:var(--accent-lo);color:var(--accent);border-color:var(--accent-mid)}
+.nav-icon{width:14px;height:14px;flex-shrink:0;opacity:.5}
+.nav-item.active .nav-icon{opacity:1}
+.sb-footer{padding:12px;border-top:1px solid var(--b1)}
+.user-row{display:flex;align-items:center;gap:8px}
+.user-av{width:28px;height:28px;border-radius:50%;background:var(--accent-lo);border:1px solid var(--accent-mid);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--accent);flex-shrink:0}
+.user-name{font-size:12px;font-weight:500;color:var(--ink)}
+.user-plan{font-size:10px;color:var(--ink3)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.topbar{height:52px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:12px;padding:0 24px;flex-shrink:0;background:var(--s1)}
+.back-btn{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink3);cursor:pointer;transition:color .15s;background:none;border:none;font-family:var(--sans);padding:0}
+.back-btn:hover{color:var(--ink2)}
+.topbar-sep{width:1px;height:16px;background:var(--b1)}
+.topbar-crumb{font-size:13px;color:var(--ink2)}
+.topbar-actions{margin-left:auto;display:flex;gap:8px}
+.tbtn{padding:6px 14px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--sans);transition:all .15s;border:none}
+.tbtn-ghost{background:transparent;border:1px solid var(--b2);color:var(--ink2)}
+.tbtn-ghost:hover{border-color:var(--b3);color:var(--ink)}
+.tbtn-solid{background:var(--accent);color:#fff}
+.tbtn-solid:hover{background:#5F9AF7}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:24px}
+.layout{display:grid;grid-template-columns:280px 1fr;gap:20px;max-width:1100px;margin:0 auto}
+
+/* LEFT COLUMN */
+.profile-card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px;margin-bottom:12px}
+.profile-av{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;margin-bottom:14px}
+.profile-name{font-family:var(--syne);font-size:16px;font-weight:700;color:var(--ink);margin-bottom:3px;letter-spacing:-.02em}
+.profile-handle{font-size:12px;color:var(--ink3);margin-bottom:12px}
+.profile-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+.ptag{font-size:10px;padding:2px 8px;border-radius:4px;background:var(--s3);border:1px solid var(--b1);color:var(--ink3);text-transform:uppercase;letter-spacing:.04em}
+.profile-stats{display:flex;flex-direction:column;gap:8px}
+.pstat-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--b1)}
+.pstat-row:last-child{border-bottom:none}
+.pstat-label{font-size:12px;color:var(--ink3)}
+.pstat-val{font-size:13px;font-weight:500;color:var(--ink)}
+
+.score-card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px;margin-bottom:12px;text-align:center}
+.score-big{font-family:var(--syne);font-size:56px;font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:8px}
+.score-verdict{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 12px;border-radius:10px;font-weight:500;border:1px solid;margin-bottom:10px}
+.score-bench{font-size:12px;color:var(--ink3)}
+.score-bench span{font-weight:500}
+
+.best-card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:18px}
+.best-title{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;font-weight:500}
+.best-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--b1);font-size:13px;color:var(--ink2)}
+.best-item:last-child{border-bottom:none}
+.best-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* RIGHT COLUMN */
+.section-card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px;margin-bottom:12px}
+.sec-title{font-family:var(--syne);font-size:14px;font-weight:600;color:var(--ink);margin-bottom:16px;letter-spacing:-.01em}
+
+/* SCORE BREAKDOWN */
+.factor-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--b1)}
+.factor-row:last-child{border-bottom:none}
+.factor-left{flex:1}
+.factor-name{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:3px}
+.factor-desc{font-size:11px;color:var(--ink3)}
+.factor-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:80px}
+.factor-score{font-family:var(--syne);font-size:16px;font-weight:700}
+.factor-bar-wrap{width:80px}
+.factor-track{height:3px;background:var(--b1);border-radius:2px;overflow:hidden}
+.factor-fill{height:3px;border-radius:2px;transition:width .8s cubic-bezier(.22,1,.36,1)}
+.factor-weight{font-size:10px;color:var(--ink3);text-align:right}
+
+/* INSIGHT */
+.insight-box{background:var(--s2);border-radius:9px;padding:14px 16px;font-size:13px;color:var(--ink2);line-height:1.7;border-left:3px solid;font-weight:400}
+
+/* OUTREACH */
+.outreach-textarea{width:100%;min-height:180px;background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:13px;color:var(--ink2);font-size:13px;line-height:1.75;resize:none;outline:none;font-family:var(--sans);font-weight:400;transition:border-color .15s;margin-bottom:10px}
+.outreach-textarea:focus{border-color:var(--b2)}
+.outreach-btns{display:flex;gap:8px}
+.obtn{flex:1;padding:10px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--sans);text-align:center;transition:all .15s;border:none}
+.obtn-solid{background:var(--accent);color:#fff}
+.obtn-solid:hover{background:#5F9AF7}
+.obtn-ghost{background:transparent;border:1px solid var(--b2);color:var(--ink2)}
+.obtn-ghost:hover{border-color:var(--b3);color:var(--ink)}
+
+/* NOT RECOMMENDED */
+.not-rec{background:var(--red-lo);border:1px solid var(--red-mid);border-radius:9px;padding:14px 16px;font-size:13px;color:var(--red);line-height:1.6;margin-bottom:12px}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="logo-mark"></div>
+    <span class="logo-text">Vettly</span>
+  </div>
+  <nav class="sb-nav">
+    <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.09em;padding:10px 10px 5px;font-weight:500">Workspace</div>
+    <a class="nav-item active" href="dashboard.html">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5L13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Discovery
+    </a>
+    <a class="nav-item" href="dashboard.html#outreach">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h8M2 12h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Outreach
+    </a>
+    <a class="nav-item" href="dashboard.html#analytics">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 12L5 8L8 10L11 5L14 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Analytics
+    </a>
+  </nav>
+  <div class="sb-footer">
+    <div class="user-row">
+      <div class="user-av">YD</div>
+      <div><div class="user-name">Yagiz D.</div><div class="user-plan">Pro plan</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <button class="back-btn" onclick="history.back()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back
+    </button>
+    <div class="topbar-sep"></div>
+    <div class="topbar-crumb" id="tb-crumb">Loading...</div>
+    <div class="topbar-actions">
+      <button class="tbtn tbtn-ghost" onclick="copyTemplate()">Copy outreach</button>
+      <button class="tbtn tbtn-solid">Add to campaign</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="layout" id="layout" style="display:none">
+
+      <!-- LEFT -->
+      <div>
+        <div class="profile-card fadeup">
+          <div class="profile-av" id="p-av"></div>
+          <div class="profile-name" id="p-name"></div>
+          <div class="profile-handle" id="p-handle"></div>
+          <div class="profile-tags" id="p-tags"></div>
+          <div class="profile-stats" id="p-stats"></div>
+        </div>
+
+        <div class="score-card fadeup d1">
+          <div class="score-big" id="s-big"></div>
+          <div class="score-verdict" id="s-verdict"></div>
+          <div class="score-bench" id="s-bench"></div>
+        </div>
+
+        <div class="best-card fadeup d2" id="best-card"></div>
+      </div>
+
+      <!-- RIGHT -->
+      <div>
+        <div id="not-rec-banner"></div>
+
+        <div class="section-card fadeup d1">
+          <div class="sec-title">Why this score</div>
+          <div class="insight-box" id="insight-box"></div>
+        </div>
+
+        <div class="section-card fadeup d2">
+          <div class="sec-title">Score breakdown</div>
+          <div id="factor-list"></div>
+        </div>
+
+        <div class="section-card fadeup d3">
+          <div class="sec-title">Outreach template</div>
+          <textarea class="outreach-textarea" id="outreach-ta" readonly></textarea>
+          <div class="outreach-btns">
+            <button class="obtn obtn-solid" onclick="copyTemplate()">Copy to clipboard</button>
+            <button class="obtn obtn-ghost">Mark as sent</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA=[
+  {id:1,name:"Sophia Reeves",handle:"@sophiareeves",platforms:["instagram"],followers:"15.1K",followersRaw:15100,cat:"skincare",av:"SR",color:"#4F8CF5",score:89,label:"high",
+   insight:"Product-question rate of 44% is 2.8× the skincare category average. Small but intensely engaged audience — followers actively look for new products to try. 8 months of consistent skincare-only content builds deep niche authority.",
+   breakdown:[{name:"Product-question comments",desc:"\"Where can I buy this?\" in 44% of recent comments",val:92,weight:35},{name:"Before/after content ratio",desc:"65% of posts show results, not just aesthetics",val:88,weight:25},{name:"Audience demographic fit",desc:"Primarily 24–34 women, matching skincare buyer profile",val:85,weight:20},{name:"Niche consistency",desc:"8 months skincare-only — no topic drift",val:95,weight:15},{name:"Authenticity penalty",desc:"No suspicious signals detected",val:100,weight:-5}],
+   bestFor:["Product launch","High-conversion campaign","Long-term partnership"],bench:"Top 12% in skincare"},
+  {id:2,name:"Chloe Park",handle:"@chloepark",platforms:["instagram"],followers:"44.8K",followersRaw:44800,cat:"skincare",av:"CP",color:"#34C77A",score:82,label:"high",
+   insight:"38% of recent comments contain purchase questions — 2.3× the category average. Consistent skincare focus over 8 months creates a trusted audience. Strong before/after content ratio signals results-driven communication style.",
+   breakdown:[{name:"Product-question comments",desc:"38% purchase intent in recent comments",val:88,weight:35},{name:"Before/after content ratio",desc:"Results-driven posting style",val:79,weight:25},{name:"Audience demographic fit",desc:"Core audience aligns with skincare buyers",val:75,weight:20},{name:"Niche consistency",desc:"Skincare-focused with minimal topic drift",val:90,weight:15},{name:"Authenticity penalty",desc:"No suspicious signals",val:100,weight:-5}],
+   bestFor:["Skincare product series","Long-term brand partnership"],bench:"Top 18% in skincare"},
+  {id:3,name:"Maya Chen",handle:"@mayachen",platforms:["instagram","tiktok"],followers:"118K",followersRaw:118000,cat:"makeup",av:"MC",color:"#A78BFA",score:74,label:"high",
+   insight:"Before/after content ratio of 65% is the strongest conversion driver in this dataset. Instagram engagement runs 40% higher than TikTok — prioritize IG for this collaboration. Good for tutorial-style campaigns where product results are visible.",
+   breakdown:[{name:"Product-question comments",desc:"Moderate purchase intent in comments",val:72,weight:35},{name:"Before/after content ratio",desc:"65% of content shows transformations",val:85,weight:25},{name:"Audience demographic fit",desc:"Makeup buyer demographic, slightly broad",val:70,weight:20},{name:"Niche consistency",desc:"Mostly makeup with some lifestyle",val:68,weight:15},{name:"Authenticity penalty",desc:"Minor engagement inconsistency on TikTok",val:95,weight:-5}],
+   bestFor:["Makeup tutorials","Product reveal campaigns"],bench:"Top 24% in makeup"},
+  {id:4,name:"Zara Okafor",handle:"@zaraokafor",platforms:["instagram","tiktok"],followers:"67K",followersRaw:67000,cat:"makeup",av:"ZO",color:"#F59E0B",score:58,label:"mid",
+   insight:"Good content quality but scattered audience focus. Non-beauty content makes up 35% of recent posts — this dilutes niche trust and reduces purchase intent from core followers. Better suited for brand awareness than direct conversion.",
+   breakdown:[{name:"Product-question comments",desc:"Low purchase intent, mostly general praise",val:35,weight:35},{name:"Before/after content ratio",desc:"Some transformation content but inconsistent",val:62,weight:25},{name:"Audience demographic fit",desc:"Mixed audience — some non-beauty segments",val:60,weight:20},{name:"Niche consistency",desc:"35% non-beauty content reduces trust",val:58,weight:15},{name:"Authenticity penalty",desc:"No major red flags",val:95,weight:-5}],
+   bestFor:["Brand awareness"],bench:"Middle 50% in makeup"},
+  {id:5,name:"Lily Santos",handle:"@lilysantos",platforms:["instagram"],followers:"28.3K",followersRaw:28300,cat:"skincare",av:"LS",color:"#6EE7B7",score:67,label:"mid",
+   insight:"Strong content quality and solid audience demographic match. However, product-question rate is only 18% — significantly below high-converters. Good for brand awareness campaigns where aesthetic matters more than conversion.",
+   breakdown:[{name:"Product-question comments",desc:"18% purchase intent — below average",val:42,weight:35},{name:"Before/after content ratio",desc:"Some results content but mostly aesthetic",val:55,weight:25},{name:"Audience demographic fit",desc:"Strong demographic match — 80 score",val:80,weight:20},{name:"Niche consistency",desc:"Consistent skincare focus",val:75,weight:15},{name:"Authenticity penalty",desc:"Clean account, no red flags",val:100,weight:-5}],
+   bestFor:["Brand awareness","Editorial content"],bench:"Top 35% in skincare"},
+  {id:6,name:"Nina Voss",handle:"@ninavoss",platforms:["instagram","tiktok"],followers:"89K",followersRaw:89000,cat:"fragrance",av:"NV",color:"#C084FC",score:48,label:"mid",
+   insight:"High follower count but very low buying signal. 72% of comments are aesthetic praise — purchase intent questions are rare. Better positioned for luxury brand perception campaigns than for driving direct sales.",
+   breakdown:[{name:"Product-question comments",desc:"Only 8% purchase intent in comments",val:22,weight:35},{name:"Before/after content ratio",desc:"Almost no results-based content",val:18,weight:25},{name:"Audience demographic fit",desc:"Broad audience, some fragrance buyers",val:65,weight:20},{name:"Niche consistency",desc:"Mixed content reduces category authority",val:55,weight:15},{name:"Authenticity penalty",desc:"No red flags",val:95,weight:-5}],
+   bestFor:["Luxury brand positioning"],bench:"Lower 40% in fragrance"},
+  {id:7,name:"Mia Torres",handle:"@miatorres",platforms:["tiktok"],followers:"203K",followersRaw:203000,cat:"makeup",av:"MT",color:"#F87171",score:36,label:"low",
+   insight:"Engagement dropped 52% in the last 30 days. Abnormal follower spike detected in the past 6 weeks. Comment pattern analysis indicates possible inauthentic engagement. High penalty score applied — not recommended for paid partnerships.",
+   breakdown:[{name:"Product-question comments",desc:"Very low purchase intent — 5%",val:15,weight:35},{name:"Before/after content ratio",desc:"Some transformation content",val:40,weight:25},{name:"Audience demographic fit",desc:"Unclear audience composition",val:30,weight:20},{name:"Niche consistency",desc:"Content scattered across topics",val:45,weight:15},{name:"Authenticity penalty",desc:"Engagement drop + follower spike detected",val:20,weight:-5}],
+   bestFor:[],bench:"Bottom 20% in makeup"},
+  {id:8,name:"Eva Kim",handle:"@evakim",platforms:["instagram"],followers:"312K",followersRaw:312000,cat:"makeup",av:"EK",color:"#FB923C",score:29,label:"low",
+   insight:"Large audience but very low trust score. 83% single-word comments signal low authentic engagement. Active sponsored content from 15+ brands simultaneously — audience has become desensitized to product recommendations.",
+   breakdown:[{name:"Product-question comments",desc:"Only 2% genuine purchase intent",val:8,weight:35},{name:"Before/after content ratio",desc:"Minimal results-based content",val:25,weight:25},{name:"Audience demographic fit",desc:"Broad but low-trust audience",val:40,weight:20},{name:"Niche consistency",desc:"Heavy brand deals dilute authenticity",val:30,weight:15},{name:"Authenticity penalty",desc:"15+ concurrent sponsorships — over-saturated",val:10,weight:-5}],
+   bestFor:[],bench:"Bottom 10% in makeup"},
+];
+
+const LBL={
+  high:{bg:"var(--green-lo)",col:"var(--green)",brd:"var(--green-mid)",txt:"High conversion potential"},
+  mid:{bg:"var(--amber-lo)",col:"var(--amber)",brd:"var(--amber-mid)",txt:"Aesthetic — conversion uncertain"},
+  low:{bg:"var(--red-lo)",col:"var(--red)",brd:"var(--red-mid)",txt:"Risk — not recommended"}
+};
+const CATS={skincare:"Skincare",makeup:"Makeup",haircare:"Hair care",fragrance:"Fragrance"};
+
+function sc(s){return s>=70?"var(--green)":s>=40?"var(--amber)":"var(--red)";}
+function scHex(s){return s>=70?"#34C77A":s>=40?"#E8962A":"#D95050";}
+
+function buildTpl(inf){
+  const cats={skincare:"skincare",makeup:"makeup",haircare:"hair care",fragrance:"beauty"};
+  const first=inf.name.split(" ")[0];
+  return `Hi ${first},\n\nI've been following your ${cats[inf.cat]||"beauty"} content and it genuinely stood out to me.\n\n[Brand name] creates ${cats[inf.cat]||"beauty"} products, and I think your audience would love what we make.\n\nWould you be open to a complimentary product? No obligations — share only if you love it.\n\n[Your name]`;
+}
+
+function copyTemplate(){
+  const ta=document.getElementById("outreach-ta");
+  if(!ta)return;
+  if(navigator.clipboard)navigator.clipboard.writeText(ta.value);
+  else{ta.select();document.execCommand("copy");}
+  const btns=document.querySelectorAll(".obtn-solid");
+  btns.forEach(b=>{const old=b.textContent;b.textContent="Copied ✓";b.style.background="#2D6A4F";setTimeout(()=>{b.textContent=old;b.style.background="var(--accent)";},2000);});
+}
+
+const API = "http://127.0.0.1:8000";
+
+function randomColor(handle){
+  const colors=["#4F8CF5","#34C77A","#A78BFA","#F59E0B","#6EE7B7","#C084FC","#F87171","#FB923C"];
+  let n=0; for(const c of handle) n+=c.charCodeAt(0);
+  return colors[n%colors.length];
+}
+
+function render(inf){
+  const l=LBL[inf.label];
+  const color=inf.color||randomColor(inf.handle);
+
+  document.title=`Vettly — ${inf.name}`;
+  document.getElementById("tb-crumb").textContent=inf.name;
+  document.getElementById("layout").style.display="grid";
+
+  // Profile avatar
+  const av=document.getElementById("p-av");
+  av.textContent=inf.av||(inf.handle.replace("@","").slice(0,2).toUpperCase());
+  av.style.background=color+"18";
+  av.style.border=`1px solid ${color}30`;
+  av.style.color=color;
+  document.getElementById("p-name").textContent=inf.name;
+  document.getElementById("p-handle").textContent=inf.handle;
+
+  const tags=document.getElementById("p-tags");
+  tags.innerHTML="";
+  (inf.platforms||["instagram"]).forEach(p=>{const s=document.createElement("span");s.className="ptag";s.textContent=p;tags.appendChild(s);});
+  if(inf.cat){const c=document.createElement("span");c.className="ptag";c.textContent=CATS[inf.cat]||inf.cat;tags.appendChild(c);}
+
+  const followers = inf.followers||(inf.followersRaw?inf.followersRaw.toLocaleString():"—");
+  document.getElementById("p-stats").innerHTML=`
+    <div class="pstat-row"><span class="pstat-label">Followers</span><span class="pstat-val">${followers}</span></div>
+    <div class="pstat-row"><span class="pstat-label">Platform</span><span class="pstat-val">${(inf.platforms||["instagram"]).map(p=>p.charAt(0).toUpperCase()+p.slice(1)).join(", ")}</span></div>
+    ${inf.cat?`<div class="pstat-row"><span class="pstat-label">Category</span><span class="pstat-val">${CATS[inf.cat]||inf.cat}</span></div>`:""}
+    <div class="pstat-row"><span class="pstat-label">Ranking</span><span class="pstat-val" style="color:${sc(inf.score)}">${inf.bench||"—"}</span></div>
+    ${inf.mock?`<div class="pstat-row"><span class="pstat-label">Source</span><span class="pstat-val" style="color:var(--accent)">Live API</span></div>`:""}`;
+
+  // Score card
+  const sb=document.getElementById("s-big");
+  sb.textContent=inf.score; sb.style.color=sc(inf.score);
+  const sv=document.getElementById("s-verdict");
+  sv.textContent=l.txt; sv.style.background=l.bg; sv.style.color=l.col; sv.style.borderColor=l.brd;
+  document.getElementById("s-bench").innerHTML=`<span style="color:${sc(inf.score)};font-weight:500">${inf.bench||"Analyzed"}</span>`;
+
+  // Best for
+  const bc=document.getElementById("best-card");
+  const bestFor=inf.bestFor||[];
+  if(bestFor.length>0){
+    bc.innerHTML=`<div class="best-title">Best for</div>${bestFor.map(b=>`<div class="best-item"><div class="best-dot" style="background:var(--green)"></div>${b}</div>`).join('')}`;
+    bc.style.borderColor=""; bc.style.background="";
+  } else {
+    bc.innerHTML=`<div class="best-title">Recommendation</div><div style="font-size:13px;color:var(--red);line-height:1.55">Not recommended for paid partnerships. Risk signals detected.</div>`;
+    bc.style.borderColor="var(--red-mid)"; bc.style.background="var(--red-lo)";
+  }
+
+  // Not rec banner
+  document.getElementById("not-rec-banner").innerHTML = inf.label==="low"
+    ? `<div class="not-rec">Risk signals detected — bot activity, engagement drops, or over-sponsorship. Not recommended for paid partnerships.</div>`
+    : "";
+
+  // Insight
+  const ib=document.getElementById("insight-box");
+  ib.textContent=inf.insight;
+  ib.style.borderColor=scHex(inf.score)+"66";
+
+  // Breakdown — normalise field names from both API and mock DATA
+  const breakdown=inf.breakdown||[];
+  document.getElementById("factor-list").innerHTML=breakdown.map(f=>{
+    const name  = f.name  || f.label       || f.key || "—";
+    const desc  = f.desc  || f.description || "";
+    const val   = f.val   ?? f.value       ?? 0;
+    const wt    = f.weight ?? 0;
+    const wtDisplay = typeof wt==="number"&&Math.abs(wt)<=1
+      ? (wt>=0?"+":"")+Math.round(wt*100)+"%"
+      : (wt>0?"+":"")+wt+"%";
+    return `<div class="factor-row">
+      <div class="factor-left">
+        <div class="factor-name">${name} <span style="font-size:10px;color:var(--ink3);font-weight:400">(${wtDisplay})</span></div>
+        <div class="factor-desc">${desc}</div>
+      </div>
+      <div class="factor-right">
+        <div class="factor-score" style="color:${scHex(val)}">${val}</div>
+        <div class="factor-bar-wrap"><div class="factor-track"><div class="factor-fill" style="width:${val}%;background:${scHex(val)}"></div></div></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Outreach template
+  document.getElementById("outreach-ta").value=buildTpl(inf);
+}
+
+function showLoading(){
+  document.getElementById("tb-crumb").textContent="Loading…";
+  document.getElementById("layout").style.display="none";
+}
+
+function showError(msg){
+  document.getElementById("tb-crumb").textContent="Error";
+  document.body.insertAdjacentHTML("beforeend",
+    `<div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg)">
+      <div style="text-align:center;color:var(--ink2)">
+        <div style="font-size:32px;margin-bottom:12px">⚠</div>
+        <div style="font-size:14px;margin-bottom:8px">${msg}</div>
+        <button onclick="history.back()" style="margin-top:16px;padding:8px 20px;background:var(--accent);border:none;border-radius:7px;color:#fff;font-family:var(--sans);font-size:13px;cursor:pointer">← Go back</button>
+      </div>
+    </div>`);
+}
+
+async function init(){
+  const params  = new URLSearchParams(window.location.search);
+  const handle  = params.get("handle");
+  const id      = parseInt(params.get("id")||"0");
+
+  // ── API path: ?handle=@sophiareeves ──────────────────────────────────────
+  if(handle){
+    showLoading();
+    try{
+      const res = await fetch(`${API}/score`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({handle})
+      });
+      if(!res.ok) throw new Error(`API ${res.status}`);
+      const data = await res.json();
+
+      // Map API response to the shape render() expects
+      const inf = {
+        handle: data.handle,
+        name: data.handle.replace("@","").replace(/\./g," ").replace(/\b\w/g,c=>c.toUpperCase()),
+        platforms:["instagram"],
+        followers:"—",
+        cat: null,
+        av: data.handle.replace("@","").slice(0,2).toUpperCase(),
+        color: randomColor(data.handle),
+        score: data.score,
+        label: data.label,
+        insight: data.insight,
+        breakdown: data.breakdown,   // API uses {key,label,description,value,weight}
+        bestFor: data.score>=70 ? ["High-conversion campaign","Brand partnership"] : data.score>=40 ? ["Brand awareness"] : [],
+        bench: data.score>=70?"Top tier":data.score>=40?"Mid tier":"Low tier",
+        mock: data.mock,
+      };
+      render(inf);
+    } catch(e){
+      showError("Could not reach the API. Is the backend running?<br><small>"+e.message+"</small>");
+    }
+    return;
+  }
+
+  // ── Mock path: ?id=1 ─────────────────────────────────────────────────────
+  const inf = DATA.find(d=>d.id===id) || DATA[0];
+  render(inf);
+}
+
+init();
+</script>
+</body>
+</html>

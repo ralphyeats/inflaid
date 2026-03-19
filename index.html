@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vettly — Know before you spend</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090D;
+  --s1:#0B0F16;
+  --s2:#0F1520;
+  --s3:#131A26;
+  --b1:#1C2638;
+  --b2:#24304A;
+  --accent:#4F8CF5;
+  --accent-lo:rgba(79,140,245,.08);
+  --accent-mid:rgba(79,140,245,.22);
+  --green:#34C77A;
+  --green-lo:rgba(52,199,122,.08);
+  --amber:#E8962A;
+  --amber-lo:rgba(232,150,42,.08);
+  --red:#D95050;
+  --red-lo:rgba(217,80,80,.08);
+  --ink:#DDE4F0;
+  --ink2:#8896B0;
+  --ink3:#3D4E68;
+  --syne:'Syne',sans-serif;
+  --sans:'Geist',-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes scan{0%{top:-50px;opacity:0}20%{opacity:.3}80%{opacity:.3}100%{top:120%;opacity:0}}
+.rise{animation:rise .6s cubic-bezier(.22,1,.36,1) both}
+.d1{animation-delay:.06s}.d2{animation-delay:.12s}.d3{animation-delay:.18s}.d4{animation-delay:.24s}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 48px;background:rgba(7,9,13,.88);backdrop-filter:blur(20px);border-bottom:1px solid rgba(28,38,56,.6)}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-mark{width:22px;height:22px;background:var(--accent);border-radius:5px;position:relative;flex-shrink:0}
+.logo-mark::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:7px;height:7px;background:#fff;border-radius:50%}
+.logo-text{font-family:var(--syne);font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.02em}
+.nav-links{display:flex;gap:2px}
+.nav-a{padding:5px 12px;border-radius:6px;font-size:13px;color:var(--ink3);text-decoration:none;transition:color .15s}
+.nav-a:hover{color:var(--ink2)}
+.nav-r{display:flex;gap:8px}
+.btn{padding:7px 16px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;font-family:var(--sans);border:none;letter-spacing:-.01em}
+.btn-ghost{background:transparent;border:1px solid var(--b2);color:var(--ink2)}
+.btn-ghost:hover{color:var(--ink);background:var(--s2)}
+.btn-solid{background:var(--accent);color:#fff}
+.btn-solid:hover{background:#5F9AF7;box-shadow:0 0 20px rgba(79,140,245,.22)}
+.btn-lg{padding:12px 26px;font-size:14px;border-radius:8px}
+
+/* HERO — centered, no split */
+.hero{max-width:700px;margin:0 auto;padding:80px 48px 56px;text-align:center}
+.badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent-lo);border:1px solid var(--accent-mid);border-radius:20px;padding:4px 13px;margin-bottom:22px;font-size:11px;font-weight:500;color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
+.badge-dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+h1{font-family:var(--syne);font-size:54px;font-weight:800;line-height:1.08;letter-spacing:-.03em;color:var(--ink);margin-bottom:16px}
+h1 span{color:var(--accent)}
+.hero-sub{font-size:16px;color:var(--ink2);line-height:1.7;font-weight:400;margin-bottom:28px}
+.hero-btns{display:flex;gap:10px;justify-content:center;margin-bottom:12px}
+.hero-fine{font-size:12px;color:var(--ink3)}
+
+/* FULL DASHBOARD MOCKUP */
+.dash-section{max-width:1080px;margin:0 auto;padding:0 48px 72px}
+.dash-glow-wrap{position:relative}
+.dash-glow{position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:800px;height:300px;background:radial-gradient(ellipse at 50% 0%,rgba(79,140,245,.09) 0%,transparent 70%);pointer-events:none}
+.dash-frame{position:relative;z-index:1;background:var(--s1);border:1px solid var(--b2);border-radius:14px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.55),0 0 0 1px rgba(79,140,245,.04)}
+.dash-bar{display:flex;align-items:center;gap:6px;padding:10px 16px;background:var(--s2);border-bottom:1px solid var(--b1)}
+.dash-dot{width:9px;height:9px;border-radius:50%}
+.dash-url{flex:1;margin:0 10px;background:var(--s3);border:1px solid var(--b1);border-radius:5px;padding:3px 10px;font-size:11px;color:var(--ink3)}
+.dash-analyze{padding:5px 14px;background:var(--accent);border:none;border-radius:5px;color:#fff;font-size:11px;font-weight:500;font-family:var(--sans);cursor:pointer}
+.dash-body{display:flex;height:480px;overflow:hidden;position:relative}
+.dash-scan{position:absolute;left:0;right:0;height:40px;background:linear-gradient(transparent,rgba(79,140,245,.025),transparent);pointer-events:none;animation:scan 6s linear infinite}
+
+/* Sidebar */
+.dash-side{width:160px;flex-shrink:0;background:var(--s2);border-right:1px solid var(--b1);padding:14px 10px;display:flex;flex-direction:column;gap:2px}
+.dash-slogo{display:flex;align-items:center;gap:7px;padding:7px 8px;margin-bottom:10px}
+.dash-slm{width:18px;height:18px;background:var(--accent);border-radius:4px;position:relative;flex-shrink:0}
+.dash-slm::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6px;height:6px;background:#fff;border-radius:50%}
+.dash-si{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:6px;font-size:11px;color:var(--ink3)}
+.dash-si.on{background:var(--accent-lo);color:var(--accent)}
+.dash-si-sq{width:11px;height:11px;border-radius:2px;background:currentColor;opacity:.45;flex-shrink:0}
+.dash-quota{margin-top:auto;background:var(--s3);border:1px solid var(--b1);border-radius:7px;padding:8px 10px}
+.dash-quota-label{font-size:8px;color:var(--ink3);margin-bottom:4px}
+.dash-quota-bar{height:3px;background:var(--b1);border-radius:2px;overflow:hidden}
+.dash-quota-fill{height:3px;background:var(--accent);border-radius:2px;width:62%}
+.dash-quota-note{font-size:8px;color:var(--ink3);margin-top:3px}
+
+/* Main content */
+.dash-main{flex:1;padding:18px 20px;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+.dash-toprow{display:flex;align-items:center;gap:10px}
+.dash-heading{font-family:var(--syne);font-size:14px;font-weight:700;color:var(--ink);letter-spacing:-.01em;flex-shrink:0}
+.dash-search{display:flex;align-items:center;gap:7px;background:var(--s3);border:1px solid var(--b1);border-radius:7px;padding:7px 11px;flex:1}
+.dash-search-c{width:11px;height:11px;border:1.5px solid var(--ink3);border-radius:50%;flex-shrink:0}
+.dash-search-t{font-size:11px;color:var(--ink3)}
+.dash-abtn{padding:6px 14px;background:var(--accent);border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:500;font-family:var(--sans);flex-shrink:0}
+
+/* Filters */
+.dash-filters{display:flex;gap:6px;flex-wrap:wrap}
+.dash-f{padding:4px 11px;border-radius:6px;font-size:10px;border:1px solid var(--b1);color:var(--ink3);background:transparent}
+.dash-f.on{background:var(--accent-lo);border-color:var(--accent-mid);color:var(--accent)}
+
+/* Stats */
+.dash-stats{display:flex;gap:10px}
+.dash-stat{background:var(--s3);border:1px solid var(--b1);border-radius:8px;padding:10px 14px;flex:1}
+.dash-stat-n{font-family:var(--syne);font-size:22px;font-weight:700;line-height:1;margin-bottom:3px}
+.dash-stat-l{font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
+
+/* Cards grid */
+.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;overflow:hidden}
+.dash-card{background:var(--s3);border:1px solid var(--b1);border-radius:10px;padding:13px;transition:border-color .15s}
+.dash-card:hover{border-color:var(--b2)}
+.dash-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.dash-card-info{display:flex;align-items:center;gap:8px}
+.dash-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.dash-name{font-size:12px;font-weight:500;color:var(--ink);margin-bottom:1px}
+.dash-meta{font-size:10px;color:var(--ink3)}
+.dash-score-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.dash-score{font-family:var(--syne);font-size:20px;font-weight:700;line-height:1}
+.dash-verdict{font-size:9px;padding:2px 7px;border-radius:4px;font-weight:500;white-space:nowrap}
+.dash-bars{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+.dash-bar-row{display:flex;flex-direction:column;gap:2px}
+.dash-bar-label{display:flex;justify-content:space-between;font-size:9px;color:var(--ink3)}
+.dash-bar-track{height:2px;background:var(--b1);border-radius:1px;overflow:hidden}
+.dash-bar-fill{height:2px;border-radius:1px}
+.dash-card-actions{display:flex;gap:6px}
+.dash-card-btn{flex:1;padding:5px 0;border-radius:5px;font-size:10px;font-weight:500;cursor:pointer;font-family:var(--sans);text-align:center;border:1px solid var(--b2);background:transparent;color:var(--ink3)}
+.dash-card-btn.pri{background:var(--accent-lo);border-color:var(--accent-mid);color:var(--accent)}
+
+/* PROOF */
+.proof{max-width:1080px;margin:0 auto;padding:0 48px;border-top:1px solid var(--b1)}
+.proof-row{display:flex}
+.proof-item{flex:1;padding:22px 26px;border-right:1px solid var(--b1)}
+.proof-item:last-child{border-right:none}
+.proof-n{font-family:var(--syne);font-size:26px;font-weight:700;color:var(--ink);letter-spacing:-.03em;margin-bottom:3px}
+.proof-n span{color:var(--accent)}
+.proof-l{font-size:12px;color:var(--ink3)}
+
+/* SECTIONS */
+.sec{max-width:1080px;margin:80px auto 0;padding:0 48px}
+.sec-tag{font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.09em;font-weight:500;margin-bottom:8px}
+.sec-h{font-family:var(--syne);font-size:34px;font-weight:700;letter-spacing:-.025em;line-height:1.12;color:var(--ink);margin-bottom:32px}
+
+/* FEATURES — true 3-col grid */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--b1);border-radius:12px;overflow:hidden}
+.feat-cell{background:var(--s1);padding:26px 24px;border-right:1px solid var(--b1);border-bottom:1px solid var(--b1)}
+.feat-cell:nth-child(3n){border-right:none}
+.feat-cell:nth-child(4),.feat-cell:nth-child(5),.feat-cell:nth-child(6){border-bottom:none}
+.feat-cell-title{font-family:var(--syne);font-size:14px;font-weight:600;color:var(--ink);margin-bottom:6px;letter-spacing:-.01em}
+.feat-cell-desc{font-size:13px;color:var(--ink2);line-height:1.6}
+
+/* SCORING */
+.scoring-wrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.factor-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--b1)}
+.factor-row:last-child{border-bottom:none}
+.factor-name{font-size:13px;font-weight:500;color:var(--ink);flex:1;letter-spacing:-.01em}
+.factor-w{font-family:var(--syne);font-size:14px;font-weight:700;flex-shrink:0}
+.verdict-box{border-radius:9px;padding:14px 15px;border:1px solid;margin-bottom:9px}
+.verdict-box:last-child{margin-bottom:0}
+.vb-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.vb-title{font-size:13px;font-weight:500}
+.vb-range{font-family:var(--syne);font-size:15px;font-weight:700}
+.vb-desc{font-size:12px;font-weight:400;opacity:.75;line-height:1.5}
+
+/* QUOTES */
+.quote-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.qcard{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:24px}
+.qstars{font-size:11px;color:var(--amber);letter-spacing:2px;margin-bottom:14px}
+.qtext{font-size:14px;color:var(--ink);line-height:1.65;font-weight:400;margin-bottom:16px}
+.qperson{display:flex;align-items:center;gap:10px;padding-top:14px;border-top:1px solid var(--b1)}
+.qav{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.qname{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:1px}
+.qrole{font-size:11px;color:var(--ink3)}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.plan{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:28px;position:relative;transition:border-color .2s}
+.plan:hover{border-color:var(--b2)}
+.plan.pop{border-color:rgba(79,140,245,.3)}
+.plan.pop::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);border-radius:12px 12px 0 0}
+.pbadge{position:absolute;top:16px;right:16px;background:var(--accent-lo);border:1px solid var(--accent-mid);color:var(--accent);font-size:10px;padding:2px 8px;border-radius:5px;font-weight:500}
+.ptier{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;font-weight:500;margin-bottom:10px}
+.pprice{font-family:var(--syne);font-size:40px;font-weight:800;color:var(--ink);letter-spacing:-.04em;line-height:1;margin-bottom:4px}
+.pprice sup{font-size:16px;font-weight:400;color:var(--ink2);vertical-align:super}
+.pprice sub{font-size:12px;font-weight:300;color:var(--ink3)}
+.pnote{font-size:12px;color:var(--ink3);margin-bottom:22px;line-height:1.5}
+.pfeats{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.pfeats li{font-size:13px;display:flex;gap:8px;color:var(--ink2)}
+.fon{color:var(--green);flex-shrink:0;font-size:12px;margin-top:2px}
+.foff{color:var(--ink3);flex-shrink:0;font-size:12px;margin-top:2px}
+
+/* CTA */
+.cta-wrap{max-width:1080px;margin:80px auto;padding:0 48px}
+.cta{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:64px;text-align:center;position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:400px;height:280px;background:radial-gradient(ellipse,rgba(79,140,245,.06) 0%,transparent 70%);pointer-events:none}
+.cta-h{font-family:var(--syne);font-size:44px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:14px;color:var(--ink)}
+.cta-h span{color:var(--accent)}
+.cta-sub{font-size:15px;color:var(--ink2);font-weight:400;margin-bottom:28px;max-width:380px;margin-left:auto;margin-right:auto;line-height:1.6}
+.cta-btns{display:flex;gap:10px;justify-content:center}
+
+/* FOOTER */
+.footer-border{border-top:1px solid var(--b1);max-width:1080px;margin:0 auto;padding:0 48px}
+footer{display:flex;justify-content:space-between;align-items:center;padding:28px 0;flex-wrap:wrap;gap:12px}
+.flogo{font-family:var(--syne);font-size:14px;font-weight:700;color:var(--ink2)}
+.flinks{display:flex;gap:18px}
+.flink{font-size:12px;color:var(--ink3);text-decoration:none;transition:color .15s}
+.flink:hover{color:var(--ink2)}
+.fcopy{font-size:11px;color:var(--ink3)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">
+    <div class="logo-mark"></div>
+    <span class="logo-text">Vettly</span>
+  </a>
+  <div class="nav-links">
+    <a class="nav-a" href="#features">Features</a>
+    <a class="nav-a" href="#scoring">Scoring</a>
+    <a class="nav-a" href="#pricing">Pricing</a>
+  </div>
+  <div class="nav-r">
+    <button class="btn btn-ghost">Sign in</button>
+    <a href="dashboard.html" class="btn btn-solid">Start free →</a>
+  </div>
+</nav>
+
+<!-- HERO — centered -->
+<div class="hero">
+  <div class="badge rise"><div class="badge-dot"></div>Influencer ROI Intelligence</div>
+  <h1 class="rise d1">Stop guessing.<br>Start <span>knowing.</span></h1>
+  <p class="hero-sub rise d2">Vettly scores influencers on 5 conversion signals — so you know who drives real sales before you spend a dollar.</p>
+  <div class="hero-btns rise d3">
+    <a href="dashboard.html" class="btn btn-solid btn-lg">Start free →</a>
+    <button class="btn btn-ghost btn-lg">See how it works</button>
+  </div>
+  <p class="hero-fine rise d4">No credit card &nbsp;·&nbsp; Free tier available &nbsp;·&nbsp; Any niche</p>
+</div>
+
+<!-- FULL DASHBOARD -->
+<div class="dash-section rise d3">
+  <div class="dash-glow-wrap">
+    <div class="dash-glow"></div>
+    <div class="dash-frame">
+      <!-- Browser bar -->
+      <div class="dash-bar">
+        <div class="dash-dot" style="background:#FF5F57"></div>
+        <div class="dash-dot" style="background:#FFBD2E"></div>
+        <div class="dash-dot" style="background:#28C840"></div>
+        <div class="dash-url">app.vettly.io/dashboard</div>
+        <button class="dash-analyze">Analyze →</button>
+      </div>
+
+      <!-- App -->
+      <div class="dash-body">
+        <div class="dash-scan"></div>
+
+        <!-- Sidebar -->
+        <div class="dash-side">
+          <div class="dash-slogo">
+            <div class="dash-slm"></div>
+            <span style="font-family:var(--syne);font-size:12px;font-weight:700;color:var(--ink)">Vettly</span>
+          </div>
+          <div class="dash-si on"><div class="dash-si-sq"></div>Discovery</div>
+          <div class="dash-si"><div class="dash-si-sq"></div>Campaigns</div>
+          <div class="dash-si"><div class="dash-si-sq"></div>Analytics</div>
+          <div class="dash-si"><div class="dash-si-sq"></div>Outreach</div>
+          <div class="dash-quota">
+            <div class="dash-quota-label">Pro plan</div>
+            <div class="dash-quota-bar"><div class="dash-quota-fill"></div></div>
+            <div class="dash-quota-note">31 / 50 analyses used</div>
+          </div>
+        </div>
+
+        <!-- Main -->
+        <div class="dash-main">
+          <!-- Top row -->
+          <div class="dash-toprow">
+            <div class="dash-heading">Influencer Discovery</div>
+            <div class="dash-search"><div class="dash-search-c"></div><div class="dash-search-t">Search by niche, handle, category...</div></div>
+            <button class="dash-abtn">Analyze →</button>
+          </div>
+
+          <!-- Filters -->
+          <div class="dash-filters">
+            <div class="dash-f on">All categories</div>
+            <div class="dash-f">Skincare</div>
+            <div class="dash-f">Makeup</div>
+            <div class="dash-f">Fashion</div>
+            <div class="dash-f">Fitness</div>
+            <div class="dash-f on">Instagram</div>
+            <div class="dash-f">TikTok</div>
+            <div class="dash-f" style="margin-left:auto;border-color:var(--accent-mid);color:var(--accent)">Sort: ROI Score ↓</div>
+          </div>
+
+          <!-- Stats -->
+          <div class="dash-stats">
+            <div class="dash-stat"><div class="dash-stat-n" style="color:var(--ink)">24</div><div class="dash-stat-l">Found</div></div>
+            <div class="dash-stat" style="background:var(--green-lo);border-color:rgba(52,199,122,.15)"><div class="dash-stat-n" style="color:var(--green)">8</div><div class="dash-stat-l" style="color:rgba(52,199,122,.5)">High ROI</div></div>
+            <div class="dash-stat" style="background:var(--amber-lo);border-color:rgba(232,150,42,.15)"><div class="dash-stat-n" style="color:var(--amber)">11</div><div class="dash-stat-l" style="color:rgba(232,150,42,.5)">Aesthetic</div></div>
+            <div class="dash-stat" style="background:var(--red-lo);border-color:rgba(217,80,80,.15)"><div class="dash-stat-n" style="color:var(--red)">5</div><div class="dash-stat-l" style="color:rgba(217,80,80,.5)">Risk</div></div>
+          </div>
+
+          <!-- Cards 3-col grid -->
+          <div class="dash-grid">
+            <!-- Card 1 -->
+            <div class="dash-card" style="border-top:2px solid rgba(52,199,122,.4)">
+              <div class="dash-card-top">
+                <div class="dash-card-info">
+                  <div class="dash-av" style="background:rgba(79,140,245,.12);border:1px solid rgba(79,140,245,.25);color:var(--accent)">SR</div>
+                  <div><div class="dash-name">Sophia Reeves</div><div class="dash-meta">@sophiareeves · 15.1K · Skincare</div></div>
+                </div>
+                <div class="dash-score-wrap">
+                  <div class="dash-score" style="color:var(--green)">89</div>
+                  <div class="dash-verdict" style="background:var(--green-lo);color:var(--green)">High ROI</div>
+                </div>
+              </div>
+              <div class="dash-bars">
+                <div class="dash-bar-row"><div class="dash-bar-label"><span>Comment quality</span><span style="color:var(--green)">92</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:92%;background:var(--green)"></div></div></div>
+                <div class="dash-bar-row"><div class="dash-bar-label"><span>Before/after ratio</span><span style="color:var(--green)">88</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:88%;background:var(--green)"></div></div></div>
+                <div class="dash-bar-row"><div class="dash-bar-label"><span>Audience fit</span><span style="color:var(--amber)">85</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:85%;background:var(--amber)"></div></div></div>
+              </div>
+              <div class="dash-card-actions">
+                <div class="dash-card-btn pri">Outreach</div>
+                <div class="dash-card-btn">+ Campaign</div>
+              </div>
+            </div>
+            <!-- Card 2 -->
+            <div class="dash-card" style="border-top:2px solid rgba(52,199,122,.4)">
+              <div class="dash-card-top">
+                <div class="dash-card-info">
+                  <div class="dash-av" style="background:rgba(52,199,122,.12);border:1px solid rgba(52,199,122,.25);color:var(--green)">CP</div>
+                  <div><div class="dash-name">Chloe Park</div><div class="dash-meta">@chloepark · 44.8K · Skincare</div></div>
+                </div>
+                <div class="dash-score-wrap">
+                  <div class="dash-score" style="color:var(--green)">82</div>
+                  <div class="dash-verdict" style="background:var(--green-lo);color:var(--green)">High ROI</div>
+                </div>
+              </div>
+              <div class="dash-bars">
+                <div class="dash-bar-row"><div class="dash-bar-label"><span>Comment quality</span><span style="color:var(--green)">88</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:88%;background:var(--green)"></div></div></div>
+                <div class="dash-bar-row"><div class="dash-bar-label"><span>Before/after ratio</span><span style="color:var(--green)">79</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:79%;background:var(--green)"></div></div></div>
+                <div class="dash-bar-row"><div class="dash-bar-label"><span>Audience fit</span><span style="color:var(--amber)">75</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:75%;background:var(--amber)"></div></div></div>
+              </div>
+              <div class="dash-card-actions">
+                <div class="dash-card-btn pri">Outreach</div>
+                <div class="dash-card-btn">+ Campaign</div>
+              </div>
+            </div>
+            <!-- Card 3 -->
+            <div class="dash-card" style="border-top:2px solid rgba(232,150,42,.3)">
+              <div class="dash-card-top">
+                <div class="dash-card-info">
+                  <div class="dash-av" style="background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA">ZO</div>
+                  <div><div class="dash-name">Zara Okafor</div><div class="dash-meta">@zaraokafor · 67K · Makeup</div></div>
+                </div>
+                <div class="dash-score-wrap">
+                  <div class="dash-score" style="color:var(--amber)">58</div>
+                  <div class="dash-verdict" style="background:var(--amber-lo);color:var(--amber)">Aesthetic</div>
+                </div>
+              </div>
+              <div class="dash-bars">
+                <div class="dash-bar-row"><div class="dash-bar-label"><span>Comment quality</span><span style="color:var(--red)">35</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:35%;background:var(--amber)"></div></div></div>
+                <div class="dash-bar-row"><div class="dash-bar-label"><span>Before/after ratio</span><span style="color:var(--amber)">62</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:62%;background:var(--amber)"></div></div></div>
+                <div class="dash-bar-row"><div class="dash-bar-label"><span>Audience fit</span><span style="color:var(--amber)">60</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:60%;background:var(--amber)"></div></div></div>
+              </div>
+              <div class="dash-card-actions">
+                <div class="dash-card-btn">Outreach</div>
+                <div class="dash-card-btn">+ Campaign</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROOF -->
+<div class="proof" style="margin-top:0">
+  <div class="proof-row">
+    <div class="proof-item"><div class="proof-n"><span>240</span>+</div><div class="proof-l">brands using Vettly</div></div>
+    <div class="proof-item"><div class="proof-n"><span>4.6</span>×</div><div class="proof-l">higher ROI vs. follower-based picks</div></div>
+    <div class="proof-item"><div class="proof-n"><span>60</span>s</div><div class="proof-l">to get a full conversion verdict</div></div>
+    <div class="proof-item"><div class="proof-n" style="font-size:20px;padding-top:3px">Any niche</div><div class="proof-l">beauty, fashion, fitness & more</div></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="sec">
+    <div class="sec-tag">Features</div>
+    <div class="sec-h">Everything in one place.</div>
+    <div class="feat-grid">
+      <div class="feat-cell">
+        <div class="feat-cell-title">ROI scoring</div>
+        <div class="feat-cell-desc">5 conversion signals combined into one clear verdict.</div>
+      </div>
+      <div class="feat-cell">
+        <div class="feat-cell-title">Plain-English reasoning</div>
+        <div class="feat-cell-desc">Every score explains itself. No guessing what the number means.</div>
+      </div>
+      <div class="feat-cell">
+        <div class="feat-cell-title">Niche benchmarking</div>
+        <div class="feat-cell-desc">See how each influencer ranks within their category.</div>
+      </div>
+      <div class="feat-cell">
+        <div class="feat-cell-title">Outreach templates</div>
+        <div class="feat-cell-desc">Personalized DM and email drafts, built from their actual content.</div>
+      </div>
+      <div class="feat-cell">
+        <div class="feat-cell-title">Campaign tracker</div>
+        <div class="feat-cell-desc">Move deals through a pipeline. From first DM to final results.</div>
+      </div>
+      <div class="feat-cell">
+        <div class="feat-cell-title">Score alerts</div>
+        <div class="feat-cell-desc">Get notified when a score drops. Catch red flags early.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCORING -->
+<section id="scoring">
+  <div class="sec">
+    <div class="sec-tag">Scoring system</div>
+    <div class="sec-h">5 signals that predict sales.</div>
+    <div class="scoring-wrap">
+      <div>
+        <div class="factor-row"><div class="factor-name">Product-question comments</div><div class="factor-w" style="color:var(--accent)">35%</div></div>
+        <div class="factor-row"><div class="factor-name">Before / after content ratio</div><div class="factor-w" style="color:var(--green)">25%</div></div>
+        <div class="factor-row"><div class="factor-name">Audience demographic fit</div><div class="factor-w" style="color:var(--amber)">20%</div></div>
+        <div class="factor-row"><div class="factor-name">Niche consistency</div><div class="factor-w" style="color:#A78BFA">15%</div></div>
+        <div class="factor-row"><div class="factor-name">Authenticity penalty</div><div class="factor-w" style="color:var(--red)">−5%</div></div>
+        <div style="margin-top:16px;background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:14px 16px">
+          <div style="font-size:11px;color:var(--ink3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">Works across all verticals</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <span style="font-size:11px;padding:3px 10px;border-radius:5px;background:var(--accent-lo);border:1px solid var(--accent-mid);color:var(--accent)">Beauty</span>
+            <span style="font-size:11px;padding:3px 10px;border-radius:5px;background:var(--s3);border:1px solid var(--b1);color:var(--ink3)">Fashion</span>
+            <span style="font-size:11px;padding:3px 10px;border-radius:5px;background:var(--s3);border:1px solid var(--b1);color:var(--ink3)">Fitness</span>
+            <span style="font-size:11px;padding:3px 10px;border-radius:5px;background:var(--s3);border:1px solid var(--b1);color:var(--ink3)">Food</span>
+            <span style="font-size:11px;padding:3px 10px;border-radius:5px;background:var(--s3);border:1px solid var(--b1);color:var(--ink3)">Tech</span>
+            <span style="font-size:11px;padding:3px 10px;border-radius:5px;background:var(--s3);border:1px solid var(--b1);color:var(--ink3)">Finance</span>
+            <span style="font-size:11px;padding:3px 10px;border-radius:5px;background:var(--s3);border:1px solid var(--b2);color:var(--ink2)">+ more</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="verdict-box" style="background:var(--green-lo);border-color:rgba(52,199,122,.2)">
+          <div class="vb-head"><div class="vb-title" style="color:var(--green)">High conversion</div><div class="vb-range" style="color:var(--green)">70–100</div></div>
+          <div class="vb-desc" style="color:var(--green)">Strong purchase-intent signals. Recommended for direct conversion campaigns.</div>
+        </div>
+        <div class="verdict-box" style="background:var(--amber-lo);border-color:rgba(232,150,42,.2)">
+          <div class="vb-head"><div class="vb-title" style="color:var(--amber)">Aesthetic</div><div class="vb-range" style="color:var(--amber)">40–69</div></div>
+          <div class="vb-desc" style="color:var(--amber)">Good content quality but low buying intent. Use for awareness, not conversion.</div>
+        </div>
+        <div class="verdict-box" style="background:var(--red-lo);border-color:rgba(217,80,80,.2)">
+          <div class="vb-head"><div class="vb-title" style="color:var(--red)">Risk</div><div class="vb-range" style="color:var(--red)">0–39</div></div>
+          <div class="vb-desc" style="color:var(--red)">Suspicious signals detected. Not recommended for paid partnerships.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section>
+  <div class="sec">
+    <div class="sec-tag">What brands say</div>
+    <div class="sec-h">Brands that stopped guessing.</div>
+    <div class="quote-grid">
+      <div class="qcard">
+        <div class="qstars">★★★★★</div>
+        <div class="qtext">"We used to spend 3 days vetting influencers in spreadsheets. Vettly cuts that to 20 minutes."</div>
+        <div class="qperson">
+          <div class="qav" style="background:var(--accent-lo);color:var(--accent)">JK</div>
+          <div><div class="qname">Jamie K.</div><div class="qrole">Founder, skincare brand</div></div>
+        </div>
+      </div>
+      <div class="qcard">
+        <div class="qstars">★★★★★</div>
+        <div class="qtext">"The High ROI verdict paid for 6 months of the subscription on the first collaboration alone."</div>
+        <div class="qperson">
+          <div class="qav" style="background:var(--green-lo);color:var(--green)">AR</div>
+          <div><div class="qname">Alicia R.</div><div class="qrole">CMO, DTC fashion label</div></div>
+        </div>
+      </div>
+      <div class="qcard">
+        <div class="qstars">★★★★★</div>
+        <div class="qtext">"Finally a tool that tells me why, not just who. The comment signal alone is worth the subscription."</div>
+        <div class="qperson">
+          <div class="qav" style="background:rgba(167,139,250,.12);color:#A78BFA">MT</div>
+          <div><div class="qname">Marcus T.</div><div class="qrole">Growth lead, supplement brand</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="sec">
+    <div class="sec-tag">Pricing</div>
+    <div class="sec-h">Start free. Scale when ready.</div>
+    <div class="pricing-grid">
+      <div class="plan">
+        <div class="ptier">Free</div>
+        <div class="pprice"><sup></sup>$0<sub>/mo</sub></div>
+        <div class="pnote">Try before you commit.</div>
+        <ul class="pfeats">
+          <li><span class="fon">✓</span> 5 analyses per month</li>
+          <li><span class="fon">✓</span> High / Mid / Risk verdict</li>
+          <li><span class="fon">✓</span> Platform & category filters</li>
+          <li><span class="foff">–</span> <span style="color:var(--ink3)">Score breakdown</span></li>
+          <li><span class="foff">–</span> <span style="color:var(--ink3)">Outreach templates</span></li>
+          <li><span class="foff">–</span> <span style="color:var(--ink3)">Campaign tracker</span></li>
+        </ul>
+        <a href="dashboard.html" class="btn btn-ghost" style="width:100%;padding:10px;text-align:center">Get started free</a>
+      </div>
+      <div class="plan pop">
+        <div class="pbadge">POPULAR</div>
+        <div class="ptier">Pro</div>
+        <div class="pprice"><sup>$</sup>19<sub>/mo</sub></div>
+        <div class="pnote">One good decision covers the cost.</div>
+        <ul class="pfeats">
+          <li><span class="fon">✓</span> 50 analyses per month</li>
+          <li><span class="fon">✓</span> Full score breakdown + explanation</li>
+          <li><span class="fon">✓</span> Niche benchmarking</li>
+          <li><span class="fon">✓</span> Outreach template generator</li>
+          <li><span class="fon">✓</span> Campaign tracker</li>
+          <li><span class="fon">✓</span> Weekly score alerts</li>
+        </ul>
+        <button class="btn btn-solid" style="width:100%;padding:10px">Start Pro →</button>
+      </div>
+      <div class="plan">
+        <div class="ptier">Growth</div>
+        <div class="pprice"><sup>$</sup>49<sub>/mo</sub></div>
+        <div class="pnote">For agencies and multi-niche brands.</div>
+        <ul class="pfeats">
+          <li><span class="fon">✓</span> Unlimited analyses</li>
+          <li><span class="fon">✓</span> Everything in Pro</li>
+          <li><span class="fon">✓</span> Multi-niche support</li>
+          <li><span class="fon">✓</span> Bulk comparison (20+)</li>
+          <li><span class="fon">✓</span> Pattern insights</li>
+          <li><span class="fon">✓</span> CSV export · 3 seats</li>
+        </ul>
+        <button class="btn btn-ghost" style="width:100%;padding:10px">Start Growth →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-wrap">
+  <div class="cta">
+    <div class="cta-h">Know before<br>you <span>spend.</span></div>
+    <div class="cta-sub">The only influencer tool that explains its reasoning. Start free in 60 seconds.</div>
+    <div class="cta-btns">
+      <a href="dashboard.html" class="btn btn-solid btn-lg">Start free — no card needed</a>
+      <button class="btn btn-ghost btn-lg">Book a demo</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer-border">
+  <footer>
+    <div class="flogo">Vettly</div>
+    <div class="flinks">
+      <a class="flink" href="#">Features</a>
+      <a class="flink" href="#">Pricing</a>
+      <a class="flink" href="#">Privacy</a>
+      <a class="flink" href="#">Terms</a>
+    </div>
+    <div class="fcopy">© 2025 Vettly</div>
+  </footer>
+</div>
+
+</body>
+</html>
