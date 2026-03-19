@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
@@ -7,9 +9,16 @@ from scorer import compute_score, FactorResult
 
 app = FastAPI(title="Vettly API", version="0.1.0")
 
+# ALLOWED_ORIGINS env var: comma-separated list, e.g.
+# "https://vettly.vercel.app,https://vettly-git-main-xyz.vercel.app"
+# Defaults to "*" for local development.
+_origins_env = os.getenv("ALLOWED_ORIGINS", "*")
+ALLOWED_ORIGINS = [o.strip() for o in _origins_env.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # tighten in production
+    allow_origins=ALLOWED_ORIGINS,
+    allow_origin_regex=r"https://.*\.vercel\.app" if "*" not in ALLOWED_ORIGINS else None,
     allow_methods=["*"],
     allow_headers=["*"],
 )

@@ -277,7 +277,12 @@ function copyTemplate(){
   btns.forEach(b=>{const old=b.textContent;b.textContent="Copied ✓";b.style.background="#2D6A4F";setTimeout(()=>{b.textContent=old;b.style.background="var(--accent)";},2000);});
 }
 
-const API = "http://127.0.0.1:8000";
+// Switch between local dev and Railway production automatically.
+// After deploying to Railway, replace the string below with your Railway URL.
+const RAILWAY_URL = "https://YOUR_RAILWAY_URL.up.railway.app";
+const API = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+  ? "http://127.0.0.1:8000"
+  : RAILWAY_URL;
 
 function randomColor(handle){
   const colors=["#4F8CF5","#34C77A","#A78BFA","#F59E0B","#6EE7B7","#C084FC","#F87171","#FB923C"];
