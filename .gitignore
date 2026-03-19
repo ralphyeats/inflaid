@@ -42,3 +42,5 @@ uvicorn.log
 apify_token.txt
 secrets.json
 .vercel
+.env
+.env
