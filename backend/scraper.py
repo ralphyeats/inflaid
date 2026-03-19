@@ -45,13 +45,34 @@ def _fetch_apify(handle):
                     product_comments += 1
         comment_quality = int(product_comments / total_comments * 100) if total_comments > 0 else 40
 
-        ba_keywords = ["before", "after", "results", "transformation", "progress", "difference"]
-        ba_count = sum(1 for p in posts if any(k in (p.get("caption") or "").lower() for k in ba_keywords))
-        before_after_ratio = int(ba_count / len(posts) * 100) if posts else 40
+        # Before/after: check hashtags too (language-independent)
+        ba_keywords = ["before", "after", "results", "transformation", "progress", "difference",
+                       "до", "после", "result", "beforeafter", "transformation", "glow"]
+        ba_hashtags = ["beforeafter", "transformation", "glowup", "results", "skincareroutine"]
+        ba_count = 0
+        for p in posts:
+            caption = (p.get("caption") or "").lower()
+            hashtags = [h.lower() for h in (p.get("hashtags") or [])]
+            if any(k in caption for k in ba_keywords) or any(h in ba_hashtags for h in hashtags):
+                ba_count += 1
+        before_after_ratio = int(ba_count / len(posts) * 100) if posts else 30
 
-        beauty_keywords = ["skincare", "makeup", "beauty", "skin", "glow", "routine", "serum", "moisturizer", "foundation", "lipstick", "hair"]
-        niche_count = sum(1 for p in posts if any(k in (p.get("caption") or "").lower() for k in beauty_keywords))
-        niche_consistency = int(niche_count / len(posts) * 100) if posts else 40
+        # Niche consistency: use hashtags + mentions (language-independent)
+        beauty_keywords = ["skincare", "makeup", "beauty", "skin", "glow", "routine", "serum",
+                           "moisturizer", "foundation", "lipstick", "hair", "cosmetic", "beauty",
+                           "макияж", "красота", "уход", "косметика", "мода", "стиль", "style", "fashion"]
+        beauty_hashtags = ["makeup", "beauty", "skincare", "cosmetics", "makeuptutorial", "beautytips",
+                           "makeupartist", "glowup", "skincareroutine", "beautyinfluencer"]
+        niche_count = 0
+        for p in posts:
+            caption = (p.get("caption") or "").lower()
+            hashtags = [h.lower() for h in (p.get("hashtags") or [])]
+            mentions = [m.lower() for m in (p.get("mentions") or [])]
+            if (any(k in caption for k in beauty_keywords) or 
+                any(h in beauty_hashtags for h in hashtags) or
+                any("beauty" in m or "makeup" in m or "cosmetic" in m for m in mentions)):
+                niche_count += 1
+        niche_consistency = int(niche_count / len(posts) * 100) if posts else 30
 
         avg_likes = sum(p.get("likesCount") or 0 for p in posts) / len(posts) if posts else 0
         engagement_rate = (avg_likes / followers * 100) if followers > 0 else 0
