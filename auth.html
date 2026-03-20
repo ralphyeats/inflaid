@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vettly — Sign in</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090D;--s1:#0B0F16;--s2:#0F1520;--s3:#131A26;
+  --b1:#1C2638;--b2:#24304A;
+  --accent:#4F8CF5;--accent-lo:rgba(79,140,245,.08);--accent-mid:rgba(79,140,245,.22);
+  --green:#34C77A;--red:#D95050;
+  --ink:#DDE4F0;--ink2:#8896B0;--ink3:#3D4E68;
+  --syne:"Syne",sans-serif;--sans:"Geist",-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;-webkit-font-smoothing:antialiased}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:40px}
+.logo-mark{width:24px;height:24px;background:var(--accent);border-radius:6px;position:relative}
+.logo-mark::after{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;background:#fff;border-radius:50%}
+.logo-text{font-family:var(--syne);font-size:16px;font-weight:700;color:var(--ink)}
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:36px;width:100%;max-width:400px}
+.card-title{font-family:var(--syne);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px;letter-spacing:-.02em}
+.card-sub{font-size:13px;color:var(--ink3);margin-bottom:28px}
+.tabs{display:flex;gap:0;margin-bottom:28px;background:var(--s2);border-radius:8px;padding:3px}
+.tab{flex:1;padding:7px;border:none;background:transparent;color:var(--ink3);font-size:13px;font-weight:500;cursor:pointer;border-radius:6px;font-family:var(--sans);transition:all .15s}
+.tab.active{background:var(--accent);color:#fff}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;color:var(--ink3);margin-bottom:6px;font-weight:500}
+.field input{width:100%;background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:10px 14px;color:var(--ink);font-size:14px;font-family:var(--sans);outline:none;transition:border-color .15s}
+.field input:focus{border-color:var(--accent)}
+.field input::placeholder{color:var(--ink3)}
+.btn-primary{width:100%;padding:12px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--sans);margin-top:8px;transition:background .15s}
+.btn-primary:hover{background:#5F9AF7}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.msg{font-size:13px;padding:10px 14px;border-radius:8px;margin-top:12px;display:none}
+.msg.error{background:rgba(217,80,80,.1);border:1px solid rgba(217,80,80,.2);color:var(--red)}
+.msg.success{background:rgba(52,199,122,.1);border:1px solid rgba(52,199,122,.2);color:var(--green)}
+.divider{text-align:center;font-size:12px;color:var(--ink3);margin:20px 0;position:relative}
+.divider::before{content:"";position:absolute;top:50%;left:0;right:0;height:1px;background:var(--b1)}
+.divider span{background:var(--s1);padding:0 12px;position:relative}
+.google-btn{width:100%;padding:11px;background:transparent;border:1px solid var(--b2);border-radius:8px;color:var(--ink2);font-size:13px;font-weight:500;cursor:pointer;font-family:var(--sans);display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s}
+.google-btn:hover{border-color:var(--b2);background:var(--s2);color:var(--ink)}
+.fine{font-size:11px;color:var(--ink3);text-align:center;margin-top:20px;line-height:1.6}
+</style>
+</head>
+<body>
+<a class="logo" href="/">
+  <div class="logo-mark"></div>
+  <span class="logo-text">Vettly</span>
+</a>
+
+<div class="card">
+  <div class="card-title">Welcome back</div>
+  <div class="card-sub" id="card-sub">Sign in to your account to continue.</div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('signin')">Sign in</button>
+    <button class="tab" onclick="switchTab('signup')">Create account</button>
+  </div>
+
+  <div id="form-signin">
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="signin-email" placeholder="you@example.com">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="signin-password" placeholder="••••••••">
+    </div>
+    <button class="btn-primary" onclick="signIn()">Sign in →</button>
+  </div>
+
+  <div id="form-signup" style="display:none">
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="signup-email" placeholder="you@example.com">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="signup-password" placeholder="Min. 8 characters">
+    </div>
+    <button class="btn-primary" onclick="signUp()">Create account →</button>
+  </div>
+
+  <div class="msg" id="msg"></div>
+
+  <div class="divider"><span>or</span></div>
+  <button class="google-btn" onclick="signInGoogle()">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M15.68 8.18c0-.57-.05-1.11-.14-1.64H8v3.1h4.3a3.67 3.67 0 01-1.6 2.41v2h2.58c1.51-1.39 2.4-3.44 2.4-5.87z" fill="#4285F4"/>
+      <path d="M8 16c2.16 0 3.97-.72 5.29-1.94l-2.58-2a4.8 4.8 0 01-2.71.75 4.8 4.8 0 01-4.52-3.32H.82v2.06A8 8 0 008 16z" fill="#34A853"/>
+      <path d="M3.48 9.49a4.8 4.8 0 010-2.98V4.45H.82a8 8 0 000 7.1l2.66-2.06z" fill="#FBBC05"/>
+      <path d="M8 3.18a4.33 4.33 0 013.06 1.2l2.3-2.3A7.7 7.7 0 008 0 8 8 0 00.82 4.45l2.66 2.06A4.8 4.8 0 018 3.18z" fill="#EA4335"/>
+    </svg>
+    Continue with Google
+  </button>
+
+  <div class="fine">By continuing, you agree to our Terms of Service and Privacy Policy.</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://qpfjxbsvymlrbeoqwqmr.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZmp4YnN2eW1scmJlb3F3cW1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NzY3MzgsImV4cCI6MjA4OTU1MjczOH0.d16JZphML2HPIYrXm9oEegQc8GpL-tZA36HpWJAFZNw";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function switchTab(tab) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  event.target.classList.add("active");
+  document.getElementById("form-signin").style.display = tab === "signin" ? "block" : "none";
+  document.getElementById("form-signup").style.display = tab === "signup" ? "block" : "none";
+  document.getElementById("card-sub").textContent = tab === "signin" ? "Sign in to your account to continue." : "Create your free Vettly account.";
+  hideMsg();
+}
+
+function showMsg(text, type) {
+  const el = document.getElementById("msg");
+  el.textContent = text;
+  el.className = "msg " + type;
+  el.style.display = "block";
+}
+
+function hideMsg() {
+  document.getElementById("msg").style.display = "none";
+}
+
+async function signIn() {
+  const email = document.getElementById("signin-email").value.trim();
+  const password = document.getElementById("signin-password").value;
+  if (!email || !password) return showMsg("Please fill in all fields.", "error");
+  const btn = event.target;
+  btn.disabled = true; btn.textContent = "Signing in...";
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) { showMsg(error.message, "error"); btn.disabled = false; btn.textContent = "Sign in →"; }
+  else window.location.href = "/dashboard.html";
+}
+
+async function signUp() {
+  const email = document.getElementById("signup-email").value.trim();
+  const password = document.getElementById("signup-password").value;
+  if (!email || !password) return showMsg("Please fill in all fields.", "error");
+  if (password.length < 8) return showMsg("Password must be at least 8 characters.", "error");
+  const btn = event.target;
+  btn.disabled = true; btn.textContent = "Creating account...";
+  const { error } = await sb.auth.signUp({ email, password });
+  if (error) { showMsg(error.message, "error"); btn.disabled = false; btn.textContent = "Create account →"; }
+  else showMsg("Check your email to confirm your account.", "success");
+}
+
+async function signInGoogle() {
+  await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin + "/dashboard.html" } });
+}
+
+// Check if already logged in
+sb.auth.getSession().then(({ data }) => {
+  if (data.session) window.location.href = "/dashboard.html";
+});
+</script>
+</body>
+</html>
