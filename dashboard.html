@@ -332,7 +332,7 @@ function initials(handle){const h=handle.replace("@","");return (h.slice(0,2)).t
 function randomColor(handle){const colors=["#4F8CF5","#34C77A","#A78BFA","#F59E0B","#6EE7B7","#C084FC","#F87171","#FB923C"];let n=0;for(const c of handle)n+=c.charCodeAt(0);return colors[n%colors.length];}
 
 // ── API ANALYZE ──────────────────────────────────────────────────────────────
-function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.value.trim();if(!r)return;doAnalyze(r.startsWith("@")?r:"@"+r);}async function doAnalyze(handle){
+function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.value.trim();if(!r)return;doAnalyze(r.startsWith("@")?r:"@"+r);}function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.value.trim();if(!r)return;doAnalyze(r.startsWith("@")?r:"@"+r);}async function doAnalyze(handle){
   const handle_val = handle;
   const input = document.getElementById("handle-input");
   const btn   = document.getElementById("analyze-btn");
