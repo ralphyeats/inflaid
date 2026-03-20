@@ -349,7 +349,7 @@ async function analyzeHandle(){
     const res = await fetch(`${API}/score`, {
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({handle, user_email: data.session?.user?.email})
+      body: JSON.stringify({handle, user_email: currentUserEmail})
     });
     if(res.status === 429) {
       const err = await res.json();
@@ -597,6 +597,7 @@ sb.auth.getSession().then(({ data }) => {
   const name = email.split("@")[0];
   document.querySelector(".user-av").textContent = initials;
   document.querySelector(".user-name").textContent = name;
+  window.currentUserEmail = email;
 
   // Show upgrade success message
   const params = new URLSearchParams(window.location.search);
