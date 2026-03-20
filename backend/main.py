@@ -91,6 +91,8 @@ def score(req: ScoreRequestWithUser):
                 u = result.data[0]
                 if u["analyses_used"] >= u["analyses_limit"]:
                     raise HTTPException(status_code=429, detail=f"limit_reached:{u['plan']}")
+            else:
+                sb.table("users").insert({"email": req.user_email, "plan": "free", "analyses_used": 0, "analyses_limit": 2}).execute()
     
     cached = get_cached(req.handle)
     if cached:
@@ -142,6 +144,8 @@ def score(req: ScoreRequestWithUser):
                 r = sb.table("users").select("analyses_used").eq("email", req.user_email).execute()
                 if r.data:
                     sb.table("users").update({"analyses_used": r.data[0]["analyses_used"] + 1}).eq("email", req.user_email).execute()
+                else:
+                    sb.table("users").insert({"email": req.user_email, "plan": "free", "analyses_used": 1, "analyses_limit": 2}).execute()
         except Exception as e:
             print(f"Usage increment error: {e}")
 
