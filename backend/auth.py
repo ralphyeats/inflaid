@@ -40,7 +40,7 @@ def get_cached(handle: str) -> dict:
     if not sb:
         return None
     from datetime import datetime, timedelta
-    cutoff = (datetime.utcnow() - timedelta(hours=24)).isoformat()
+    cutoff = (datetime.utcnow() - timedelta(days=7)).isoformat()
     result = sb.table("analyses").select("result").eq("handle", handle).gte("created_at", cutoff).order("created_at", desc=True).limit(1).execute()
     if result.data:
         return result.data[0]["result"]
