@@ -134,7 +134,19 @@ async function signIn() {
   btn.disabled = true; btn.textContent = "Signing in...";
   const { error } = await sb.auth.signInWithPassword({ email, password });
   if (error) { showMsg(error.message, "error"); btn.disabled = false; btn.textContent = "Sign in →"; }
-  else window.location.href = "/dashboard.html";
+  else {
+    const params = new URLSearchParams(window.location.search);
+    const plan = params.get("plan");
+    if (plan) {
+      const res = await fetch("https://vettly-production-63d5.up.railway.app/create-checkout", {
+        method: "POST", headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({plan, user_email: email})
+      });
+      const d = await res.json();
+      if (d.url) { window.location.href = d.url; return; }
+    }
+    window.location.href = "/dashboard.html";
+  }
 }
 
 async function signUp() {

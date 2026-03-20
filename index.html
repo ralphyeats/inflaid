@@ -595,7 +595,7 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
           <li><span class="fon">✓</span> Campaign tracker</li>
           <li><span class="fon">✓</span> Weekly score alerts</li>
         </ul>
-        <button class="btn btn-solid" style="width:100%;padding:10px"><span data-i18n="btn_pro">Start Pro →</span></button>
+        <button class="btn btn-solid" style="width:100%;padding:10px" onclick="startPlan('pro')"><span data-i18n="btn_pro">Start Pro →</span></button>
       </div>
       <div class="plan">
         <div class="ptier">Growth</div>
@@ -609,7 +609,7 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
           <li><span class="fon">✓</span> Pattern insights</li>
           <li><span class="fon">✓</span> CSV export · 3 seats</li>
         </ul>
-        <button class="btn btn-ghost" style="width:100%;padding:10px"><span data-i18n="btn_growth">Start Growth →</span></button>
+        <button class="btn btn-ghost" style="width:100%;padding:10px" onclick="startPlan('growth')"><span data-i18n="btn_growth">Start Growth →</span></button>
       </div>
     </div>
   </div>
@@ -741,5 +741,11 @@ document.getElementById('lang-current-code').textContent = codes[currentLang] ||
 applyLang(currentLang);
 </script>
 
+
+<script>
+async function startPlan(plan) {
+  window.location.href = '/auth.html?plan=' + plan;
+}
+</script>
 </body>
 </html>
