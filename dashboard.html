@@ -159,6 +159,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 .rec-name{font-size:12px;font-weight:500;color:var(--ink);flex:1}
 .rec-score{font-family:var(--syne);font-size:14px;font-weight:700}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -191,7 +192,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
       <div style="font-size:10px;color:var(--ink3)">19 analyses remaining</div>
       <button class="upgrade-btn">Upgrade to Growth →</button>
     </div>
-    <div class="user-row">
+    <div class="user-row" style="cursor:pointer" onclick="logout()" title="Sign out">
       <div class="user-av">YD</div>
       <div><div class="user-name">Yagiz D.</div><div class="user-plan">Pro plan</div></div>
     </div>
@@ -570,5 +571,29 @@ function renderAnalytics(){
 
 renderGrid();
 </script>
+
+<script>
+const SUPABASE_URL = "https://qpfjxbsvymlrbeoqwqmr.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZmp4YnN2eW1scmJlb3F3cW1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NzY3MzgsImV4cCI6MjA4OTU1MjczOH0.d16JZphML2HPIYrXm9oEegQc8GpL-tZA36HpWJAFZNw";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+sb.auth.getSession().then(({ data }) => {
+  if (!data.session) {
+    window.location.href = "/auth.html";
+    return;
+  }
+  const user = data.session.user;
+  const email = user.email || "";
+  const initials = email.slice(0,2).toUpperCase();
+  const name = email.split("@")[0];
+  document.querySelector(".user-av").textContent = initials;
+  document.querySelector(".user-name").textContent = name;
+});
+
+function logout() {
+  sb.auth.signOut().then(() => window.location.href = "/auth.html");
+}
+</script>
+
 </body>
 </html>
