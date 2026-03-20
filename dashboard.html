@@ -599,6 +599,21 @@ sb.auth.getSession().then(({ data }) => {
   document.querySelector(".user-name").textContent = name;
   window.currentUserEmail = email;
 
+  // Load real plan from Supabase
+  const { createClient } = supabase;
+  const sbClient = supabase.createClient("https://qpfjxbsvymlrbeoqwqmr.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZmp4YnN2eW1scmJlb3F3cW1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NzY3MzgsImV4cCI6MjA4OTU1MjczOH0.d16JZphML2HPIYrXm9oEegQc8GpL-tZA36HpWJAFZNw");
+  sbClient.table("users").select("plan,analyses_used,analyses_limit").eq("email", email).then(({data}) => {
+    if (data && data[0]) {
+      const u = data[0];
+      const planName = u.plan.charAt(0).toUpperCase() + u.plan.slice(1) + " plan";
+      document.querySelector(".usage-top span:first-child").textContent = planName;
+      document.querySelector(".usage-top span:last-child").textContent = u.analyses_used + "/" + u.analyses_limit;
+      document.querySelector(".usage-fill").style.width = Math.min(100, (u.analyses_used / u.analyses_limit) * 100) + "%";
+      document.querySelector(".user-plan").textContent = planName;
+      if (u.plan === "growth") document.querySelector(".upgrade-btn").style.display = "none";
+    }
+  });
+
   // Show upgrade success message
   const params = new URLSearchParams(window.location.search);
   if (params.get("upgraded") === "1") {
