@@ -192,9 +192,10 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
       <div style="font-size:10px;color:var(--ink3)">19 analyses remaining</div>
       <button class="upgrade-btn">Upgrade to Growth →</button>
     </div>
-    <div class="user-row" style="cursor:pointer" onclick="logout()" title="Sign out">
+    <div class="user-row">
       <div class="user-av">YD</div>
-      <div><div class="user-name">Yagiz D.</div><div class="user-plan">Pro plan</div></div>
+      <div style="flex:1"><div class="user-name">Yagiz D.</div><div class="user-plan">Pro plan</div></div>
+      <button onclick="logout()" style="background:none;border:none;cursor:pointer;color:var(--ink3);padding:4px;border-radius:4px;font-size:11px;transition:color .15s" title="Sign out">⎋</button>
     </div>
   </div>
 </div>
