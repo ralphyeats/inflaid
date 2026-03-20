@@ -1,31 +1,5 @@
 import os
-
 import stripe
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
-
-PRICE_IDS = {
-    "pro": os.getenv("STRIPE_PRO_PRICE"),
-    "growth": os.getenv("STRIPE_GROWTH_PRICE"),
-}
-
-class CheckoutRequest(BaseModel):
-    plan: str
-    user_email: str
-
-@app.post("/create-checkout")
-def create_checkout(req: CheckoutRequest):
-    price_id = PRICE_IDS.get(req.plan)
-    if not price_id:
-        raise HTTPException(status_code=400, detail="Invalid plan")
-    session = stripe.checkout.Session.create(
-        payment_method_types=["card"],
-        mode="subscription",
-        line_items=[{"price": price_id, "quantity": 1}],
-        customer_email=req.user_email,
-        success_url="https://vettly-eight.vercel.app/dashboard.html?upgraded=1",
-        cancel_url="https://vettly-eight.vercel.app/dashboard.html",
-    )
-    return {"url": session.url}
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
@@ -43,6 +17,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+
+PRICE_IDS = {
+    "pro": os.getenv("STRIPE_PRO_PRICE"),
+    "growth": os.getenv("STRIPE_GROWTH_PRICE"),
+}
 
 class ScoreRequest(BaseModel):
     handle: str
@@ -70,9 +51,28 @@ class ScoreResponse(BaseModel):
     insight: str
     mock: bool = True
 
+class CheckoutRequest(BaseModel):
+    plan: str
+    user_email: str
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+@app.post("/create-checkout")
+def create_checkout(req: CheckoutRequest):
+    price_id = PRICE_IDS.get(req.plan)
+    if not price_id:
+        raise HTTPException(status_code=400, detail="Invalid plan")
+    session = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        mode="subscription",
+        line_items=[{"price": price_id, "quantity": 1}],
+        customer_email=req.user_email,
+        success_url="https://vettly-eight.vercel.app/dashboard.html?upgraded=1",
+        cancel_url="https://vettly-eight.vercel.app/dashboard.html",
+    )
+    return {"url": session.url}
 
 @app.post("/score", response_model=ScoreResponse)
 def score(req: ScoreRequest):
