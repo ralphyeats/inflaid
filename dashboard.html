@@ -589,6 +589,15 @@ sb.auth.getSession().then(({ data }) => {
   const name = email.split("@")[0];
   document.querySelector(".user-av").textContent = initials;
   document.querySelector(".user-name").textContent = name;
+
+  // Show upgrade success message
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("upgraded") === "1") {
+    showToast("🎉 Plan upgraded successfully! Welcome to Growth.", "info");
+    document.querySelector(".usage-top span:first-child").textContent = "Growth plan";
+    document.querySelector(".upgrade-btn").style.display = "none";
+    history.replaceState({}, "", "/dashboard.html");
+  }
 });
 
 async function upgradePlan(plan) {
