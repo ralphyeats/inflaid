@@ -699,5 +699,27 @@ function logout() {
   </div>
 </div>
 
+
+<div class="modal-overlay" id="cat-modal" style="display:none">
+  <div class="modal">
+    <div class="modal-title">Select account category</div>
+    <div class="modal-sub">This helps us score the account more accurately.</div>
+    <div class="cat-grid">
+      <button class="cat-btn" onclick="selectCat('beauty')">💄 Beauty</button>
+      <button class="cat-btn" onclick="selectCat('fashion')">👗 Fashion</button>
+      <button class="cat-btn" onclick="selectCat('fitness')">💪 Fitness</button>
+      <button class="cat-btn" onclick="selectCat('food')">🍕 Food</button>
+      <button class="cat-btn" onclick="selectCat('travel')">✈️ Travel</button>
+      <button class="cat-btn" onclick="selectCat('lifestyle')">🌿 Lifestyle</button>
+      <button class="cat-btn" onclick="selectCat('tech')">💻 Tech</button>
+      <button class="cat-btn" onclick="selectCat('other')">⭐ Other</button>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn modal-btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn modal-btn-solid" id="modal-analyze-btn" onclick="confirmAnalyze()" disabled style="opacity:.5">Analyze →</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
