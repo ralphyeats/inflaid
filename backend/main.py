@@ -75,11 +75,30 @@ def create_checkout(req: CheckoutRequest):
     )
     return {"url": session.url}
 
+class ScoreRequestWithUser(ScoreRequest):
+    user_email: str = None
+
 @app.post("/score", response_model=ScoreResponse)
-def score(req: ScoreRequest):
-    from auth import get_cached, save_analysis
+def score(req: ScoreRequestWithUser):
+    from auth import get_cached, save_analysis, get_supabase
+    
+    # Check limit if user_email provided
+    if req.user_email:
+        sb = get_supabase()
+        if sb:
+            result = sb.table("users").select("analyses_used,analyses_limit,plan").eq("email", req.user_email).execute()
+            if result.data:
+                u = result.data[0]
+                if u["analyses_used"] >= u["analyses_limit"]:
+                    raise HTTPException(status_code=429, detail=f"limit_reached:{u['plan']}")
+    
     cached = get_cached(req.handle)
     if cached:
+        # Still increment usage for cached results
+        if req.user_email:
+            sb = get_supabase()
+            if sb:
+                sb.table("users").update({"analyses_used": sb.table("users").select("analyses_used").eq("email", req.user_email).execute().data[0]["analyses_used"] + 1}).eq("email", req.user_email).execute()
         return ScoreResponse(**cached)
 
     try:
@@ -113,6 +132,18 @@ def score(req: ScoreRequest):
         save_analysis(result.handle, result.score, result.label, response.model_dump())
     except Exception as e:
         print(f"Cache save error: {e}")
+
+    # Increment usage
+    if req.user_email:
+        try:
+            from auth import get_supabase
+            sb = get_supabase()
+            if sb:
+                r = sb.table("users").select("analyses_used").eq("email", req.user_email).execute()
+                if r.data:
+                    sb.table("users").update({"analyses_used": r.data[0]["analyses_used"] + 1}).eq("email", req.user_email).execute()
+        except Exception as e:
+            print(f"Usage increment error: {e}")
 
     return response
 
