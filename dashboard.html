@@ -332,13 +332,46 @@ function initials(handle){const h=handle.replace("@","");return (h.slice(0,2)).t
 function randomColor(handle){const colors=["#4F8CF5","#34C77A","#A78BFA","#F59E0B","#6EE7B7","#C084FC","#F87171","#FB923C"];let n=0;for(const c of handle)n+=c.charCodeAt(0);return colors[n%colors.length];}
 
 // ── API ANALYZE ──────────────────────────────────────────────────────────────
-async function analyzeHandle(){
+let pendingHandle = null;
+let selectedCategory = null;
+
+function selectCat(cat) {
+  selectedCategory = cat;
+  document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("selected"));
+  event.target.classList.add("selected");
+  const btn = document.getElementById("modal-analyze-btn");
+  btn.disabled = false;
+  btn.style.opacity = "1";
+}
+
+function closeModal() {
+  document.getElementById("cat-modal").style.display = "none";
+  pendingHandle = null;
+  selectedCategory = null;
+  document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("selected"));
+}
+
+function confirmAnalyze() {
+  closeModal();
+  if (pendingHandle) doAnalyze(pendingHandle);
+}
+
+function analyzeHandle(){
+  const input = document.getElementById("handle-input");
+  const raw = input.value.trim();
+  if(!raw) return;
+  pendingHandle = raw.startsWith("@") ? raw : "@"+raw;
+  selectedCategory = null;
+  document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("selected"));
+  const btn = document.getElementById("modal-analyze-btn");
+  btn.disabled = true;
+  btn.style.opacity = "0.5";
+  document.getElementById("cat-modal").style.display = "flex";
+}
+
+async function doAnalyze(handle){
   const input = document.getElementById("handle-input");
   const btn   = document.getElementById("analyze-btn");
-  const raw   = input.value.trim();
-  if(!raw) return;
-
-  const handle = raw.startsWith("@") ? raw : "@"+raw;
 
   // Loading state
   btn.textContent = "…";
@@ -349,7 +382,7 @@ async function analyzeHandle(){
     const res = await fetch(`${API}/score`, {
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({handle, user_email: currentUserEmail})
+      body: JSON.stringify({handle, user_email: currentUserEmail, category: selectedCategory})
     });
     if(res.status === 429) {
       const err = await res.json();
@@ -643,6 +676,28 @@ function logout() {
   sb.auth.signOut().then(() => window.location.href = "/auth.html");
 }
 </script>
+
+
+<div class="modal-overlay" id="cat-modal" style="display:none">
+  <div class="modal">
+    <div class="modal-title">Select account category</div>
+    <div class="modal-sub">This helps us score the account more accurately.</div>
+    <div class="cat-grid">
+      <button class="cat-btn" onclick="selectCat('beauty')">💄 Beauty</button>
+      <button class="cat-btn" onclick="selectCat('fashion')">👗 Fashion</button>
+      <button class="cat-btn" onclick="selectCat('fitness')">💪 Fitness</button>
+      <button class="cat-btn" onclick="selectCat('food')">🍕 Food</button>
+      <button class="cat-btn" onclick="selectCat('travel')">✈️ Travel</button>
+      <button class="cat-btn" onclick="selectCat('lifestyle')">🌿 Lifestyle</button>
+      <button class="cat-btn" onclick="selectCat('tech')">💻 Tech</button>
+      <button class="cat-btn" onclick="selectCat('other')">⭐ Other</button>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn modal-btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn modal-btn-solid" id="modal-analyze-btn" onclick="confirmAnalyze()" disabled style="opacity:.5">Analyze →</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
