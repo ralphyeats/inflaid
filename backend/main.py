@@ -67,6 +67,10 @@ def health():
 
 @app.post("/score", response_model=ScoreResponse)
 def score(req: ScoreRequest):
+    from auth import get_cached, save_analysis
+    cached = get_cached(req.handle)
+    if cached:
+        response = ScoreResponse(**cached)
     try:
         raw = fetch_profile(req.handle)
     except Exception as e:
@@ -75,7 +79,7 @@ def score(req: ScoreRequest):
     raw["handle"] = req.handle
     result = compute_score(raw)
 
-    return ScoreResponse(
+    response = ScoreResponse(
         handle=result.handle,
         score=result.score,
         label=result.label,
