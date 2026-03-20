@@ -349,8 +349,16 @@ async function analyzeHandle(){
     const res = await fetch(`${API}/score`, {
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({handle})
+      body: JSON.stringify({handle, user_email: data.session?.user?.email})
     });
+    if(res.status === 429) {
+      const err = await res.json();
+      if(err.detail && err.detail.startsWith("limit_reached")) {
+        showToast("You\'ve reached your analysis limit. Upgrade to continue.", "error");
+        document.querySelector(".upgrade-btn").style.display = "block";
+        return;
+      }
+    }
     if(!res.ok) throw new Error(`API error ${res.status}`);
     const data = await res.json();
 
