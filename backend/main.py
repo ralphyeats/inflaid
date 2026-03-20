@@ -20,10 +20,7 @@ app.add_middleware(
 
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
-PRICE_IDS = {
-    "pro": os.getenv("STRIPE_PRO_PRICE"),
-    "growth": os.getenv("STRIPE_GROWTH_PRICE"),
-}
+
 
 class ScoreRequest(BaseModel):
     handle: str
@@ -61,9 +58,13 @@ def health():
 
 @app.post("/create-checkout")
 def create_checkout(req: CheckoutRequest):
+    PRICE_IDS = {
+        "pro": os.getenv("STRIPE_PRO_PRICE"),
+        "growth": os.getenv("STRIPE_GROWTH_PRICE"),
+    }
     price_id = PRICE_IDS.get(req.plan)
     if not price_id:
-        raise HTTPException(status_code=400, detail="Invalid plan")
+        raise HTTPException(status_code=400, detail=f"Invalid plan: {req.plan}, available: {list(PRICE_IDS.keys())}, pro_price: {os.getenv('STRIPE_PRO_PRICE')}")
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
         mode="subscription",
