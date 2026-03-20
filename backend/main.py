@@ -1,6 +1,6 @@
 import os
 import stripe
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
 from scraper import fetch_profile
@@ -115,3 +115,42 @@ def score(req: ScoreRequest):
         print(f"Cache save error: {e}")
 
     return response
+
+@app.post("/webhook")
+async def webhook(request: Request):
+    from fastapi import Request
+    payload = await request.body()
+    sig_header = request.headers.get("stripe-signature")
+    webhook_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
+    
+    try:
+        event = stripe.Webhook.construct_event(payload, sig_header, webhook_secret)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+    if event["type"] == "checkout.session.completed":
+        session = event["data"]["object"]
+        email = session.get("customer_email")
+        price_id = session.get("line_items", {})
+        
+        # Determine plan from price ID
+        pro_price = os.getenv("STRIPE_PRO_PRICE")
+        growth_price = os.getenv("STRIPE_GROWTH_PRICE")
+        
+        plan = "pro"
+        limit = 50
+        if session.get("amount_total") == 4900:
+            plan = "growth"
+            limit = 999999
+        
+        # Update user in Supabase
+        from auth import get_supabase
+        sb = get_supabase()
+        if sb and email:
+            sb.table("users").upsert({
+                "email": email,
+                "plan": plan,
+                "analyses_limit": limit
+            }, on_conflict="email").execute()
+    
+    return {"status": "ok"}
