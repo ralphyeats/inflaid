@@ -190,7 +190,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
       <div class="usage-top"><span>Pro plan</span><span style="color:var(--ink2)">31/50</span></div>
       <div class="usage-bar"><div class="usage-fill" style="width:62%"></div></div>
       <div style="font-size:10px;color:var(--ink3)">19 analyses remaining</div>
-      <button class="upgrade-btn">Upgrade to Growth →</button>
+      <button class="upgrade-btn" onclick="upgradePlan('growth')">Upgrade to Growth →</button>
     </div>
     <div class="user-row">
       <div class="user-av">YD</div>
@@ -590,6 +590,21 @@ sb.auth.getSession().then(({ data }) => {
   document.querySelector(".user-av").textContent = initials;
   document.querySelector(".user-name").textContent = name;
 });
+
+async function upgradePlan(plan) {
+  const { data } = await sb.auth.getSession();
+  if (!data.session) { window.location.href = "/auth.html"; return; }
+  const email = data.session.user.email;
+  try {
+    const res = await fetch("https://vettly-production-63d5.up.railway.app/create-checkout", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({plan, user_email: email})
+    });
+    const d = await res.json();
+    if (d.url) window.location.href = d.url;
+  } catch(e) { showToast("Payment error: " + e.message, "error"); }
+}
 
 function logout() {
   sb.auth.signOut().then(() => window.location.href = "/auth.html");
