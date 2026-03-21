@@ -1,15 +1,15 @@
 import os
 import stripe
-from fastapi import FastAPI, HTTPException, Request, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
+
 from scraper import fetch_profile
-from scorer import compute_score, FactorResult
+from scorer import compute_score
 
 app = FastAPI(title="Vettly API", version="0.1.0")
 
 ALLOWED_ORIGINS = ["*", "https://vettly-eight.vercel.app"]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
@@ -21,9 +21,10 @@ app.add_middleware(
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 
-
 class ScoreRequest(BaseModel):
     handle: str
+    user_email: str = None
+
     @field_validator("handle")
     @classmethod
     def clean_handle(cls, v: str) -> str:
@@ -31,6 +32,7 @@ class ScoreRequest(BaseModel):
         if not v:
             raise ValueError("handle must not be empty")
         return v if v.startswith("@") else f"@{v}"
+
 
 class FactorOut(BaseModel):
     key: str
@@ -40,6 +42,7 @@ class FactorOut(BaseModel):
     weight: float
     contribution: float
 
+
 class ScoreResponse(BaseModel):
     handle: str
     score: int
@@ -48,13 +51,27 @@ class ScoreResponse(BaseModel):
     insight: str
     mock: bool = True
 
+
 class CheckoutRequest(BaseModel):
     plan: str
     user_email: str
 
+
+def get_user_usage(sb, email):
+    r = sb.table("users").select("analyses_used,analyses_limit,plan").eq("email", email).execute()
+    return r.data[0] if r.data else None
+
+
+def increment_usage(sb, email):
+    u = sb.table("users").select("analyses_used").eq("email", email).execute()
+    if u.data:
+        sb.table("users").update({"analyses_used": u.data[0]["analyses_used"] + 1}).eq("email", email).execute()
+
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
 
 @app.post("/create-checkout")
 def create_checkout(req: CheckoutRequest):
@@ -64,7 +81,7 @@ def create_checkout(req: CheckoutRequest):
     }
     price_id = PRICE_IDS.get(req.plan)
     if not price_id:
-        raise HTTPException(status_code=400, detail=f"Invalid plan: {req.plan}, available: {list(PRICE_IDS.keys())}, pro_price: {os.getenv('STRIPE_PRO_PRICE')}")
+        raise HTTPException(status_code=400, detail=f"Invalid plan: {req.plan}")
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
         mode="subscription",
@@ -75,34 +92,33 @@ def create_checkout(req: CheckoutRequest):
     )
     return {"url": session.url}
 
-class ScoreRequestWithUser(ScoreRequest):
-    user_email: str = None
 
 @app.post("/score", response_model=ScoreResponse)
-def score(req: ScoreRequestWithUser):
+def score(req: ScoreRequest):
     from auth import get_cached, save_analysis, get_supabase
-    
-    # Check limit if user_email provided
-    if req.user_email:
-        sb = get_supabase()
-        if sb:
-            result = sb.table("users").select("analyses_used,analyses_limit,plan").eq("email", req.user_email).execute()
-            if result.data:
-                u = result.data[0]
-                if u["analyses_used"] >= u["analyses_limit"]:
-                    raise HTTPException(status_code=429, detail=f"limit_reached:{u['plan']}")
-            else:
-                sb.table("users").insert({"email": req.user_email, "plan": "free", "analyses_used": 0, "analyses_limit": 2}).execute()
-    
+
+    sb = get_supabase() if req.user_email else None
+
+    # Check limit
+    if sb and req.user_email:
+        u = get_user_usage(sb, req.user_email)
+        if u:
+            if u["analyses_used"] >= u["analyses_limit"]:
+                raise HTTPException(status_code=429, detail=f"limit_reached:{u['plan']}")
+        else:
+            sb.table("users").insert({"email": req.user_email, "plan": "free", "analyses_used": 0, "analyses_limit": 2}).execute()
+
+    # Cache check
     cached = get_cached(req.handle)
     if cached:
-        # Still increment usage for cached results
-        if req.user_email:
-            sb = get_supabase()
-            if sb:
-                sb.table("users").update({"analyses_used": sb.table("users").select("analyses_used").eq("email", req.user_email).execute().data[0]["analyses_used"] + 1}).eq("email", req.user_email).execute()
+        if sb and req.user_email:
+            try:
+                increment_usage(sb, req.user_email)
+            except Exception as e:
+                print(f"Usage increment error: {e}")
         return ScoreResponse(**cached)
 
+    # Scrape + score
     try:
         raw = fetch_profile(req.handle)
     except Exception as e:
@@ -116,14 +132,8 @@ def score(req: ScoreRequestWithUser):
         score=result.score,
         label=result.label,
         breakdown=[
-            FactorOut(
-                key=f.key,
-                label=f.label,
-                description=f.description,
-                value=f.value,
-                weight=f.weight,
-                contribution=f.contribution,
-            )
+            FactorOut(key=f.key, label=f.label, description=f.description,
+                      value=f.value, weight=f.weight, contribution=f.contribution)
             for f in result.breakdown
         ],
         insight=result.insight,
@@ -135,89 +145,34 @@ def score(req: ScoreRequestWithUser):
     except Exception as e:
         print(f"Cache save error: {e}")
 
-    # Increment usage
-    if req.user_email:
+    if sb and req.user_email:
         try:
-            from auth import get_supabase
-            sb = get_supabase()
-            if sb:
-                r = sb.table("users").select("analyses_used").eq("email", req.user_email).execute()
-                if r.data:
-                    sb.table("users").update({"analyses_used": r.data[0]["analyses_used"] + 1}).eq("email", req.user_email).execute()
-                else:
-                    sb.table("users").insert({"email": req.user_email, "plan": "free", "analyses_used": 1, "analyses_limit": 2}).execute()
+            increment_usage(sb, req.user_email)
         except Exception as e:
             print(f"Usage increment error: {e}")
 
     return response
 
-@app.post("/webhook")
-async def webhook(request: Request):
-    from fastapi import Request
-    payload = await request.body()
-    sig_header = request.headers.get("stripe-signature")
-    webhook_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
-    
-    try:
-        event = stripe.Webhook.construct_event(payload, sig_header, webhook_secret)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    
-    if event["type"] == "checkout.session.completed":
-        session = event["data"]["object"]
-        email = session.get("customer_email")
-        price_id = session.get("line_items", {})
-        
-        # Determine plan from price ID
-        pro_price = os.getenv("STRIPE_PRO_PRICE")
-        growth_price = os.getenv("STRIPE_GROWTH_PRICE")
-        
-        plan = "pro"
-        limit = 50
-        if session.get("amount_total") == 4900:
-            plan = "growth"
-            limit = 999999
-        
-        # Update user in Supabase
-        from auth import get_supabase
-        sb = get_supabase()
-        if sb and email:
-            sb.table("users").upsert({
-                "email": email,
-                "plan": plan,
-                "analyses_limit": limit
-            }, on_conflict="email").execute()
-    
-    return {"status": "ok"}
 
 @app.post("/webhook")
 async def webhook(request: Request):
-    from fastapi import Request
     payload = await request.body()
     sig_header = request.headers.get("stripe-signature")
     webhook_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
-    
+
     try:
         event = stripe.Webhook.construct_event(payload, sig_header, webhook_secret)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-    
+
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
         email = session.get("customer_email")
-        price_id = session.get("line_items", {})
-        
-        # Determine plan from price ID
+
         pro_price = os.getenv("STRIPE_PRO_PRICE")
-        growth_price = os.getenv("STRIPE_GROWTH_PRICE")
-        
-        plan = "pro"
-        limit = 50
-        if session.get("amount_total") == 4900:
-            plan = "growth"
-            limit = 999999
-        
-        # Update user in Supabase
+        plan = "growth" if session.get("amount_total") == 4900 else "pro"
+        limit = 999999 if plan == "growth" else 50
+
         from auth import get_supabase
         sb = get_supabase()
         if sb and email:
@@ -226,5 +181,5 @@ async def webhook(request: Request):
                 "plan": plan,
                 "analyses_limit": limit
             }, on_conflict="email").execute()
-    
+
     return {"status": "ok"}
