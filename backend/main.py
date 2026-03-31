@@ -89,10 +89,14 @@ def debug_raw(handle: str):
     if not items:
         return {"error": "no items"}
     p = items[0]
-    # Return full raw item but truncate latestPosts to first 2 for readability
     posts = p.get("latestPosts") or []
-    p["latestPosts"] = posts[:2]
-    return p
+    return {
+        "private": p.get("private"),
+        "followersCount": p.get("followersCount"),
+        "followsCount": p.get("followsCount"),
+        "latestPosts_count": len(posts),
+        "latestPosts_sample": posts[:2],
+    }
 
 
 @app.post("/create-checkout")
