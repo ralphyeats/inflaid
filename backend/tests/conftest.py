@@ -2,19 +2,19 @@ import pytest
 from datetime import datetime, timedelta
 
 
-def make_posts(n=20, likes=500, comments=25, days_apart=3, hashtags=None, captions=None):
+def make_posts(n=20, likes=500, comments=25, days_apart=3, hashtags=None, captions=None, likes_list=None, comments_list=None):
     """Generate n fake posts with consistent timestamps."""
     posts = []
     base = datetime(2025, 1, 1, 12, 0, 0)
     for i in range(n):
         ts = base - timedelta(days=i * days_apart)
         posts.append({
-            "likesCount": likes,
-            "commentsCount": comments,
+            "likesCount": likes_list[i] if likes_list and i < len(likes_list) else likes,
+            "commentsCount": comments_list[i][0] if comments_list and i < len(comments_list) and isinstance(comments_list[i], list) and len(comments_list[i]) > 0 else comments,
             "timestamp": ts.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
             "caption": captions[i] if captions and i < len(captions) else "skincare routine #skincare",
             "hashtags": hashtags[i] if hashtags and i < len(hashtags) else ["skincare", "beauty"],
-            "latestComments": [
+            "latestComments": comments_list[i] if comments_list and i < len(comments_list) and isinstance(comments_list[i], list) else [
                 {"text": "Love this product!", "ownerUsername": "user1"},
                 {"text": "Where can I buy this?", "ownerUsername": "user2"},
             ],
