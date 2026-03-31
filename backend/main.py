@@ -24,6 +24,7 @@ stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 class ScoreRequest(BaseModel):
     handle: str
     user_email: str = None
+    category: str = "beauty"
 
     @field_validator("handle")
     @classmethod
@@ -120,7 +121,7 @@ def score(req: ScoreRequest):
 
     # Scrape + score
     try:
-        raw = fetch_profile(req.handle)
+        raw = fetch_profile(req.handle, req.category)
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"Scraper error: {e}")
 
@@ -132,8 +133,8 @@ def score(req: ScoreRequest):
         score=result.score,
         label=result.label,
         breakdown=[
-            FactorOut(key=f.key, label=f.label, description=f.description,
-                      value=f.value, weight=f.weight, contribution=f.contribution)
+            FactorOut(key=f["key"], label=f["label"], description=f["description"],
+                      value=f["value"], weight=f["weight"], contribution=f["contribution"])
             for f in result.breakdown
         ],
         insight=result.insight,

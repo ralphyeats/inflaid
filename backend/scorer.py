@@ -1,180 +1,123 @@
 """
-ROI scoring logic — 5 conversion signals.
+Vettly ROI Scorer — 7-factor modular system with fraud multiplier.
 
-Weights:
-  comment_quality      35%
-  before_after_ratio   25%
-  audience_fit         20%
-  niche_consistency    15%
-  authenticity_penalty -5% (penalty, lower raw score = bigger deduction)
+Formula:
+  score = round(weighted_sum * fraud_multiplier)
+
+  weighted_sum = engagement*0.30 + rhythm*0.20 + audience*0.20
+               + niche*0.15 + authenticity*0.10 + momentum*0.05
+  (each factor is 0-100, weights sum to 1.0, so weighted_sum is 0-100)
+
+Labels: elite(85+) | high(70+) | mid(50+) | risky(30+) | avoid(<30)
 """
 
 from dataclasses import dataclass
 
+from factors.engagement import score_engagement
+from factors.rhythm import score_rhythm
+from factors.audience import score_audience
+from factors.niche import score_niche
+from factors.authenticity import score_authenticity
+from factors.momentum import score_momentum
+from factors.fraud import compute_fraud_multiplier
+from factors.sentiment import score_sentiment
 
 WEIGHTS = {
-    "comment_quality": 0.35,
-    "before_after_ratio": 0.25,
-    "audience_fit": 0.20,
-    "niche_consistency": 0.15,
-    "authenticity_penalty": -0.05,
+    "engagement":   0.30,
+    "rhythm":       0.20,
+    "audience":     0.20,
+    "niche":        0.15,
+    "authenticity": 0.10,
+    "momentum":     0.05,
 }
 
-FACTOR_META = {
-    "comment_quality": {
-        "label": "Product-question comments",
-        "desc_template": "Purchase-intent comments make up {value}% of recent comments.",
-    },
-    "before_after_ratio": {
-        "label": "Before / after content ratio",
-        "desc_template": "{value}% of posts show results or transformations.",
-    },
-    "audience_fit": {
-        "label": "Audience demographic fit",
-        "desc_template": "Audience demographic overlap with typical buyers is {value}/100.",
-    },
-    "niche_consistency": {
-        "label": "Niche consistency",
-        "desc_template": "Niche focus score is {value}/100 — measures topic drift over time.",
-    },
-    "authenticity_penalty": {
-        "label": "Authenticity penalty",
-        "desc_template": "Authenticity check score: {value}/100. Lower = more red flags.",
-    },
+LABELS = {
+    "engagement":   "Engagement Quality",
+    "rhythm":       "Content Rhythm",
+    "audience":     "Audience Reliability",
+    "niche":        "Niche Depth",
+    "authenticity": "Authenticity",
+    "momentum":     "Growth Momentum",
 }
-
-
-@dataclass
-class FactorResult:
-    key: str
-    label: str
-    description: str
-    value: int       # 0–100 raw signal score
-    weight: float    # e.g. 0.35
-    contribution: float  # weighted contribution to final score
 
 
 @dataclass
 class ScoreResult:
     handle: str
     score: int
-    label: str       # "high" | "mid" | "low"
-    breakdown: list[FactorResult]
+    label: str
+    breakdown: list
     insight: str
 
 
 def compute_score(raw: dict) -> ScoreResult:
-    """
-    raw: dict with keys matching WEIGHTS, each value 0–100.
-    Example:
-        {
-            "comment_quality": 88,
-            "before_after_ratio": 75,
-            "audience_fit": 80,
-            "niche_consistency": 90,
-            "authenticity_penalty": 100,  # 100 = clean, 0 = very suspicious
-        }
-    """
     handle = raw.get("handle", "unknown")
 
-    breakdown = []
-    weighted_sum = 0.0
+    scores = {k: f(raw) for k, f in [
+        ("engagement",   score_engagement),
+        ("rhythm",       score_rhythm),
+        ("audience",     score_audience),
+        ("niche",        score_niche),
+        ("authenticity", score_authenticity),
+        ("momentum",     score_momentum),
+    ]}
 
-    for key, weight in WEIGHTS.items():
-        value = int(raw.get(key, 50))
-        value = max(0, min(100, value))
+    sentiment = score_sentiment(raw)
+    fraud_multiplier = compute_fraud_multiplier(raw, scores, sentiment)
 
-        if key == "authenticity_penalty":
-            # Penalty: authenticity score of 100 = no deduction (0 penalty applied)
-            #          authenticity score of 0   = full -5 applied
-            # contribution = weight * (value / 100)  → negative weight * fraction lost
-            contribution = weight * ((100 - value) / 100)  # weight is -0.05
-        else:
-            contribution = weight * (value / 100)
+    weighted_sum = sum(scores[k] * WEIGHTS[k] for k in WEIGHTS)
+    final_score = max(0, min(100, round(weighted_sum * fraud_multiplier)))
 
-        weighted_sum += contribution
+    label = _label(final_score)
+    breakdown = [
+        {
+            "key":          k,
+            "label":        LABELS[k],
+            "description":  f"{LABELS[k]} score: {scores[k]}/100.",
+            "value":        scores[k],
+            "weight":       WEIGHTS[k],
+            "contribution": round(scores[k] * WEIGHTS[k], 2),
+        }
+        for k in WEIGHTS
+    ]
+    insight = _build_insight(final_score, label, scores, fraud_multiplier, sentiment)
 
-        meta = FACTOR_META[key]
-        breakdown.append(FactorResult(
-            key=key,
-            label=meta["label"],
-            description=meta["desc_template"].format(value=value),
-            value=value,
-            weight=weight,
-            contribution=round(contribution * 100, 2),
-        ))
-
-    score = max(0, min(100, round(weighted_sum * 100)))
-
-    if score >= 70:
-        label = "high"
-    elif score >= 40:
-        label = "mid"
-    else:
-        label = "low"
-
-    insight = _build_insight(handle, score, label, breakdown, raw)
-
-    return ScoreResult(
-        handle=handle,
-        score=score,
-        label=label,
-        breakdown=breakdown,
-        insight=insight,
-    )
+    return ScoreResult(handle=handle, score=final_score, label=label,
+                       breakdown=breakdown, insight=insight)
 
 
-def _build_insight(handle: str, score: int, label: str, breakdown: list[FactorResult], raw: dict) -> str:
-    cq = raw.get("comment_quality", 50)
-    ba = raw.get("before_after_ratio", 50)
-    auth = raw.get("authenticity_penalty", 100)
+def _label(score: int) -> str:
+    if score >= 85: return "elite"
+    if score >= 70: return "high"
+    if score >= 50: return "mid"
+    if score >= 30: return "risky"
+    return "avoid"
 
+
+def _build_insight(score, label, scores, fraud_multiplier, sentiment) -> str:
     lines = []
 
-    # Lead with the strongest signal
-    top_factor = max(
-        [f for f in breakdown if f.key != "authenticity_penalty"],
-        key=lambda f: f.value,
-    )
-    lines.append(
-        f"{top_factor.label} is the strongest signal at {top_factor.value}/100."
-    )
+    top = max(scores, key=scores.get)
+    lines.append(f"{LABELS[top]} is the strongest signal at {scores[top]}/100.")
 
-    # Comment quality context
-    if cq >= 80:
-        lines.append(
-            f"Purchase-intent comments at {cq}% place this account well above the category average."
-        )
-    elif cq >= 50:
-        lines.append(f"Comment purchase-intent rate of {cq}% is near the category average.")
-    else:
-        lines.append(
-            f"Product-question comment rate is only {cq}% — low buying signal from the audience."
-        )
+    if scores["engagement"] >= 75:
+        lines.append("Engagement rate is well above average — strong buying signal.")
+    elif scores["engagement"] < 40:
+        lines.append("Engagement rate is low — weak conversion potential.")
 
-    # Before/after context
-    if ba >= 70:
-        lines.append(f"Results-driven content makes up {ba}% of posts — a strong conversion driver.")
-    elif ba < 40:
-        lines.append(f"Before/after content is underrepresented at {ba}% — mostly aesthetic posts.")
+    if fraud_multiplier < 1.0:
+        lines.append(f"Fraud signals detected — score reduced by {int((1 - fraud_multiplier) * 100)}%.")
 
-    # Authenticity
-    if auth < 60:
-        lines.append(
-            "⚠ Authenticity signals are concerning: engagement drops or follower spikes detected. "
-            "Not recommended for paid partnerships."
-        )
-    elif auth < 85:
-        lines.append("Minor authenticity inconsistencies detected — monitor before committing to a deal.")
+    if sentiment and sentiment.get("purchase_intent_ratio", 0) > 0.3:
+        lines.append("Comment analysis shows high purchase intent — strong ROI signal.")
 
-    # Final verdict
-    if label == "high":
-        lines.append(f"Overall: strong conversion candidate. ROI score {score}/100.")
-    elif label == "mid":
-        lines.append(
-            f"Overall: better suited for brand awareness than direct conversion. ROI score {score}/100."
-        )
-    else:
-        lines.append(f"Overall: risk signals present. Proceed with caution. ROI score {score}/100.")
+    verdicts = {
+        "elite": f"Elite conversion candidate. ROI score {score}/100.",
+        "high":  f"Strong ROI potential. Safe choice for paid partnerships. Score {score}/100.",
+        "mid":   f"Better suited for brand awareness than direct conversion. Score {score}/100.",
+        "risky": f"Risk signals present. Proceed with caution. Score {score}/100.",
+        "avoid": f"Multiple red flags. Not recommended for paid partnerships. Score {score}/100.",
+    }
+    lines.append(verdicts[label])
 
     return " ".join(lines)

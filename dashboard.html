@@ -306,20 +306,22 @@ const API = (window.location.hostname === "localhost" || window.location.hostnam
   : RAILWAY_URL;
 
 const DATA=[
-  {id:1,name:"Sophia Reeves",handle:"@sophiareeves",platforms:["instagram"],followers:"15.1K",cat:"skincare",av:"SR",color:"#4F8CF5",score:89,label:"high",insight:"Product-question rate 44% — 2.8× category average."},
+  {id:1,name:"Sophia Reeves",handle:"@sophiareeves",platforms:["instagram"],followers:"15.1K",cat:"skincare",av:"SR",color:"#4F8CF5",score:89,label:"elite",insight:"Product-question rate 44% — 2.8× category average."},
   {id:2,name:"Chloe Park",handle:"@chloepark",platforms:["instagram"],followers:"44.8K",cat:"skincare",av:"CP",color:"#34C77A",score:82,label:"high",insight:"38% purchase-question comments — 2.3× average."},
   {id:3,name:"Maya Chen",handle:"@mayachen",platforms:["instagram","tiktok"],followers:"118K",cat:"makeup",av:"MC",color:"#A78BFA",score:74,label:"high",insight:"Before/after content ratio 65% — strong conversion signal."},
   {id:4,name:"Zara Okafor",handle:"@zaraokafor",platforms:["instagram","tiktok"],followers:"67K",cat:"makeup",av:"ZO",color:"#F59E0B",score:58,label:"mid",insight:"Good content but non-beauty posts are 35% of recent content."},
   {id:5,name:"Lily Santos",handle:"@lilysantos",platforms:["instagram"],followers:"28.3K",cat:"skincare",av:"LS",color:"#6EE7B7",score:67,label:"mid",insight:"Strong audience fit. Product-question rate only 18%."},
   {id:6,name:"Nina Voss",handle:"@ninavoss",platforms:["instagram","tiktok"],followers:"89K",cat:"fragrance",av:"NV",color:"#C084FC",score:48,label:"mid",insight:"72% aesthetic praise comments — rare purchase intent."},
-  {id:7,name:"Mia Torres",handle:"@miatorres",platforms:["tiktok"],followers:"203K",cat:"makeup",av:"MT",color:"#F87171",score:36,label:"low",insight:"Engagement dropped 52% in 30 days. Suspicious signals."},
-  {id:8,name:"Eva Kim",handle:"@evakim",platforms:["instagram"],followers:"312K",cat:"makeup",av:"EK",color:"#FB923C",score:29,label:"low",insight:"83% single-word comments. 15+ active sponsorships."},
+  {id:7,name:"Mia Torres",handle:"@miatorres",platforms:["tiktok"],followers:"203K",cat:"makeup",av:"MT",color:"#F87171",score:36,label:"risky",insight:"Engagement dropped 52% in 30 days. Suspicious signals."},
+  {id:8,name:"Eva Kim",handle:"@evakim",platforms:["instagram"],followers:"312K",cat:"makeup",av:"EK",color:"#FB923C",score:29,label:"avoid",insight:"83% single-word comments. 15+ active sponsorships."},
 ];
 
 const LBL={
-  high:{bg:"var(--green-lo)",col:"var(--green)",brd:"var(--green-mid)",txt:"High ROI"},
-  mid:{bg:"var(--amber-lo)",col:"var(--amber)",brd:"var(--amber-mid)",txt:"Aesthetic"},
-  low:{bg:"var(--red-lo)",col:"var(--red)",brd:"var(--red-mid)",txt:"Risk"}
+  elite:{bg:"var(--green-lo)",col:"var(--green)",brd:"var(--green-mid)",txt:"Elite ROI"},
+  high: {bg:"var(--green-lo)",col:"var(--green)",brd:"var(--green-mid)",txt:"High ROI"},
+  mid:  {bg:"var(--amber-lo)",col:"var(--amber)",brd:"var(--amber-mid)",txt:"Mid ROI"},
+  risky:{bg:"var(--red-lo)",  col:"var(--red)",  brd:"var(--red-mid)",  txt:"Risky"},
+  avoid:{bg:"var(--red-lo)",  col:"var(--red)",  brd:"var(--red-mid)",  txt:"Avoid"}
 };
 
 // API results prepended to grid (separate from mock DATA)
@@ -332,7 +334,7 @@ function initials(handle){const h=handle.replace("@","");return (h.slice(0,2)).t
 function randomColor(handle){const colors=["#4F8CF5","#34C77A","#A78BFA","#F59E0B","#6EE7B7","#C084FC","#F87171","#FB923C"];let n=0;for(const c of handle)n+=c.charCodeAt(0);return colors[n%colors.length];}
 
 // ── API ANALYZE ──────────────────────────────────────────────────────────────
-function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.value.trim();if(!r)return;doAnalyze(r.startsWith("@")?r:"@"+r);}function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.value.trim();if(!r)return;doAnalyze(r.startsWith("@")?r:"@"+r);}async function doAnalyze(handle){
+function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.value.trim();if(!r)return;doAnalyze(r.startsWith("@")?r:"@"+r);}async function doAnalyze(handle){
   const handle_val = handle;
   const input = document.getElementById("handle-input");
   const btn   = document.getElementById("analyze-btn");
