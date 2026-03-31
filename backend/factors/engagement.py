@@ -6,13 +6,15 @@ def score_engagement(raw: dict) -> int:
         return 50
 
     n = len(posts)
-    avg_likes = sum(p.get("likesCount", 0) for p in posts) / n
-    avg_comments = sum(p.get("commentsCount", 0) for p in posts) / n
+    total_likes = sum(p.get("likesCount", 0) for p in posts)
+    total_comments = sum(p.get("commentsCount", 0) for p in posts)
+    avg_likes = total_likes / n
+    avg_comments = total_comments / n
 
-    engagement_rate = (avg_likes + avg_comments) / max(followers, 1) * 100
-    raw_score = min(100.0, engagement_rate * 20)
+    engagement_rate = (total_likes + total_comments) / max(followers, 1) * 100
+    raw_score = int(engagement_rate)
 
-    comment_ratio = avg_comments / (avg_likes + 1e-9) if avg_likes > 0 else 0
+    comment_ratio = avg_comments / (avg_likes + 1)
     if comment_ratio >= 0.05:
         quality_bonus = 15
     elif comment_ratio >= 0.02:
@@ -34,4 +36,5 @@ def score_engagement(raw: dict) -> int:
     else:
         variance_penalty = 0
 
-    return min(100, max(0, int(raw_score + quality_bonus + variance_penalty)))
+    final_score = raw_score + quality_bonus + variance_penalty
+    return int(min(100, max(0, final_score)))
