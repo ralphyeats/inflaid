@@ -74,6 +74,15 @@ def health():
     return {"status": "ok"}
 
 
+@app.get("/debug-raw/{handle}")
+def debug_raw(handle: str):
+    from scraper import _fetch_apify
+    raw = _fetch_apify(handle)
+    if raw is None:
+        return {"error": "apify returned None"}
+    return raw
+
+
 @app.post("/create-checkout")
 def create_checkout(req: CheckoutRequest):
     PRICE_IDS = {
