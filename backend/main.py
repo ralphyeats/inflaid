@@ -76,11 +76,23 @@ def health():
 
 @app.get("/debug-raw/{handle}")
 def debug_raw(handle: str):
-    from scraper import _fetch_apify
-    raw = _fetch_apify(handle)
-    if raw is None:
-        return {"error": "apify returned None"}
-    return raw
+    import os
+    from apify_client import ApifyClient
+    token = os.getenv("APIFY_TOKEN")
+    if not token:
+        return {"error": "no APIFY_TOKEN"}
+    client = ApifyClient(token)
+    run = client.actor("apify/instagram-profile-scraper").call(
+        run_input={"usernames": [handle.lstrip("@")]}
+    )
+    items = list(client.dataset(run["defaultDatasetId"]).iterate_items())
+    if not items:
+        return {"error": "no items"}
+    p = items[0]
+    # Return full raw item but truncate latestPosts to first 2 for readability
+    posts = p.get("latestPosts") or []
+    p["latestPosts"] = posts[:2]
+    return p
 
 
 @app.post("/create-checkout")
