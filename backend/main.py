@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
 
-from scraper import fetch_profile
+from scraper import fetch_profile, PrivateAccountError
 from scorer import compute_score
 
 app = FastAPI(title="Vettly API", version="0.1.0")
@@ -74,30 +74,6 @@ def health():
     return {"status": "ok"}
 
 
-@app.get("/debug-raw/{handle}")
-def debug_raw(handle: str):
-    import os
-    from apify_client import ApifyClient
-    token = os.getenv("APIFY_TOKEN")
-    if not token:
-        return {"error": "no APIFY_TOKEN"}
-    client = ApifyClient(token)
-    run = client.actor("apify/instagram-profile-scraper").call(
-        run_input={"usernames": [handle.lstrip("@")]}
-    )
-    items = list(client.dataset(run["defaultDatasetId"]).iterate_items())
-    if not items:
-        return {"error": "no items"}
-    p = items[0]
-    posts = p.get("latestPosts") or []
-    return {
-        "private": p.get("private"),
-        "followersCount": p.get("followersCount"),
-        "followsCount": p.get("followsCount"),
-        "latestPosts_count": len(posts),
-        "latestPosts_sample": posts[:2],
-    }
-
 
 @app.post("/create-checkout")
 def create_checkout(req: CheckoutRequest):
@@ -147,6 +123,8 @@ def score(req: ScoreRequest):
     # Scrape + score
     try:
         raw = fetch_profile(req.handle, req.category)
+    except PrivateAccountError:
+        raise HTTPException(status_code=422, detail="Private account — cannot analyze")
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"Scraper error: {e}")
 

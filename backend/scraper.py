@@ -4,6 +4,10 @@ from datetime import datetime, timedelta
 from apify_client import ApifyClient
 
 
+class PrivateAccountError(Exception):
+    pass
+
+
 def _make_mock_posts(n=20, likes=500, comments=25, days_apart=3):
     posts = []
     base = datetime(2025, 1, 1, 12, 0, 0)
@@ -93,6 +97,8 @@ def _fetch_apify(handle):
             return None
 
         p = items[0]
+        if p.get("private"):
+            raise PrivateAccountError(handle)
         followers = p.get("followersCount") or 1
         following = p.get("followsCount") or 1
         posts = p.get("latestPosts") or []
