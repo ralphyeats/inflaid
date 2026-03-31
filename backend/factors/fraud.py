@@ -1,0 +1,45 @@
+def compute_fraud_multiplier(raw: dict, scores: dict, sentiment_result) -> float:
+    followers = raw.get("followers", 1)
+    following = raw.get("following", 0)
+    posts = raw.get("posts", [])
+    fraud_score = 100
+
+    # Signal 1: Ghost followers
+    if posts:
+        n = len(posts)
+        avg_eng = sum(p.get("likesCount", 0) + p.get("commentsCount", 0) for p in posts) / n
+        expected_min = followers * 0.005
+        if avg_eng < expected_min * 0.3:
+            fraud_score -= 30
+
+    # Signal 2: Suspicious growth (old posts much higher engagement)
+    if len(posts) >= 24:
+        early = sum(p.get("likesCount", 0) + p.get("commentsCount", 0) for p in posts[18:24]) / 6
+        recent = sum(p.get("likesCount", 0) + p.get("commentsCount", 0) for p in posts[:6]) / 6
+        if early / max(recent, 1) > 3:
+            fraud_score -= 25
+
+    # Signal 3: Follow/unfollow tactic
+    if following > followers * 0.8:
+        fraud_score -= 20
+
+    # Signal 4: Hashtag spam
+    if posts:
+        avg_hashtags = sum(len(p.get("hashtags") or []) for p in posts) / len(posts)
+        if avg_hashtags > 25:
+            fraud_score -= 10
+
+    # Signal 5: Suspicious comments from sentiment
+    if sentiment_result and sentiment_result.get("fraud_risk", 0) > 0.6:
+        fraud_score -= 15
+
+    fraud_score = max(0, fraud_score)
+
+    if fraud_score >= 80:
+        return 1.0
+    elif fraud_score >= 60:
+        return 0.85
+    elif fraud_score >= 40:
+        return 0.65
+    else:
+        return 0.40
