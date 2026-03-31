@@ -22,8 +22,8 @@ def test_high_engagement_rate():
 
 
 def test_very_high_engagement_rate():
-    # 600/10000 * 100 = 6% → raw_score capped at 100
-    raw = make_raw(followers=10000, likes=590, comments=10, n=20)
+    # 750/10000 * 100 = 7.5% → raw_score=90 + comment_bonus=15 → capped at 100
+    raw = make_raw(followers=10000, likes=700, comments=50, n=20)
     score = score_engagement(raw)
     assert score >= 95
 
