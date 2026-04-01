@@ -260,7 +260,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
           <textarea class="tpl-textarea" id="tpl-textarea" placeholder="Select an influencer to generate a personalized outreach template..." readonly></textarea>
           <div class="tpl-btns">
             <button class="tpl-btn pri" onclick="copyTpl()">Copy to clipboard</button>
-            <button class="tpl-btn ghost">Mark as sent</button>
+            <button class="tpl-btn ghost" onclick="markAsSent()">Mark as sent</button>
           </div>
         </div>
       </div>
@@ -305,16 +305,7 @@ const API = (window.location.hostname === "localhost" || window.location.hostnam
   ? "https://vettly-production-63d5.up.railway.app"
   : RAILWAY_URL;
 
-const DATA=[
-  {id:1,name:"Sophia Reeves",handle:"@sophiareeves",platforms:["instagram"],followers:"15.1K",cat:"skincare",av:"SR",color:"#4F8CF5",score:89,label:"elite",insight:"Product-question rate 44% — 2.8× category average."},
-  {id:2,name:"Chloe Park",handle:"@chloepark",platforms:["instagram"],followers:"44.8K",cat:"skincare",av:"CP",color:"#34C77A",score:82,label:"high",insight:"38% purchase-question comments — 2.3× average."},
-  {id:3,name:"Maya Chen",handle:"@mayachen",platforms:["instagram","tiktok"],followers:"118K",cat:"makeup",av:"MC",color:"#A78BFA",score:74,label:"high",insight:"Before/after content ratio 65% — strong conversion signal."},
-  {id:4,name:"Zara Okafor",handle:"@zaraokafor",platforms:["instagram","tiktok"],followers:"67K",cat:"makeup",av:"ZO",color:"#F59E0B",score:58,label:"mid",insight:"Good content but non-beauty posts are 35% of recent content."},
-  {id:5,name:"Lily Santos",handle:"@lilysantos",platforms:["instagram"],followers:"28.3K",cat:"skincare",av:"LS",color:"#6EE7B7",score:67,label:"mid",insight:"Strong audience fit. Product-question rate only 18%."},
-  {id:6,name:"Nina Voss",handle:"@ninavoss",platforms:["instagram","tiktok"],followers:"89K",cat:"fragrance",av:"NV",color:"#C084FC",score:48,label:"mid",insight:"72% aesthetic praise comments — rare purchase intent."},
-  {id:7,name:"Mia Torres",handle:"@miatorres",platforms:["tiktok"],followers:"203K",cat:"makeup",av:"MT",color:"#F87171",score:36,label:"risky",insight:"Engagement dropped 52% in 30 days. Suspicious signals."},
-  {id:8,name:"Eva Kim",handle:"@evakim",platforms:["instagram"],followers:"312K",cat:"makeup",av:"EK",color:"#FB923C",score:29,label:"avoid",insight:"83% single-word comments. 15+ active sponsorships."},
-];
+// History is loaded from localStorage after auth resolves (per-user key)
 
 const LBL={
   elite:{bg:"var(--green-lo)",col:"var(--green)",brd:"var(--green-mid)",txt:"Elite ROI"},
@@ -324,9 +315,18 @@ const LBL={
   avoid:{bg:"var(--red-lo)",  col:"var(--red)",  brd:"var(--red-mid)",  txt:"Avoid"}
 };
 
-// API results prepended to grid (separate from mock DATA)
-let apiResults = [];
+let apiResults = [];  // loaded from localStorage after auth
 let curCat="all", curPlat="all", selOutreach=null;
+
+function historyKey(email){ return "vettly_history_" + email; }
+function loadHistory(email){
+  try { apiResults = JSON.parse(localStorage.getItem(historyKey(email)) || "[]"); }
+  catch(e){ apiResults = []; }
+}
+function saveHistory(email){
+  try { localStorage.setItem(historyKey(email), JSON.stringify(apiResults)); }
+  catch(e){}
+}
 
 function sc(s){return s>=70?"var(--green)":s>=40?"var(--amber)":"var(--red)";}
 function scHex(s){return s>=70?"#34C77A":s>=40?"#E8962A":"#D95050";}
@@ -378,9 +378,10 @@ function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.v
       fromApi: true,
     };
 
-    // Remove any previous result for same handle
+    // Remove any previous result for same handle, prepend new one
     apiResults = apiResults.filter(r => r.handle !== inf.handle);
     apiResults.unshift(inf);
+    saveHistory(window.currentUserEmail);
 
     input.value = "";
     renderGrid();
@@ -446,14 +447,22 @@ function renderCard(inf, i){
 }
 
 function renderGrid(){
-  const mockFiltered = DATA.filter(i=>(curCat==="all"||i.cat===curCat)&&(curPlat==="all"||i.platforms.includes(curPlat)));
-  const all = [...apiResults, ...mockFiltered];
+  const all = apiResults.filter(i=>(curCat==="all"||i.cat===curCat)&&(curPlat==="all"||i.platforms.includes(curPlat)));
 
-  document.getElementById("st-total").textContent = all.length;
-  document.getElementById("st-high").textContent  = all.filter(i=>i.score>=70).length;
-  document.getElementById("st-mid").textContent   = all.filter(i=>i.score>=40&&i.score<70).length;
-  document.getElementById("st-low").textContent   = all.filter(i=>i.score<40).length;
-  document.getElementById("inf-grid").innerHTML   = all.map(renderCard).join('');
+  document.getElementById("st-total").textContent = apiResults.length;
+  document.getElementById("st-high").textContent  = apiResults.filter(i=>i.score>=70).length;
+  document.getElementById("st-mid").textContent   = apiResults.filter(i=>i.score>=40&&i.score<70).length;
+  document.getElementById("st-low").textContent   = apiResults.filter(i=>i.score<40).length;
+
+  if(apiResults.length === 0){
+    document.getElementById("inf-grid").innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--ink3)">
+      <div style="font-size:32px;margin-bottom:12px">🔍</div>
+      <div style="font-size:14px;font-weight:500;color:var(--ink2);margin-bottom:6px">No analyses yet</div>
+      <div style="font-size:12px">Enter an Instagram handle above and click Analyze →</div>
+    </div>`;
+  } else {
+    document.getElementById("inf-grid").innerHTML = all.map(renderCard).join('');
+  }
 }
 
 function setCat(el,v){
@@ -507,10 +516,12 @@ function buildTpl(inf){
 }
 
 function renderOutreach(){
-  const mockStatuses=[{inf:DATA[0],st:"replied"},{inf:DATA[1],st:"sent"},{inf:DATA[2],st:"pending"},{inf:DATA[3],st:"pending"},{inf:DATA[4],st:"sent"}];
-  const apiStatuses=apiResults.map(inf=>({inf,st:"pending"}));
-  const statuses=[...apiStatuses,...mockStatuses];
+  const statuses=apiResults.map(inf=>({inf,st:inf.outreachStatus||"pending"}));
   const stmap={replied:{bg:"var(--green-lo)",col:"var(--green)",brd:"var(--green-mid)",txt:"Replied"},sent:{bg:"var(--accent-lo)",col:"var(--accent)",brd:"var(--accent-mid)",txt:"Sent"},pending:{bg:"var(--amber-lo)",col:"var(--amber)",brd:"var(--amber-mid)",txt:"Pending"}};
+  if(statuses.length===0){
+    document.getElementById("outreach-list").innerHTML=`<div style="text-align:center;padding:60px 20px;color:var(--ink3)"><div style="font-size:12px">Analyze influencers first to generate outreach templates.</div></div>`;
+    return;
+  }
   document.getElementById("outreach-list").innerHTML=statuses.map((d,i)=>{
     const s=stmap[d.st];
     const key=d.inf.id||d.inf.handle;
@@ -529,7 +540,7 @@ function renderOutreach(){
 
 function selectOutreachByKey(key){
   selOutreach=key;
-  const inf = apiResults.find(r=>r.handle===key) || DATA.find(d=>d.id===key||d.handle===key);
+  const inf = apiResults.find(r=>r.handle===key||String(r.id)===String(key));
   if(!inf)return;
   _fillOutreachPanel(inf);
   document.querySelectorAll(".oi").forEach(el=>{
@@ -561,8 +572,20 @@ function copyTpl(){
   setTimeout(()=>{btn.textContent="Copy to clipboard";btn.style.background="var(--accent)";},2000);
 }
 
+function markAsSent(){
+  if(!selOutreach)return;
+  const inf = apiResults.find(r=>r.handle===selOutreach||String(r.id)===String(selOutreach));
+  if(!inf)return;
+  inf.outreachStatus = inf.outreachStatus==="sent" ? "pending" : "sent";
+  saveHistory(window.currentUserEmail);
+  renderOutreach();
+  const btn=event.target;
+  btn.textContent = inf.outreachStatus==="sent" ? "Marked as sent ✓" : "Mark as sent";
+  setTimeout(()=>{ btn.textContent="Mark as sent"; },2000);
+}
+
 function renderAnalytics(){
-  const all=[...apiResults,...DATA];
+  const all=[...apiResults];
   const days=[{l:"Mon",v:72},{l:"Tue",v:58},{l:"Wed",v:85},{l:"Thu",v:61},{l:"Fri",v:89},{l:"Sat",v:44},{l:"Sun",v:67}];
   const max=Math.max(...days.map(d=>d.v));
   document.getElementById("chart-bars").innerHTML=days.map(d=>`
@@ -578,7 +601,7 @@ function renderAnalytics(){
     </div>`).join('');
 }
 
-renderGrid();
+// renderGrid() is called after auth resolves (see Supabase auth block below)
 </script>
 
 <script>
@@ -598,6 +621,10 @@ sb.auth.getSession().then(({ data }) => {
   document.querySelector(".user-av").textContent = initials;
   document.querySelector(".user-name").textContent = name;
   window.currentUserEmail = email;
+
+  // Load this user's analysis history from localStorage and render
+  loadHistory(email);
+  renderGrid();
 
   // Load real plan from Supabase
   const { createClient } = supabase;
