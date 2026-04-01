@@ -112,7 +112,7 @@ def score(req: ScoreRequest):
             sb.table("users").insert({"email": req.user_email, "plan": "free", "analyses_used": 0, "analyses_limit": 2}).execute()
 
     # Cache check
-    cached = None if req.bypass_cache else get_cached(req.handle)
+    cached = get_cached(req.handle)
     if cached:
         if sb and req.user_email:
             try:
