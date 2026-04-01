@@ -354,7 +354,8 @@ function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.v
       const err = await res.json();
       if(err.detail && err.detail.startsWith("limit_reached")) {
         showToast("You\'ve reached your analysis limit. Upgrade to continue.", "error");
-        document.querySelector(".upgrade-btn").style.display = "block";
+        const upgradeBtn = document.querySelector(".upgrade-btn");
+        if(upgradeBtn) upgradeBtn.style.display = "block";
         return;
       }
     }
