@@ -269,10 +269,10 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
     <!-- ANALYTICS -->
     <div id="tab-analytics" class="tab-page">
       <div class="anl-top">
-        <div class="anl-card fadeup d1"><div class="anl-label">Total analyzed</div><div class="anl-value">24</div><div class="anl-sub" style="color:var(--green)">+8 this week</div></div>
-        <div class="anl-card fadeup d2"><div class="anl-label">High ROI found</div><div class="anl-value" style="color:var(--green)">8</div><div class="anl-sub" style="color:var(--ink3)">33% hit rate</div></div>
-        <div class="anl-card fadeup d3"><div class="anl-label">Outreach sent</div><div class="anl-value" style="color:var(--accent)">6</div><div class="anl-sub" style="color:var(--amber)">2 replied</div></div>
-        <div class="anl-card fadeup d4"><div class="anl-label">Avg ROI score</div><div class="anl-value" style="color:var(--amber)">61</div><div class="anl-sub" style="color:var(--green)">+4 vs last week</div></div>
+        <div class="anl-card fadeup d1"><div class="anl-label">Total analyzed</div><div class="anl-value" id="anl-total">—</div><div class="anl-sub" id="anl-total-sub" style="color:var(--ink3)"></div></div>
+        <div class="anl-card fadeup d2"><div class="anl-label">High ROI found</div><div class="anl-value" id="anl-high" style="color:var(--green)">—</div><div class="anl-sub" id="anl-high-sub" style="color:var(--ink3)"></div></div>
+        <div class="anl-card fadeup d3"><div class="anl-label">Outreach sent</div><div class="anl-value" id="anl-sent" style="color:var(--accent)">—</div><div class="anl-sub" id="anl-sent-sub" style="color:var(--amber)"></div></div>
+        <div class="anl-card fadeup d4"><div class="anl-label">Avg ROI score</div><div class="anl-value" id="anl-avg" style="color:var(--amber)">—</div><div class="anl-sub" id="anl-avg-sub" style="color:var(--ink3)"></div></div>
       </div>
       <div class="anl-grid">
         <div class="anl-card fadeup d1">
@@ -282,9 +282,9 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
         <div class="anl-card fadeup d2">
           <div class="anl-card-title">Score distribution</div>
           <div>
-            <div class="dist-row"><div class="dist-lbl" style="color:var(--green)">High ROI</div><div class="dist-track"><div class="dist-fill" style="width:33%;background:var(--green)"></div></div><div class="dist-pct" style="color:var(--green)">33%</div></div>
-            <div class="dist-row"><div class="dist-lbl" style="color:var(--amber)">Aesthetic</div><div class="dist-track"><div class="dist-fill" style="width:46%;background:var(--amber)"></div></div><div class="dist-pct" style="color:var(--amber)">46%</div></div>
-            <div class="dist-row"><div class="dist-lbl" style="color:var(--red)">Risk</div><div class="dist-track"><div class="dist-fill" style="width:21%;background:var(--red)"></div></div><div class="dist-pct" style="color:var(--red)">21%</div></div>
+            <div class="dist-row"><div class="dist-lbl" style="color:var(--green)">High ROI</div><div class="dist-track"><div class="dist-fill" id="dist-high" style="width:0%;background:var(--green)"></div></div><div class="dist-pct" id="dist-high-pct" style="color:var(--green)">—</div></div>
+            <div class="dist-row"><div class="dist-lbl" style="color:var(--amber)">Aesthetic</div><div class="dist-track"><div class="dist-fill" id="dist-mid" style="width:0%;background:var(--amber)"></div></div><div class="dist-pct" id="dist-mid-pct" style="color:var(--amber)">—</div></div>
+            <div class="dist-row"><div class="dist-lbl" style="color:var(--red)">Risk</div><div class="dist-track"><div class="dist-fill" id="dist-low" style="width:0%;background:var(--red)"></div></div><div class="dist-pct" id="dist-low-pct" style="color:var(--red)">—</div></div>
           </div>
         </div>
         <div class="anl-card fadeup d3" style="grid-column:1/-1">
@@ -368,7 +368,7 @@ function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.v
       name: data.handle.replace("@","").replace(/\./g," ").replace(/\b\w/g,c=>c.toUpperCase()),
       platforms: ["instagram"],
       followers: "—",
-      cat: "—",
+      cat: (curCat==="all" ? null : curCat),
       av: initials(data.handle),
       color: randomColor(data.handle),
       score: data.score,
@@ -586,19 +586,54 @@ function markAsSent(){
 
 function renderAnalytics(){
   const all=[...apiResults];
-  const days=[{l:"Mon",v:72},{l:"Tue",v:58},{l:"Wed",v:85},{l:"Thu",v:61},{l:"Fri",v:89},{l:"Sat",v:44},{l:"Sun",v:67}];
-  const max=Math.max(...days.map(d=>d.v));
-  document.getElementById("chart-bars").innerHTML=days.map(d=>`
-    <div class="chart-bar-col">
-      <div class="chart-bar" style="height:${(d.v/max)*88}px;background:${scHex(d.v)};opacity:.75"></div>
-      <div class="chart-bar-lbl">${d.l}</div>
-    </div>`).join('');
+  const total = all.length;
+  const high  = all.filter(i=>i.score>=70).length;
+  const mid   = all.filter(i=>i.score>=40&&i.score<70).length;
+  const low   = all.filter(i=>i.score<40).length;
+  const sent  = all.filter(i=>i.outreachStatus==="sent"||i.outreachStatus==="replied").length;
+  const avg   = total ? Math.round(all.reduce((s,i)=>s+i.score,0)/total) : 0;
+  const hitPct= total ? Math.round(high/total*100) : 0;
+
+  document.getElementById("anl-total").textContent = total;
+  document.getElementById("anl-total-sub").textContent = total===0?"No analyses yet":"total influencers";
+  document.getElementById("anl-high").textContent = high;
+  document.getElementById("anl-high-sub").textContent = total ? hitPct+"% hit rate" : "";
+  document.getElementById("anl-sent").textContent = sent;
+  document.getElementById("anl-sent-sub").textContent = sent===0?"None sent yet":"outreach sent";
+  document.getElementById("anl-avg").textContent = avg||"—";
+  document.getElementById("anl-avg-sub").textContent = avg ? (avg>=70?"Good average":"Room to improve") : "";
+
+  // Score distribution bars
+  const pHigh = total ? Math.round(high/total*100) : 0;
+  const pMid  = total ? Math.round(mid/total*100)  : 0;
+  const pLow  = total ? Math.round(low/total*100)  : 0;
+  document.getElementById("dist-high").style.width = pHigh+"%";
+  document.getElementById("dist-high-pct").textContent = total ? pHigh+"%" : "—";
+  document.getElementById("dist-mid").style.width  = pMid+"%";
+  document.getElementById("dist-mid-pct").textContent  = total ? pMid+"%" : "—";
+  document.getElementById("dist-low").style.width  = pLow+"%";
+  document.getElementById("dist-low-pct").textContent  = total ? pLow+"%" : "—";
+
+  // Chart bars — show actual scores (most recent 7)
+  const recent7 = all.slice(0,7).reverse();
+  if(recent7.length>0){
+    const max=Math.max(...recent7.map(d=>d.score));
+    document.getElementById("chart-bars").innerHTML=recent7.map(d=>`
+      <div class="chart-bar-col" title="${d.handle}: ${d.score}">
+        <div class="chart-bar" style="height:${(d.score/100)*88}px;background:${scHex(d.score)};opacity:.75"></div>
+        <div class="chart-bar-lbl">${d.av||d.handle.replace("@","").slice(0,3)}</div>
+      </div>`).join('');
+  } else {
+    document.getElementById("chart-bars").innerHTML=`<div style="color:var(--ink3);font-size:12px;padding:20px">No data yet</div>`;
+  }
+
+  // Recent list
   document.getElementById("recent-list").innerHTML=all.slice(0,6).map(inf=>`
-    <div class="recent-row">
+    <div class="recent-row" onclick="window.location.href='/influencer.html?handle=${encodeURIComponent(inf.handle)}'" style="cursor:pointer">
       <div class="rec-av" style="background:${inf.color}18;border:1px solid ${inf.color}30;color:${inf.color}">${inf.av}</div>
       <div class="rec-name">${inf.name}<div style="font-size:10px;color:var(--ink3)">${inf.handle}${inf.followers!=="—"?" · "+inf.followers:""}</div></div>
       <div class="rec-score" style="color:${sc(inf.score)}">${inf.score}</div>
-    </div>`).join('');
+    </div>`).join('') || `<div style="color:var(--ink3);font-size:12px;padding:20px">No analyses yet</div>`;
 }
 
 // renderGrid() is called after auth resolves (see Supabase auth block below)

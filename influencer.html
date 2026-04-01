@@ -392,50 +392,62 @@ function showError(msg){
     </div>`);
 }
 
+function historyKey(email){ return "vettly_history_" + email; }
+
 async function init(){
   const params  = new URLSearchParams(window.location.search);
   const handle  = params.get("handle");
-  const id      = parseInt(params.get("id")||"0");
 
-  // ── API path: ?handle=@sophiareeves ──────────────────────────────────────
-  if(handle){
-    showLoading();
-    try{
-      const res = await fetch(`${API}/score`,{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({handle})
-      });
-      if(!res.ok) throw new Error(`API ${res.status}`);
-      const data = await res.json();
-
-      // Map API response to the shape render() expects
-      const inf = {
-        handle: data.handle,
-        name: data.handle.replace("@","").replace(/\./g," ").replace(/\b\w/g,c=>c.toUpperCase()),
-        platforms:["instagram"],
-        followers:"—",
-        cat: null,
-        av: data.handle.replace("@","").slice(0,2).toUpperCase(),
-        color: randomColor(data.handle),
-        score: data.score,
-        label: data.label,
-        insight: data.insight,
-        breakdown: data.breakdown,   // API uses {key,label,description,value,weight}
-        bestFor: data.score>=70 ? ["High-conversion campaign","Brand partnership"] : data.score>=40 ? ["Brand awareness"] : [],
-        bench: data.score>=70?"Top tier":data.score>=40?"Mid tier":"Low tier",
-        mock: data.mock,
-      };
-      render(inf);
-    } catch(e){
-      showError("Could not reach the API. Is the backend running?<br><small>"+e.message+"</small>");
-    }
+  if(!handle){
+    showError("No influencer specified.");
     return;
   }
 
-  // ── Mock path: ?id=1 ─────────────────────────────────────────────────────
-  const inf = DATA.find(d=>d.id===id) || DATA[0];
-  render(inf);
+  showLoading();
+
+  // ── Try localStorage first (no extra API cost) ────────────────────────────
+  const { data: sessionData } = await supabase.createClient(
+    "https://qpfjxbsvymlrbeoqwqmr.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZmp4YnN2eW1scmJlb3F3cW1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NzY3MzgsImV4cCI6MjA4OTU1MjczOH0.d16JZphML2HPIYrXm9oEegQc8GpL-tZA36HpWJAFZNw"
+  ).auth.getSession();
+  const email = sessionData?.session?.user?.email;
+  if(email){
+    try{
+      const history = JSON.parse(localStorage.getItem(historyKey(email))||"[]");
+      const cached  = history.find(r=>r.handle===handle||r.handle===handle.replace(/^@?/,"@"));
+      if(cached){ render(cached); return; }
+    } catch(e){}
+  }
+
+  // ── Fallback: fresh API call ──────────────────────────────────────────────
+  try{
+    const res = await fetch(`${API}/score`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({handle})
+    });
+    if(!res.ok) throw new Error(`API ${res.status}`);
+    const data = await res.json();
+    const inf = {
+      handle: data.handle,
+      name: data.handle.replace("@","").replace(/\./g," ").replace(/\b\w/g,c=>c.toUpperCase()),
+      platforms:["instagram"],
+      followers:"—",
+      cat: null,
+      av: data.handle.replace("@","").slice(0,2).toUpperCase(),
+      color: randomColor(data.handle),
+      score: data.score,
+      label: data.label,
+      insight: data.insight,
+      breakdown: data.breakdown,
+      bestFor: data.score>=70 ? ["High-conversion campaign","Brand partnership"] : data.score>=40 ? ["Brand awareness"] : [],
+      bench: data.score>=70?"Top tier":data.score>=40?"Mid tier":"Low tier",
+      mock: data.mock,
+    };
+    render(inf);
+  } catch(e){
+    showError("Could not load influencer data.<br><small>"+e.message+"</small>");
+  }
 }
 
 init();
