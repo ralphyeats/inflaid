@@ -1,7 +1,7 @@
 def score_momentum(raw: dict) -> int:
     posts = raw.get("posts", [])
 
-    if len(posts) < 13:
+    if len(posts) < 7:
         return 50
 
     def avg_eng(subset):
@@ -9,8 +9,9 @@ def score_momentum(raw: dict) -> int:
             return 1
         return sum((p.get("likesCount") or 0) + (p.get("commentsCount") or 0) for p in subset) / len(subset)
 
-    recent = avg_eng(posts[:12])
-    older = avg_eng(posts[12:24])
+    mid = len(posts) // 2
+    recent = avg_eng(posts[:mid])
+    older = avg_eng(posts[mid:])
     ratio = recent / max(older, 1)
 
     if ratio >= 1.3:

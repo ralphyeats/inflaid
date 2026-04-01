@@ -42,8 +42,8 @@ def test_severe_decline_returns_0():
     assert score_momentum(raw) == 0
 
 
-def test_fewer_than_13_posts_returns_50():
-    raw = {"posts": make_posts(recent_likes=500, old_likes=200, n_recent=6, n_old=6)}
+def test_fewer_than_7_posts_returns_50():
+    raw = {"posts": make_posts(recent_likes=500, old_likes=200, n_recent=3, n_old=3)}
     assert score_momentum(raw) == 50
 
 
