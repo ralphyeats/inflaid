@@ -18,7 +18,13 @@ def get_cached(handle: str) -> dict:
         cutoff = (datetime.utcnow() - timedelta(days=7)).isoformat()
         result = sb.table("analyses").select("result").eq("handle", handle).gte("created_at", cutoff).order("created_at", desc=True).limit(1).execute()
         if result.data:
-            return result.data[0]["result"]
+            cached = result.data[0]["result"]
+            # Invalidate stale cache: missing new verdict/ROI fields means old scoring
+            verdict = cached.get("verdict") or {}
+            roi = cached.get("roi_estimate") or {}
+            if "warning_flags" not in verdict or "confidence_explanation" not in roi:
+                return None
+            return cached
     except Exception as e:
         print(f"Cache get error: {e}")
     return None
