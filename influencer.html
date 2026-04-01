@@ -82,15 +82,40 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 .score-bench{font-size:12px;color:var(--ink3)}
 .score-bench span{font-weight:500}
 
-.best-card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:18px}
-.best-title{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;font-weight:500}
-.best-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--b1);font-size:13px;color:var(--ink2)}
-.best-item:last-child{border-bottom:none}
-.best-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+/* VERDICT CARD */
+.verdict-card{border-radius:12px;padding:18px;margin-bottom:12px;border:1px solid}
+.verdict-label-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.verdict-badge{font-family:var(--syne);font-size:13px;font-weight:700;letter-spacing:-.01em}
+.verdict-meta{display:flex;flex-direction:column;gap:7px}
+.verdict-meta-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.verdict-meta-row:last-child{border-bottom:none}
+.vml{font-size:11px;color:var(--ink3)}
+.vmv{font-size:12px;font-weight:500}
 
 /* RIGHT COLUMN */
 .section-card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px;margin-bottom:12px}
 .sec-title{font-family:var(--syne);font-size:14px;font-weight:600;color:var(--ink);margin-bottom:16px;letter-spacing:-.01em}
+
+/* DECISION CARD */
+.decision-card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px;margin-bottom:12px}
+.decision-reason{font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:12px}
+.decision-action{border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.6;font-weight:500;border-left:3px solid}
+
+/* ROI FORECAST CARD */
+.roi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.roi-cell{background:var(--s2);border-radius:8px;padding:12px;border:1px solid var(--b1)}
+.roi-cell-label{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.roi-cell-val{font-family:var(--syne);font-size:18px;font-weight:700;color:var(--ink)}
+.roi-cell-sub{font-size:11px;color:var(--ink3);margin-top:1px}
+.roi-aov-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.roi-aov-label{font-size:12px;color:var(--ink3);white-space:nowrap}
+.roi-aov-input{flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:7px 10px;color:var(--ink);font-size:13px;font-family:var(--sans);outline:none;transition:border-color .15s}
+.roi-aov-input:focus{border-color:var(--accent)}
+.roi-revenue{background:var(--accent-lo);border:1px solid var(--accent-mid);border-radius:8px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+.roi-rev-label{font-size:12px;color:var(--ink2)}
+.roi-rev-val{font-family:var(--syne);font-size:16px;font-weight:700;color:var(--accent)}
+.roi-note{font-size:11px;color:var(--ink3);margin-top:10px;line-height:1.5}
+.roi-confidence{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:4px;background:var(--s3);border:1px solid var(--b1);color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:12px}
 
 /* SCORE BREAKDOWN */
 .factor-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--b1)}
@@ -103,7 +128,6 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 .factor-bar-wrap{width:80px}
 .factor-track{height:3px;background:var(--b1);border-radius:2px;overflow:hidden}
 .factor-fill{height:3px;border-radius:2px;transition:width .8s cubic-bezier(.22,1,.36,1)}
-.factor-weight{font-size:10px;color:var(--ink3);text-align:right}
 
 /* INSIGHT */
 .insight-box{background:var(--s2);border-radius:9px;padding:14px 16px;font-size:13px;color:var(--ink2);line-height:1.7;border-left:3px solid;font-weight:400}
@@ -120,6 +144,18 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 
 /* NOT RECOMMENDED */
 .not-rec{background:var(--red-lo);border:1px solid var(--red-mid);border-radius:9px;padding:14px 16px;font-size:13px;color:var(--red);line-height:1.6;margin-bottom:12px}
+@media(max-width:768px){
+  .sidebar{display:none}
+  .main{width:100vw}
+  .topbar{padding:0 12px;gap:8px;height:48px}
+  .topbar-actions .tbtn:not(.tbtn-solid){display:none}
+  .content{padding:12px}
+  .layout{grid-template-columns:1fr!important;gap:12px}
+  .roi-grid{grid-template-columns:1fr!important}
+  .roi-aov-row{flex-direction:column;align-items:stretch;gap:6px}
+  .profile-card,.score-card,.verdict-card{margin-bottom:8px}
+  .factor-bar-wrap{width:60px}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -147,8 +183,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
   </nav>
   <div class="sb-footer">
     <div class="user-row">
-      <div class="user-av">YD</div>
-      <div><div class="user-name">Yagiz D.</div><div class="user-plan">Pro plan</div></div>
+      <div class="user-av" id="sb-av">?</div>
+      <div><div class="user-name" id="sb-name">—</div><div class="user-plan" id="sb-plan">—</div></div>
     </div>
   </div>
 </div>
@@ -186,24 +222,28 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
           <div class="score-bench" id="s-bench"></div>
         </div>
 
-        <div class="best-card fadeup d2" id="best-card"></div>
+        <div id="verdict-card-wrap" class="fadeup d2"></div>
       </div>
 
       <!-- RIGHT -->
       <div>
         <div id="not-rec-banner"></div>
 
-        <div class="section-card fadeup d1">
+        <div id="decision-card-wrap"></div>
+
+        <div id="roi-card-wrap" class="fadeup d2"></div>
+
+        <div class="section-card fadeup d2">
           <div class="sec-title">Why this score</div>
           <div class="insight-box" id="insight-box"></div>
         </div>
 
-        <div class="section-card fadeup d2">
+        <div class="section-card fadeup d3">
           <div class="sec-title">Score breakdown</div>
           <div id="factor-list"></div>
         </div>
 
-        <div class="section-card fadeup d3">
+        <div class="section-card fadeup d4">
           <div class="sec-title">Outreach template</div>
           <textarea class="outreach-textarea" id="outreach-ta" readonly></textarea>
           <div class="outreach-btns">
@@ -218,55 +258,77 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 </div>
 
 <script>
-const DATA=[
-  {id:1,name:"Sophia Reeves",handle:"@sophiareeves",platforms:["instagram"],followers:"15.1K",followersRaw:15100,cat:"skincare",av:"SR",color:"#4F8CF5",score:89,label:"high",
-   insight:"Product-question rate of 44% is 2.8× the skincare category average. Small but intensely engaged audience — followers actively look for new products to try. 8 months of consistent skincare-only content builds deep niche authority.",
-   breakdown:[{name:"Product-question comments",desc:"\"Where can I buy this?\" in 44% of recent comments",val:92,weight:35},{name:"Before/after content ratio",desc:"65% of posts show results, not just aesthetics",val:88,weight:25},{name:"Audience demographic fit",desc:"Primarily 24–34 women, matching skincare buyer profile",val:85,weight:20},{name:"Niche consistency",desc:"8 months skincare-only — no topic drift",val:95,weight:15},{name:"Authenticity penalty",desc:"No suspicious signals detected",val:100,weight:-5}],
-   bestFor:["Product launch","High-conversion campaign","Long-term partnership"],bench:"Top 12% in skincare"},
-  {id:2,name:"Chloe Park",handle:"@chloepark",platforms:["instagram"],followers:"44.8K",followersRaw:44800,cat:"skincare",av:"CP",color:"#34C77A",score:82,label:"high",
-   insight:"38% of recent comments contain purchase questions — 2.3× the category average. Consistent skincare focus over 8 months creates a trusted audience. Strong before/after content ratio signals results-driven communication style.",
-   breakdown:[{name:"Product-question comments",desc:"38% purchase intent in recent comments",val:88,weight:35},{name:"Before/after content ratio",desc:"Results-driven posting style",val:79,weight:25},{name:"Audience demographic fit",desc:"Core audience aligns with skincare buyers",val:75,weight:20},{name:"Niche consistency",desc:"Skincare-focused with minimal topic drift",val:90,weight:15},{name:"Authenticity penalty",desc:"No suspicious signals",val:100,weight:-5}],
-   bestFor:["Skincare product series","Long-term brand partnership"],bench:"Top 18% in skincare"},
-  {id:3,name:"Maya Chen",handle:"@mayachen",platforms:["instagram","tiktok"],followers:"118K",followersRaw:118000,cat:"makeup",av:"MC",color:"#A78BFA",score:74,label:"high",
-   insight:"Before/after content ratio of 65% is the strongest conversion driver in this dataset. Instagram engagement runs 40% higher than TikTok — prioritize IG for this collaboration. Good for tutorial-style campaigns where product results are visible.",
-   breakdown:[{name:"Product-question comments",desc:"Moderate purchase intent in comments",val:72,weight:35},{name:"Before/after content ratio",desc:"65% of content shows transformations",val:85,weight:25},{name:"Audience demographic fit",desc:"Makeup buyer demographic, slightly broad",val:70,weight:20},{name:"Niche consistency",desc:"Mostly makeup with some lifestyle",val:68,weight:15},{name:"Authenticity penalty",desc:"Minor engagement inconsistency on TikTok",val:95,weight:-5}],
-   bestFor:["Makeup tutorials","Product reveal campaigns"],bench:"Top 24% in makeup"},
-  {id:4,name:"Zara Okafor",handle:"@zaraokafor",platforms:["instagram","tiktok"],followers:"67K",followersRaw:67000,cat:"makeup",av:"ZO",color:"#F59E0B",score:58,label:"mid",
-   insight:"Good content quality but scattered audience focus. Non-beauty content makes up 35% of recent posts — this dilutes niche trust and reduces purchase intent from core followers. Better suited for brand awareness than direct conversion.",
-   breakdown:[{name:"Product-question comments",desc:"Low purchase intent, mostly general praise",val:35,weight:35},{name:"Before/after content ratio",desc:"Some transformation content but inconsistent",val:62,weight:25},{name:"Audience demographic fit",desc:"Mixed audience — some non-beauty segments",val:60,weight:20},{name:"Niche consistency",desc:"35% non-beauty content reduces trust",val:58,weight:15},{name:"Authenticity penalty",desc:"No major red flags",val:95,weight:-5}],
-   bestFor:["Brand awareness"],bench:"Middle 50% in makeup"},
-  {id:5,name:"Lily Santos",handle:"@lilysantos",platforms:["instagram"],followers:"28.3K",followersRaw:28300,cat:"skincare",av:"LS",color:"#6EE7B7",score:67,label:"mid",
-   insight:"Strong content quality and solid audience demographic match. However, product-question rate is only 18% — significantly below high-converters. Good for brand awareness campaigns where aesthetic matters more than conversion.",
-   breakdown:[{name:"Product-question comments",desc:"18% purchase intent — below average",val:42,weight:35},{name:"Before/after content ratio",desc:"Some results content but mostly aesthetic",val:55,weight:25},{name:"Audience demographic fit",desc:"Strong demographic match — 80 score",val:80,weight:20},{name:"Niche consistency",desc:"Consistent skincare focus",val:75,weight:15},{name:"Authenticity penalty",desc:"Clean account, no red flags",val:100,weight:-5}],
-   bestFor:["Brand awareness","Editorial content"],bench:"Top 35% in skincare"},
-  {id:6,name:"Nina Voss",handle:"@ninavoss",platforms:["instagram","tiktok"],followers:"89K",followersRaw:89000,cat:"fragrance",av:"NV",color:"#C084FC",score:48,label:"mid",
-   insight:"High follower count but very low buying signal. 72% of comments are aesthetic praise — purchase intent questions are rare. Better positioned for luxury brand perception campaigns than for driving direct sales.",
-   breakdown:[{name:"Product-question comments",desc:"Only 8% purchase intent in comments",val:22,weight:35},{name:"Before/after content ratio",desc:"Almost no results-based content",val:18,weight:25},{name:"Audience demographic fit",desc:"Broad audience, some fragrance buyers",val:65,weight:20},{name:"Niche consistency",desc:"Mixed content reduces category authority",val:55,weight:15},{name:"Authenticity penalty",desc:"No red flags",val:95,weight:-5}],
-   bestFor:["Luxury brand positioning"],bench:"Lower 40% in fragrance"},
-  {id:7,name:"Mia Torres",handle:"@miatorres",platforms:["tiktok"],followers:"203K",followersRaw:203000,cat:"makeup",av:"MT",color:"#F87171",score:36,label:"low",
-   insight:"Engagement dropped 52% in the last 30 days. Abnormal follower spike detected in the past 6 weeks. Comment pattern analysis indicates possible inauthentic engagement. High penalty score applied — not recommended for paid partnerships.",
-   breakdown:[{name:"Product-question comments",desc:"Very low purchase intent — 5%",val:15,weight:35},{name:"Before/after content ratio",desc:"Some transformation content",val:40,weight:25},{name:"Audience demographic fit",desc:"Unclear audience composition",val:30,weight:20},{name:"Niche consistency",desc:"Content scattered across topics",val:45,weight:15},{name:"Authenticity penalty",desc:"Engagement drop + follower spike detected",val:20,weight:-5}],
-   bestFor:[],bench:"Bottom 20% in makeup"},
-  {id:8,name:"Eva Kim",handle:"@evakim",platforms:["instagram"],followers:"312K",followersRaw:312000,cat:"makeup",av:"EK",color:"#FB923C",score:29,label:"low",
-   insight:"Large audience but very low trust score. 83% single-word comments signal low authentic engagement. Active sponsored content from 15+ brands simultaneously — audience has become desensitized to product recommendations.",
-   breakdown:[{name:"Product-question comments",desc:"Only 2% genuine purchase intent",val:8,weight:35},{name:"Before/after content ratio",desc:"Minimal results-based content",val:25,weight:25},{name:"Audience demographic fit",desc:"Broad but low-trust audience",val:40,weight:20},{name:"Niche consistency",desc:"Heavy brand deals dilute authenticity",val:30,weight:15},{name:"Authenticity penalty",desc:"15+ concurrent sponsorships — over-saturated",val:10,weight:-5}],
-   bestFor:[],bench:"Bottom 10% in makeup"},
-];
+const SUPABASE_URL = "https://qpfjxbsvymlrbeoqwqmr.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZmp4YnN2eW1scmJlb3F3cW1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NzY3MzgsImV4cCI6MjA4OTU1MjczOH0.d16JZphML2HPIYrXm9oEegQc8GpL-tZA36HpWJAFZNw";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const RAILWAY_URL = "https://vettly-production-63d5.up.railway.app";
+const API = (window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1")
+  ? RAILWAY_URL : RAILWAY_URL;
 
 const LBL={
+  elite:{bg:"var(--green-lo)",col:"var(--green)",brd:"var(--green-mid)",txt:"Elite ROI potential"},
   high:{bg:"var(--green-lo)",col:"var(--green)",brd:"var(--green-mid)",txt:"High conversion potential"},
   mid:{bg:"var(--amber-lo)",col:"var(--amber)",brd:"var(--amber-mid)",txt:"Aesthetic — conversion uncertain"},
-  low:{bg:"var(--red-lo)",col:"var(--red)",brd:"var(--red-mid)",txt:"Risk — not recommended"}
+  risky:{bg:"var(--red-lo)",col:"var(--red)",brd:"var(--red-mid)",txt:"Risk — review carefully"},
+  avoid:{bg:"var(--red-lo)",col:"var(--red)",brd:"var(--red-mid)",txt:"Avoid — not recommended"}
 };
 const CATS={skincare:"Skincare",makeup:"Makeup",haircare:"Hair care",fragrance:"Fragrance"};
 
 function sc(s){return s>=70?"var(--green)":s>=40?"var(--amber)":"var(--red)";}
 function scHex(s){return s>=70?"#34C77A":s>=40?"#E8962A":"#D95050";}
 
+function fmtFollowers(n){
+  if(!n||n==="—")return"—";
+  if(typeof n==="string")return n;
+  if(n>=1000000)return(n/1000000).toFixed(1)+"M";
+  if(n>=1000)return(n/1000).toFixed(1)+"K";
+  return n.toLocaleString();
+}
+
+function fmtNum(n){
+  if(!n&&n!==0)return"—";
+  if(n>=1000)return(n/1000).toFixed(1)+"K";
+  return n.toString();
+}
+
+function verdictColors(v){
+  if(v==="gifted")return{bg:"var(--green-lo)",col:"var(--green)",brd:"var(--green-mid)"};
+  if(v==="paid")return{bg:"var(--accent-lo)",col:"var(--accent)",brd:"var(--accent-mid)"};
+  return{bg:"var(--red-lo)",col:"var(--red)",brd:"var(--red-mid)"};
+}
+
+function riskColor(r){
+  if(!r)return"var(--ink2)";
+  const lo=r.toLowerCase();
+  if(lo.includes("low"))return"var(--green)";
+  if(lo.includes("med"))return"var(--amber)";
+  return"var(--red)";
+}
+
+let _roiData=null;
+
+function calcRevenue(aov){
+  if(!_roiData)return null;
+  const lo=Math.round(_roiData.estimated_conversions_low*(aov||0));
+  const hi=Math.round(_roiData.estimated_conversions_high*(aov||0));
+  return{lo,hi};
+}
+
+function updateRevenue(){
+  const aov=parseFloat(document.getElementById("aov-input")?.value)||0;
+  const rev=calcRevenue(aov);
+  const el=document.getElementById("revenue-val");
+  if(!el||!rev)return;
+  el.textContent=aov>0?`$${rev.lo.toLocaleString()} – $${rev.hi.toLocaleString()}`:"Enter AOV above";
+}
+
 function buildTpl(inf){
-  const cats={skincare:"skincare",makeup:"makeup",haircare:"hair care",fragrance:"beauty"};
-  const first=inf.name.split(" ")[0];
-  return `Hi ${first},\n\nI've been following your ${cats[inf.cat]||"beauty"} content and it genuinely stood out to me.\n\n[Brand name] creates ${cats[inf.cat]||"beauty"} products, and I think your audience would love what we make.\n\nWould you be open to a complimentary product? No obligations — share only if you love it.\n\n[Your name]`;
+  const v=inf.verdict;
+  const first=(inf.name||inf.handle.replace("@","")).split(" ")[0];
+  const campType=v?.campaign_type||"content";
+  const action=v?.action||"Share only if you love it.";
+  return`Hi ${first},\n\nI've been following your content and it genuinely stood out to me.\n\n[Brand name] creates beauty products, and based on your profile I think your audience would connect with what we make.\n\nWe'd love to send you a complimentary product for a ${campType} collaboration.\n\n${action}\n\nWould you be open to chatting?\n\n[Your name]`;
 }
 
 function copyTemplate(){
@@ -274,94 +336,157 @@ function copyTemplate(){
   if(!ta)return;
   if(navigator.clipboard)navigator.clipboard.writeText(ta.value);
   else{ta.select();document.execCommand("copy");}
-  const btns=document.querySelectorAll(".obtn-solid");
-  btns.forEach(b=>{const old=b.textContent;b.textContent="Copied ✓";b.style.background="#2D6A4F";setTimeout(()=>{b.textContent=old;b.style.background="var(--accent)";},2000);});
+  document.querySelectorAll(".obtn-solid").forEach(b=>{
+    const old=b.textContent;b.textContent="Copied ✓";b.style.background="#2D6A4F";
+    setTimeout(()=>{b.textContent=old;b.style.background="var(--accent)";},2000);
+  });
 }
-
-// Switch between local dev and Railway production automatically.
-// After deploying to Railway, replace the string below with your Railway URL.
-const RAILWAY_URL = "https://vettly-production-63d5.up.railway.app";
-const API = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
-  ? "https://vettly-production-63d5.up.railway.app"
-  : RAILWAY_URL;
 
 function randomColor(handle){
   const colors=["#4F8CF5","#34C77A","#A78BFA","#F59E0B","#6EE7B7","#C084FC","#F87171","#FB923C"];
-  let n=0; for(const c of handle) n+=c.charCodeAt(0);
+  let n=0;for(const c of handle)n+=c.charCodeAt(0);
   return colors[n%colors.length];
 }
 
 function render(inf){
-  const l=LBL[inf.label];
+  const label=inf.label||"mid";
+  const l=LBL[label]||LBL.mid;
   const color=inf.color||randomColor(inf.handle);
+  const v=inf.verdict||null;
+  const roi=inf.roi_estimate||null;
 
-  document.title=`Vettly — ${inf.name}`;
-  document.getElementById("tb-crumb").textContent=inf.name;
+  document.title=`Vettly — ${inf.name||inf.handle}`;
+  document.getElementById("tb-crumb").textContent=inf.name||inf.handle;
   document.getElementById("layout").style.display="grid";
 
-  // Profile avatar
+  // Avatar
   const av=document.getElementById("p-av");
-  av.textContent=inf.av||(inf.handle.replace("@","").slice(0,2).toUpperCase());
-  av.style.background=color+"18";
-  av.style.border=`1px solid ${color}30`;
-  av.style.color=color;
-  document.getElementById("p-name").textContent=inf.name;
+  const initials=(inf.name||inf.handle.replace("@","")).slice(0,2).toUpperCase();
+  av.textContent=initials;
+  av.style.background=color+"18";av.style.border=`1px solid ${color}30`;av.style.color=color;
+
+  document.getElementById("p-name").textContent=inf.name||inf.handle;
   document.getElementById("p-handle").textContent=inf.handle;
 
   const tags=document.getElementById("p-tags");
   tags.innerHTML="";
-  (inf.platforms||["instagram"]).forEach(p=>{const s=document.createElement("span");s.className="ptag";s.textContent=p;tags.appendChild(s);});
+  (inf.platforms||["instagram"]).forEach(p=>{
+    const s=document.createElement("span");s.className="ptag";s.textContent=p;tags.appendChild(s);
+  });
   if(inf.cat){const c=document.createElement("span");c.className="ptag";c.textContent=CATS[inf.cat]||inf.cat;tags.appendChild(c);}
 
-  const followers = inf.followers||(inf.followersRaw?inf.followersRaw.toLocaleString():"—");
+  const followersDisplay=fmtFollowers(inf.followers||inf.followersRaw);
   document.getElementById("p-stats").innerHTML=`
-    <div class="pstat-row"><span class="pstat-label">Followers</span><span class="pstat-val">${followers}</span></div>
-    <div class="pstat-row"><span class="pstat-label">Platform</span><span class="pstat-val">${(inf.platforms||["instagram"]).map(p=>p.charAt(0).toUpperCase()+p.slice(1)).join(", ")}</span></div>
+    <div class="pstat-row"><span class="pstat-label">Followers</span><span class="pstat-val">${followersDisplay}</span></div>
+    <div class="pstat-row"><span class="pstat-label">Platform</span><span class="pstat-val">${(inf.platforms||["instagram"]).map(p=>p[0].toUpperCase()+p.slice(1)).join(", ")}</span></div>
     ${inf.cat?`<div class="pstat-row"><span class="pstat-label">Category</span><span class="pstat-val">${CATS[inf.cat]||inf.cat}</span></div>`:""}
-    <div class="pstat-row"><span class="pstat-label">Ranking</span><span class="pstat-val" style="color:${sc(inf.score)}">${inf.bench||"—"}</span></div>
-    ${inf.mock?`<div class="pstat-row"><span class="pstat-label">Source</span><span class="pstat-val" style="color:var(--accent)">Live API</span></div>`:""}`;
+    <div class="pstat-row"><span class="pstat-label">Ranking</span><span class="pstat-val" style="color:${sc(inf.score)}">${inf.bench||"Analyzed"}</span></div>`;
 
-  // Score card
-  const sb=document.getElementById("s-big");
-  sb.textContent=inf.score; sb.style.color=sc(inf.score);
+  // Score
+  document.getElementById("s-big").textContent=inf.score;
+  document.getElementById("s-big").style.color=sc(inf.score);
   const sv=document.getElementById("s-verdict");
-  sv.textContent=l.txt; sv.style.background=l.bg; sv.style.color=l.col; sv.style.borderColor=l.brd;
+  sv.textContent=l.txt;sv.style.background=l.bg;sv.style.color=l.col;sv.style.borderColor=l.brd;
   document.getElementById("s-bench").innerHTML=`<span style="color:${sc(inf.score)};font-weight:500">${inf.bench||"Analyzed"}</span>`;
 
-  // Best for
-  const bc=document.getElementById("best-card");
-  const bestFor=inf.bestFor||[];
-  if(bestFor.length>0){
-    bc.innerHTML=`<div class="best-title">Best for</div>${bestFor.map(b=>`<div class="best-item"><div class="best-dot" style="background:var(--green)"></div>${b}</div>`).join('')}`;
-    bc.style.borderColor=""; bc.style.background="";
+  // Verdict card (left column)
+  const vc=document.getElementById("verdict-card-wrap");
+  if(v){
+    const vc_colors=verdictColors(v.verdict);
+    vc.innerHTML=`<div class="verdict-card" style="background:${vc_colors.bg};border-color:${vc_colors.brd}">
+      <div class="verdict-label-row">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L9 5.5H13.5L9.75 8.5L11.25 13L7 10.25L2.75 13L4.25 8.5L0.5 5.5H5L7 1Z" fill="${vc_colors.col}" opacity=".7"/></svg>
+        <span class="verdict-badge" style="color:${vc_colors.col}">${v.verdict_label||v.verdict}</span>
+      </div>
+      <div class="verdict-meta">
+        <div class="verdict-meta-row">
+          <span class="vml">Campaign type</span>
+          <span class="vmv" style="color:var(--ink)">${v.campaign_type||"—"}</span>
+        </div>
+        <div class="verdict-meta-row">
+          <span class="vml">Budget</span>
+          <span class="vmv" style="color:${vc_colors.col};font-size:11px">${v.budget_range||"—"}</span>
+        </div>
+        <div class="verdict-meta-row">
+          <span class="vml">Risk</span>
+          <span class="vmv" style="color:${riskColor(v.risk)}">${v.risk||"—"}</span>
+        </div>
+      </div>
+    </div>`;
   } else {
-    bc.innerHTML=`<div class="best-title">Recommendation</div><div style="font-size:13px;color:var(--red);line-height:1.55">Not recommended for paid partnerships. Risk signals detected.</div>`;
-    bc.style.borderColor="var(--red-mid)"; bc.style.background="var(--red-lo)";
+    // fallback: best for
+    const bestFor=inf.bestFor||[];
+    vc.innerHTML=`<div class="verdict-card" style="background:var(--s1);border-color:${bestFor.length?'var(--b1)':'var(--red-mid)'};${bestFor.length?'':'background:var(--red-lo)'}">
+      <div class="best-title" style="font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;font-weight:500">Best for</div>
+      ${bestFor.length
+        ? bestFor.map(b=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--b1);font-size:13px;color:var(--ink2)"><div style="width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0"></div>${b}</div>`).join('')
+        : `<div style="font-size:13px;color:var(--red);line-height:1.55">Not recommended for paid partnerships.</div>`
+      }
+    </div>`;
   }
 
   // Not rec banner
-  document.getElementById("not-rec-banner").innerHTML = inf.label==="low"
-    ? `<div class="not-rec">Risk signals detected — bot activity, engagement drops, or over-sponsorship. Not recommended for paid partnerships.</div>`
-    : "";
+  document.getElementById("not-rec-banner").innerHTML=(label==="avoid"||label==="risky"||label==="low")
+    ?`<div class="not-rec">Risk signals detected — bot activity, engagement drops, or over-sponsorship. Review carefully before proceeding.</div>`:"";
+
+  // Decision card (right column top)
+  const dc=document.getElementById("decision-card-wrap");
+  if(v){
+    const dc_colors=verdictColors(v.verdict);
+    dc.innerHTML=`<div class="decision-card fadeup d1">
+      <div class="sec-title">Campaign recommendation</div>
+      <div class="decision-reason">${v.reason||""}</div>
+      <div class="decision-action" style="background:${dc_colors.bg};border-color:${dc_colors.col};color:${dc_colors.col}">${v.action||""}</div>
+    </div>`;
+  } else {dc.innerHTML="";}
+
+  // ROI Forecast card
+  const rc=document.getElementById("roi-card-wrap");
+  if(roi){
+    _roiData=roi;
+    rc.innerHTML=`<div class="section-card fadeup d2">
+      <div class="sec-title">ROI Forecast</div>
+      <span class="roi-confidence">${roi.confidence||"medium"} confidence</span>
+      <div class="roi-grid">
+        <div class="roi-cell">
+          <div class="roi-cell-label">Estimated reach</div>
+          <div class="roi-cell-val">${fmtNum(roi.estimated_reach_low)}–${fmtNum(roi.estimated_reach_high)}</div>
+          <div class="roi-cell-sub">views per post</div>
+        </div>
+        <div class="roi-cell">
+          <div class="roi-cell-label">Conversions</div>
+          <div class="roi-cell-val">${roi.estimated_conversions_low}–${roi.estimated_conversions_high}</div>
+          <div class="roi-cell-sub">estimated orders</div>
+        </div>
+      </div>
+      <div class="roi-aov-row">
+        <span class="roi-aov-label">Your average order value ($)</span>
+        <input class="roi-aov-input" id="aov-input" type="number" min="0" placeholder="e.g. 45" oninput="updateRevenue()">
+      </div>
+      <div class="roi-revenue">
+        <span class="roi-rev-label">Estimated revenue</span>
+        <span class="roi-rev-val" id="revenue-val">Enter AOV above</span>
+      </div>
+      ${roi.note?`<div class="roi-note">${roi.note}</div>`:""}
+    </div>`;
+  } else {rc.innerHTML="";}
 
   // Insight
   const ib=document.getElementById("insight-box");
-  ib.textContent=inf.insight;
+  ib.textContent=inf.insight||"";
   ib.style.borderColor=scHex(inf.score)+"66";
 
-  // Breakdown — normalise field names from both API and mock DATA
+  // Breakdown
   const breakdown=inf.breakdown||[];
   document.getElementById("factor-list").innerHTML=breakdown.map(f=>{
-    const name  = f.name  || f.label       || f.key || "—";
-    const desc  = f.desc  || f.description || "";
-    const val   = f.val   ?? f.value       ?? 0;
-    const wt    = f.weight ?? 0;
-    const wtDisplay = typeof wt==="number"&&Math.abs(wt)<=1
-      ? (wt>=0?"+":"")+Math.round(wt*100)+"%"
-      : (wt>0?"+":"")+wt+"%";
-    return `<div class="factor-row">
+    const name=f.name||f.label||f.key||"—";
+    const desc=f.desc||f.description||"";
+    const val=f.val??f.value??0;
+    const wt=f.weight??0;
+    const wtStr=Math.abs(wt)<=1?(wt>=0?"+":"")+Math.round(wt*100)+"%":(wt>0?"+":"")+wt+"%";
+    return`<div class="factor-row">
       <div class="factor-left">
-        <div class="factor-name">${name} <span style="font-size:10px;color:var(--ink3);font-weight:400">(${wtDisplay})</span></div>
+        <div class="factor-name">${name} <span style="font-size:10px;color:var(--ink3);font-weight:400">(${wtStr})</span></div>
         <div class="factor-desc">${desc}</div>
       </div>
       <div class="factor-right">
@@ -371,7 +496,7 @@ function render(inf){
     </div>`;
   }).join('');
 
-  // Outreach template
+  // Outreach
   document.getElementById("outreach-ta").value=buildTpl(inf);
 }
 
@@ -392,78 +517,69 @@ function showError(msg){
     </div>`);
 }
 
-function historyKey(email){ return "vettly_history_" + email; }
+function historyKey(email){return"vettly_history_"+email;}
 
 async function init(){
-  const params  = new URLSearchParams(window.location.search);
-  const handle  = params.get("handle");
-
-  if(!handle){
-    showError("No influencer specified.");
-    return;
-  }
-
+  const params=new URLSearchParams(window.location.search);
+  const handle=params.get("handle");
+  if(!handle){showError("No influencer specified.");return;}
   showLoading();
 
-  // ── Try localStorage first (no extra API cost) ────────────────────────────
-  const { data: sessionData } = await supabase.createClient(
-    "https://qpfjxbsvymlrbeoqwqmr.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZmp4YnN2eW1scmJlb3F3cW1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NzY3MzgsImV4cCI6MjA4OTU1MjczOH0.d16JZphML2HPIYrXm9oEegQc8GpL-tZA36HpWJAFZNw"
-  ).auth.getSession();
-  const email = sessionData?.session?.user?.email;
+  const {data:sessionData}=await sb.auth.getSession();
+  const email=sessionData?.session?.user?.email;
+
+  // Update sidebar
   if(email){
-    try{
-      const history = JSON.parse(localStorage.getItem(historyKey(email))||"[]");
-      const cached  = history.find(r=>r.handle===handle||r.handle===handle.replace(/^@?/,"@"));
-      if(cached){ render(cached); return; }
-    } catch(e){}
+    const initials=email.slice(0,2).toUpperCase();
+    document.getElementById("sb-av").textContent=initials;
+    document.getElementById("sb-name").textContent=email.split("@")[0];
   }
 
-  // ── Fallback: fresh API call ──────────────────────────────────────────────
+  // Try localStorage cache first
+  if(email){
+    try{
+      const history=JSON.parse(localStorage.getItem(historyKey(email))||"[]");
+      const cached=history.find(r=>r.handle===handle||r.handle===handle.replace(/^@?/,"@"));
+      if(cached){render(cached);return;}
+    }catch(e){}
+  }
+
+  // Fresh API call
   try{
-    const res = await fetch(`${API}/score`,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({handle})
-    });
-    if(!res.ok) throw new Error(`API ${res.status}`);
-    const data = await res.json();
-    const inf = {
-      handle: data.handle,
-      name: data.handle.replace("@","").replace(/\./g," ").replace(/\b\w/g,c=>c.toUpperCase()),
+    const body={handle};
+    if(email)body.user_email=email;
+    const res=await fetch(`${API}/score`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    if(!res.ok)throw new Error(`API ${res.status}`);
+    const data=await res.json();
+
+    const inf={
+      handle:data.handle,
+      name:data.name||(data.handle.replace("@","").replace(/[._]/g," ").replace(/\b\w/g,c=>c.toUpperCase())),
+      followers:data.followers,
       platforms:["instagram"],
-      followers:"—",
-      cat: null,
-      av: data.handle.replace("@","").slice(0,2).toUpperCase(),
-      color: randomColor(data.handle),
-      score: data.score,
-      label: data.label,
-      insight: data.insight,
-      breakdown: data.breakdown,
-      bestFor: data.score>=70 ? ["High-conversion campaign","Brand partnership"] : data.score>=40 ? ["Brand awareness"] : [],
-      bench: data.score>=70?"Top tier":data.score>=40?"Mid tier":"Low tier",
-      mock: data.mock,
+      cat:null,
+      color:randomColor(data.handle),
+      score:data.score,
+      label:data.label,
+      insight:data.insight,
+      breakdown:data.breakdown,
+      verdict:data.verdict||null,
+      roi_estimate:data.roi_estimate||null,
+      bench:data.score>=85?"Top 15%":data.score>=70?"Top 30%":data.score>=50?"Mid tier":"Lower tier",
+      mock:data.mock,
     };
     render(inf);
-  } catch(e){
+  }catch(e){
     showError("Could not load influencer data.<br><small>"+e.message+"</small>");
   }
 }
 
+// Auth guard
+sb.auth.getSession().then(({data})=>{
+  if(!data.session)window.location.href="/auth.html";
+});
+
 init();
 </script>
-
-<script>
-const SUPABASE_URL = "https://qpfjxbsvymlrbeoqwqmr.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZmp4YnN2eW1scmJlb3F3cW1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NzY3MzgsImV4cCI6MjA4OTU1MjczOH0.d16JZphML2HPIYrXm9oEegQc8GpL-tZA36HpWJAFZNw";
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-sb.auth.getSession().then(({ data }) => {
-  if (!data.session) {
-    window.location.href = "/auth.html";
-  }
-});
-</script>
-
 </body>
 </html>

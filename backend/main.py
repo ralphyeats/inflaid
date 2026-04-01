@@ -53,6 +53,7 @@ class VerdictOut(BaseModel):
     campaign_type: str
     budget_range: str
     risk: str
+    warning_flags: list[str] = []
 
 
 class RoiEstimateOut(BaseModel):
@@ -61,6 +62,9 @@ class RoiEstimateOut(BaseModel):
     estimated_conversions_low: Optional[int]
     estimated_conversions_high: Optional[int]
     confidence: str
+    confidence_explanation: Optional[str] = None
+    reach_explanation: Optional[str] = None
+    conversion_explanation: Optional[str] = None
     note: str
 
 

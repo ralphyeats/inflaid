@@ -158,6 +158,26 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 .rec-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;flex-shrink:0}
 .rec-name{font-size:12px;font-weight:500;color:var(--ink);flex:1}
 .rec-score{font-family:var(--syne);font-size:14px;font-weight:700}
+/* MOBILE BOTTOM NAV */
+.mobile-nav{display:none}
+@media(max-width:768px){
+  .sidebar{display:none}
+  .body-wrap{flex-direction:column}
+  .main{width:100vw;padding-bottom:56px}
+  .topbar{padding:0 14px;gap:8px;height:48px}
+  .content-area{padding:10px}
+  .inf-grid{grid-template-columns:1fr!important}
+  .anl-top{grid-template-columns:1fr 1fr!important}
+  .anl-grid{grid-template-columns:1fr!important}
+  .outreach-layout{grid-template-columns:1fr!important;height:auto!important}
+  #analyze-box{width:100%!important;max-width:100%!important}
+  .disc-toolbar{flex-wrap:wrap;gap:6px}
+  .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--s1);border-top:1px solid var(--b1);z-index:100}
+  .mobile-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;color:var(--ink3);cursor:pointer;border:none;background:none;font-family:var(--sans);transition:color .15s}
+  .mobile-nav-item.active{color:var(--accent)}
+  .mobile-nav-item svg{width:18px;height:18px;opacity:.5}
+  .mobile-nav-item.active svg{opacity:1}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -365,9 +385,9 @@ function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.v
     // Build a display object compatible with renderCard()
     const inf = {
       handle: data.handle,
-      name: data.handle.replace("@","").replace(/\./g," ").replace(/\b\w/g,c=>c.toUpperCase()),
+      name: data.name || data.handle.replace("@","").replace(/\./g," ").replace(/\b\w/g,c=>c.toUpperCase()),
       platforms: ["instagram"],
-      followers: "—",
+      followers: data.followers || "—",
       cat: (curCat==="all" ? null : curCat),
       av: initials(data.handle),
       color: randomColor(data.handle),
@@ -375,6 +395,8 @@ function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.v
       label: data.label,
       insight: data.insight,
       breakdown: data.breakdown,
+      verdict: data.verdict || null,
+      roi_estimate: data.roi_estimate || null,
       fromApi: true,
     };
 
@@ -662,9 +684,7 @@ sb.auth.getSession().then(({ data }) => {
   renderGrid();
 
   // Load real plan from Supabase
-  const { createClient } = supabase;
-  const sbClient = supabase.createClient("https://qpfjxbsvymlrbeoqwqmr.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZmp4YnN2eW1scmJlb3F3cW1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NzY3MzgsImV4cCI6MjA4OTU1MjczOH0.d16JZphML2HPIYrXm9oEegQc8GpL-tZA36HpWJAFZNw");
-  sbClient.from("users").select("plan,analyses_used,analyses_limit").eq("email", email).then(({data}) => {
+  sb.from("users").select("plan,analyses_used,analyses_limit").eq("email", email).then(({data}) => {
     if (data && data[0]) {
       const u = data[0];
       const planName = u.plan.charAt(0).toUpperCase() + u.plan.slice(1) + " plan";
@@ -712,5 +732,25 @@ function logout() {
 
 
 
+<nav class="mobile-nav" id="mobile-nav">
+  <button class="mobile-nav-item active" id="mn-discovery" onclick="switchTab('discovery',this);setMobileNav('mn-discovery')">
+    <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5L13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    Discovery
+  </button>
+  <button class="mobile-nav-item" id="mn-outreach" onclick="switchTab('outreach',this);setMobileNav('mn-outreach')">
+    <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h8M2 12h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    Outreach
+  </button>
+  <button class="mobile-nav-item" id="mn-analytics" onclick="switchTab('analytics',this);setMobileNav('mn-analytics')">
+    <svg viewBox="0 0 16 16" fill="none"><path d="M2 12L5 8L8 10L11 5L14 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Analytics
+  </button>
+</nav>
+<script>
+function setMobileNav(activeId){
+  document.querySelectorAll('.mobile-nav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById(activeId).classList.add('active');
+}
+</script>
 </body>
 </html>
