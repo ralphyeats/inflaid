@@ -21,15 +21,7 @@ from factors.authenticity import score_authenticity
 from factors.momentum import score_momentum
 from factors.fraud import compute_fraud_multiplier
 from factors.sentiment import score_sentiment
-
-WEIGHTS = {
-    "engagement":   0.30,
-    "rhythm":       0.20,
-    "audience":     0.20,
-    "niche":        0.15,
-    "authenticity": 0.10,
-    "momentum":     0.05,
-}
+from categories.config import get_category_config
 
 LABELS = {
     "engagement":   "Engagement Quality",
@@ -62,10 +54,13 @@ def compute_score(raw: dict) -> ScoreResult:
         ("momentum",     score_momentum),
     ]}
 
+    cfg = get_category_config(raw.get("category", "beauty"))
+    w = cfg["factor_weights"]
+
     sentiment = score_sentiment(raw)
     fraud_multiplier = compute_fraud_multiplier(raw, scores, sentiment)
 
-    weighted_sum = sum(scores[k] * WEIGHTS[k] for k in WEIGHTS)
+    weighted_sum = sum(scores[k] * w[k] for k in w)
     final_score = max(0, min(100, round(weighted_sum * fraud_multiplier)))
 
     label = _label(final_score)
@@ -75,10 +70,10 @@ def compute_score(raw: dict) -> ScoreResult:
             "label":        LABELS[k],
             "description":  f"{LABELS[k]} score: {scores[k]}/100.",
             "value":        scores[k],
-            "weight":       WEIGHTS[k],
-            "contribution": round(scores[k] * WEIGHTS[k], 2),
+            "weight":       w[k],
+            "contribution": round(scores[k] * w[k], 2),
         }
-        for k in WEIGHTS
+        for k in w
     ]
     insight = _build_insight(final_score, label, scores, fraud_multiplier, sentiment)
 

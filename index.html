@@ -5,435 +5,837 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vettly — Know before you spend</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#07090D;
-  --s1:#0B0F16;
-  --s2:#0F1520;
-  --s3:#131A26;
-  --b1:#1C2638;
-  --b2:#24304A;
-  --accent:#4F8CF5;
-  --accent-lo:rgba(79,140,245,.08);
-  --accent-mid:rgba(79,140,245,.22);
-  --green:#34C77A;
-  --green-lo:rgba(52,199,122,.08);
-  --amber:#E8962A;
-  --amber-lo:rgba(232,150,42,.08);
-  --red:#D95050;
-  --red-lo:rgba(217,80,80,.08);
-  --ink:#DDE4F0;
-  --ink2:#8896B0;
-  --ink3:#3D4E68;
-  --syne:'Syne',sans-serif;
-  --sans:'Geist',-apple-system,sans-serif;
+:root {
+  --bg: #F8F7F4;
+  --surface: #FFFFFF;
+  --surface2: #F3F1EE;
+  --border: #E4E0D9;
+  --border2: #EDE9E3;
+  --text: #1A1714;
+  --text2: #6B6360;
+  --text3: #A09C97;
+  --accent: #3B6EF5;
+  --accent-lo: rgba(59,110,245,.08);
+  --accent-mid: rgba(59,110,245,.18);
+  --green: #16A34A;
+  --green-lo: rgba(22,163,74,.08);
+  --green-mid: rgba(22,163,74,.2);
+  --amber: #D97706;
+  --amber-lo: rgba(217,119,6,.08);
+  --red: #DC2626;
+  --red-lo: rgba(220,38,38,.08);
+  --sans: 'DM Sans', -apple-system, sans-serif;
+  --display: 'Bricolage Grotesque', sans-serif;
+  --shadow: 0 1px 3px rgba(0,0,0,.05), 0 8px 32px rgba(0,0,0,.07);
+  --shadow-lg: 0 2px 8px rgba(0,0,0,.05), 0 24px 64px rgba(0,0,0,.1);
 }
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-::-webkit-scrollbar{width:3px}
-::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
-@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
-@keyframes scan{0%{top:-50px;opacity:0}20%{opacity:.3}80%{opacity:.3}100%{top:120%;opacity:0}}
-.rise{animation:rise .6s cubic-bezier(.22,1,.36,1) both}
-.d1{animation-delay:.06s}.d2{animation-delay:.12s}.d3{animation-delay:.18s}.d4{animation-delay:.24s}
-
-/* NAV */
-nav{position:sticky;top:0;z-index:100;height:54px;display:flex;align-items:center;padding:0 48px;background:rgba(7,9,13,.88);backdrop-filter:blur(20px);border-bottom:1px solid rgba(28,38,56,.6);position:sticky}
-.logo{display:flex;align-items:center;gap:8px;text-decoration:none}
-.logo-mark{width:22px;height:22px;background:var(--accent);border-radius:5px;position:relative;flex-shrink:0}
-.logo-mark::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:7px;height:7px;background:#fff;border-radius:50%}
-.logo-text{font-family:var(--syne);font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.02em}
-.nav-links{position:absolute;left:50%;transform:translateX(-50%);display:flex;gap:2px}
-.nav-a{padding:5px 16px;border-radius:6px;font-size:15px;color:var(--ink);text-decoration:none;transition:color .15s}
-.nav-a:hover{color:var(--ink2)}
-.nav-r{display:flex;gap:8px;align-items:center;margin-left:auto}
-.btn{padding:7px 16px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;font-family:var(--sans);border:none;letter-spacing:-.01em}
-.btn-ghost{background:transparent;border:1px solid var(--b2);color:var(--ink2)}
-.btn-ghost:hover{color:var(--ink);background:var(--s2)}
-.btn-solid{background:var(--accent);color:#fff}
-.btn-solid:hover{background:#5F9AF7;box-shadow:0 0 20px rgba(79,140,245,.22)}
-.btn-lg{padding:12px 26px;font-size:14px;border-radius:8px}
-
-/* HERO — centered, no split */
-.hero{max-width:700px;margin:0 auto;padding:80px 48px 56px;text-align:center}
-.badge{display:inline-flex;align-items:center;gap:6px;background:var(--accent-lo);border:1px solid var(--accent-mid);border-radius:20px;padding:4px 13px;margin-bottom:22px;font-size:11px;font-weight:500;color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
-.badge-dot{width:5px;height:5px;background:var(--accent);border-radius:50%;animation:pulse 2s ease-in-out infinite}
-h1{font-family:var(--syne);font-size:54px;font-weight:800;line-height:1.08;letter-spacing:-.03em;color:var(--ink);margin-bottom:16px}
-h1 span{color:var(--accent)}
-.hero-sub{font-size:16px;color:var(--ink2);line-height:1.7;font-weight:400;margin-bottom:28px}
-.hero-btns{display:flex;gap:10px;justify-content:center;margin-bottom:12px}
-.hero-fine{font-size:12px;color:var(--ink3)}
-
-/* FULL DASHBOARD MOCKUP */
-.dash-section{max-width:1080px;margin:0 auto;padding:0 48px 72px}
-.dash-glow-wrap{position:relative}
-.dash-glow{position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:800px;height:300px;background:radial-gradient(ellipse at 50% 0%,rgba(79,140,245,.09) 0%,transparent 70%);pointer-events:none}
-.dash-frame{position:relative;z-index:1;background:var(--s1);border:1px solid var(--b2);border-radius:14px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.55),0 0 0 1px rgba(79,140,245,.04)}
-.dash-bar{display:flex;align-items:center;gap:6px;padding:10px 16px;background:var(--s2);border-bottom:1px solid var(--b1)}
-.dash-dot{width:9px;height:9px;border-radius:50%}
-.dash-url{flex:1;margin:0 10px;background:var(--s3);border:1px solid var(--b1);border-radius:5px;padding:3px 10px;font-size:11px;color:var(--ink3)}
-.dash-analyze{padding:5px 14px;background:var(--accent);border:none;border-radius:5px;color:#fff;font-size:11px;font-weight:500;font-family:var(--sans);cursor:pointer}
-.dash-body{display:flex;height:480px;overflow:hidden;position:relative}
-.dash-scan{position:absolute;left:0;right:0;height:40px;background:linear-gradient(transparent,rgba(79,140,245,.025),transparent);pointer-events:none;animation:scan 6s linear infinite}
-
-/* Sidebar */
-.dash-side{width:160px;flex-shrink:0;background:var(--s2);border-right:1px solid var(--b1);padding:14px 10px;display:flex;flex-direction:column;gap:2px}
-.dash-slogo{display:flex;align-items:center;gap:7px;padding:7px 8px;margin-bottom:10px}
-.dash-slm{width:18px;height:18px;background:var(--accent);border-radius:4px;position:relative;flex-shrink:0}
-.dash-slm::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6px;height:6px;background:#fff;border-radius:50%}
-.dash-si{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:6px;font-size:11px;color:var(--ink3)}
-.dash-si.on{background:var(--accent-lo);color:var(--accent)}
-.dash-si-sq{width:11px;height:11px;border-radius:2px;background:currentColor;opacity:.45;flex-shrink:0}
-.dash-quota{margin-top:auto;background:var(--s3);border:1px solid var(--b1);border-radius:7px;padding:8px 10px}
-.dash-quota-label{font-size:8px;color:var(--ink3);margin-bottom:4px}
-.dash-quota-bar{height:3px;background:var(--b1);border-radius:2px;overflow:hidden}
-.dash-quota-fill{height:3px;background:var(--accent);border-radius:2px;width:62%}
-.dash-quota-note{font-size:8px;color:var(--ink3);margin-top:3px}
-
-/* Main content */
-.dash-main{flex:1;padding:18px 20px;display:flex;flex-direction:column;gap:14px;overflow:hidden}
-.dash-toprow{display:flex;align-items:center;gap:10px}
-.dash-heading{font-family:var(--syne);font-size:14px;font-weight:700;color:var(--ink);letter-spacing:-.01em;flex-shrink:0}
-.dash-search{display:flex;align-items:center;gap:7px;background:var(--s3);border:1px solid var(--b1);border-radius:7px;padding:7px 11px;flex:1}
-.dash-search-c{width:11px;height:11px;border:1.5px solid var(--ink3);border-radius:50%;flex-shrink:0}
-.dash-search-t{font-size:11px;color:var(--ink3)}
-.dash-abtn{padding:6px 14px;background:var(--accent);border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:500;font-family:var(--sans);flex-shrink:0}
-
-/* Filters */
-.dash-filters{display:flex;gap:6px;flex-wrap:wrap}
-.dash-f{padding:4px 11px;border-radius:6px;font-size:10px;border:1px solid var(--b1);color:var(--ink3);background:transparent}
-.dash-f.on{background:var(--accent-lo);border-color:var(--accent-mid);color:var(--accent)}
-
-/* Stats */
-.dash-stats{display:flex;gap:10px}
-.dash-stat{background:var(--s3);border:1px solid var(--b1);border-radius:8px;padding:10px 14px;flex:1}
-.dash-stat-n{font-family:var(--syne);font-size:22px;font-weight:700;line-height:1;margin-bottom:3px}
-.dash-stat-l{font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
-
-/* Cards grid */
-.dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;overflow:hidden}
-.dash-card{background:var(--s3);border:1px solid var(--b1);border-radius:10px;padding:13px;transition:border-color .15s}
-.dash-card:hover{border-color:var(--b2)}
-.dash-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
-.dash-card-info{display:flex;align-items:center;gap:8px}
-.dash-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
-.dash-name{font-size:12px;font-weight:500;color:var(--ink);margin-bottom:1px}
-.dash-meta{font-size:10px;color:var(--ink3)}
-.dash-score-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
-.dash-score{font-family:var(--syne);font-size:20px;font-weight:700;line-height:1}
-.dash-verdict{font-size:9px;padding:2px 7px;border-radius:4px;font-weight:500;white-space:nowrap}
-.dash-bars{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
-.dash-bar-row{display:flex;flex-direction:column;gap:2px}
-.dash-bar-label{display:flex;justify-content:space-between;font-size:9px;color:var(--ink3)}
-.dash-bar-track{height:2px;background:var(--b1);border-radius:1px;overflow:hidden}
-.dash-bar-fill{height:2px;border-radius:1px}
-.dash-card-actions{display:flex;gap:6px}
-.dash-card-btn{flex:1;padding:5px 0;border-radius:5px;font-size:10px;font-weight:500;cursor:pointer;font-family:var(--sans);text-align:center;border:1px solid var(--b2);background:transparent;color:var(--ink3)}
-.dash-card-btn.pri{background:var(--accent-lo);border-color:var(--accent-mid);color:var(--accent)}
-
-/* PROOF */
-.proof{max-width:1080px;margin:0 auto;padding:0 48px;border-top:1px solid var(--b1)}
-.proof-row{display:flex}
-.proof-item{flex:1;padding:22px 26px;border-right:1px solid var(--b1)}
-.proof-item:last-child{border-right:none}
-.proof-n{font-family:var(--syne);font-size:26px;font-weight:700;color:var(--ink);letter-spacing:-.03em;margin-bottom:3px}
-.proof-n span{color:var(--accent)}
-.proof-l{font-size:12px;color:var(--ink3)}
-
-/* SECTIONS */
-.sec{max-width:1080px;margin:80px auto 0;padding:0 48px}
-.sec-tag{font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.09em;font-weight:500;margin-bottom:8px}
-.sec-h{font-family:var(--syne);font-size:34px;font-weight:700;letter-spacing:-.025em;line-height:1.12;color:var(--ink);margin-bottom:32px}
-
-/* FEATURES — true 3-col grid */
-.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--b1);border-radius:12px;overflow:hidden}
-.feat-cell{background:var(--s1);padding:26px 24px;border-right:1px solid var(--b1);border-bottom:1px solid var(--b1)}
-.feat-cell:nth-child(3n){border-right:none}
-.feat-cell:nth-child(4),.feat-cell:nth-child(5),.feat-cell:nth-child(6){border-bottom:none}
-.feat-cell-title{font-family:var(--syne);font-size:14px;font-weight:600;color:var(--ink);margin-bottom:6px;letter-spacing:-.01em}
-.feat-cell-desc{font-size:13px;color:var(--ink2);line-height:1.6}
-
-/* SCORING */
-.scoring-wrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
-.factor-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--b1)}
-.factor-row:last-child{border-bottom:none}
-.factor-name{font-size:13px;font-weight:500;color:var(--ink);flex:1;letter-spacing:-.01em}
-.factor-w{font-family:var(--syne);font-size:14px;font-weight:700;flex-shrink:0}
-.verdict-box{border-radius:9px;padding:14px 15px;border:1px solid;margin-bottom:9px}
-.verdict-box:last-child{margin-bottom:0}
-.vb-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
-.vb-title{font-size:13px;font-weight:500}
-.vb-range{font-family:var(--syne);font-size:15px;font-weight:700}
-.vb-desc{font-size:12px;font-weight:400;opacity:.75;line-height:1.5}
-
-/* QUOTES */
-.quote-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.qcard{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:24px}
-.qstars{font-size:11px;color:var(--amber);letter-spacing:2px;margin-bottom:14px}
-.qtext{font-size:14px;color:var(--ink);line-height:1.65;font-weight:400;margin-bottom:16px}
-.qperson{display:flex;align-items:center;gap:10px;padding-top:14px;border-top:1px solid var(--b1)}
-.qav{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
-.qname{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:1px}
-.qrole{font-size:11px;color:var(--ink3)}
-
-/* PRICING */
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.plan{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:28px;position:relative;transition:border-color .2s}
-.plan:hover{border-color:var(--b2)}
-.plan.pop{border-color:rgba(79,140,245,.3)}
-.plan.pop::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);border-radius:12px 12px 0 0}
-.pbadge{position:absolute;top:16px;right:16px;background:var(--accent-lo);border:1px solid var(--accent-mid);color:var(--accent);font-size:10px;padding:2px 8px;border-radius:5px;font-weight:500}
-.ptier{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;font-weight:500;margin-bottom:10px}
-.pprice{font-family:var(--syne);font-size:40px;font-weight:800;color:var(--ink);letter-spacing:-.04em;line-height:1;margin-bottom:4px}
-.pprice sup{font-size:16px;font-weight:400;color:var(--ink2);vertical-align:super}
-.pprice sub{font-size:12px;font-weight:300;color:var(--ink3)}
-.pnote{font-size:12px;color:var(--ink3);margin-bottom:22px;line-height:1.5}
-.pfeats{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
-.pfeats li{font-size:13px;display:flex;gap:8px;color:var(--ink2)}
-.fon{color:var(--green);flex-shrink:0;font-size:12px;margin-top:2px}
-.foff{color:var(--ink3);flex-shrink:0;font-size:12px;margin-top:2px}
-
-/* CTA */
-.cta-wrap{max-width:1080px;margin:80px auto;padding:0 48px}
-.cta{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:64px;text-align:center;position:relative;overflow:hidden}
-.cta::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:400px;height:280px;background:radial-gradient(ellipse,rgba(79,140,245,.06) 0%,transparent 70%);pointer-events:none}
-.cta-h{font-family:var(--syne);font-size:44px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:14px;color:var(--ink)}
-.cta-h span{color:var(--accent)}
-.cta-sub{font-size:15px;color:var(--ink2);font-weight:400;margin-bottom:28px;max-width:380px;margin-left:auto;margin-right:auto;line-height:1.6}
-.cta-btns{display:flex;gap:10px;justify-content:center}
-
-/* FOOTER */
-.footer-border{border-top:1px solid var(--b1);max-width:1080px;margin:0 auto;padding:0 48px}
-footer{display:flex;justify-content:space-between;align-items:center;padding:28px 0;flex-wrap:wrap;gap:12px}
-.flogo{font-family:var(--syne);font-size:14px;font-weight:700;color:var(--ink2)}
-.flinks{display:flex;gap:18px}
-.flink{font-size:12px;color:var(--ink3);text-decoration:none;transition:color .15s}
-.flink:hover{color:var(--ink2)}
-.fcopy{font-size:11px;color:var(--ink3)}
-
-/* LANG SWITCHER - injected */
-.lang-drop{position:relative;margin-right:8px}
-.lang-drop-btn{display:flex;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--b1);border-radius:6px;padding:4px 10px;color:var(--ink2);font-size:12px;font-weight:500;cursor:pointer;font-family:var(--sans);transition:all .15s}
-.lang-drop-btn:hover{border-color:var(--b2);color:var(--ink)}
-.lang-menu{display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--s1);border:1px solid var(--b2);border-radius:8px;padding:4px;min-width:130px;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,.4)}
-.lang-menu.open{display:flex;flex-direction:column}
-.lang-option{display:flex;align-items:center;gap:8px;padding:7px 10px;border:none;background:transparent;color:var(--ink2);font-size:12px;font-weight:400;cursor:pointer;border-radius:5px;font-family:var(--sans);text-align:left;transition:all .15s}
-.lang-option:hover{background:var(--s2);color:var(--ink)}
-
-@media(max-width:768px){
-  nav{padding:0 16px}
-  .nav-links{display:none}
-  .nav-r .btn-ghost{display:none}
-  .hero{padding:48px 20px 36px}
-  h1{font-size:36px}
-  .hero-sub{font-size:14px}
-  .hero-btns{flex-direction:column;align-items:center}
-  .btn-lg{padding:12px 20px;width:100%;text-align:center}
-  .dash-section{padding:0 16px 48px}
-  .dash-body{height:320px}
-  .dash-side{display:none}
-  .dash-grid{grid-template-columns:1fr}
-  .proof-row{flex-direction:column}
-  .proof-item{border-right:none;border-bottom:1px solid var(--b1);padding:16px 20px}
-  .proof-item:last-child{border-bottom:none}
-  .sec{padding:0 20px;margin-top:56px}
-  .sec-h{font-size:26px}
-  .feat-grid{grid-template-columns:1fr}
-  .scoring-wrap{grid-template-columns:1fr;gap:24px}
-  .quote-grid{grid-template-columns:1fr}
-  .pricing-grid{grid-template-columns:1fr}
-  .cta-wrap{padding:0 20px;margin:48px auto}
-  .cta{padding:36px 20px}
-  .cta-h{font-size:30px}
-  .cta-btns{flex-direction:column}
-  .footer-border{padding:0 20px}
-  footer{flex-direction:column;align-items:flex-start;gap:16px}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
-@media(max-width:480px){
-  h1{font-size:28px}
-  .cta-h{font-size:24px}
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(-1deg); }
+  50%       { transform: translateY(-6px) rotate(1deg); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: .5; transform: scale(1); }
+  50%       { opacity: 1; transform: scale(1.15); }
+}
+@keyframes barIn {
+  from { width: 0 !important; }
+}
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scanLine {
+  0%   { top: 0; opacity: 0; }
+  10%  { opacity: .6; }
+  90%  { opacity: .6; }
+  100% { top: 100%; opacity: 0; }
+}
+@keyframes typing {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .65s cubic-bezier(.22,1,.36,1), transform .65s cubic-bezier(.22,1,.36,1);
+}
+.reveal.in { opacity: 1; transform: none; }
+.reveal-d1 { transition-delay: .08s; }
+.reveal-d2 { transition-delay: .16s; }
+.reveal-d3 { transition-delay: .24s; }
+.reveal-d4 { transition-delay: .32s; }
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  padding: 0 48px;
+  background: rgba(248,247,244,.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border2);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 9px;
+  text-decoration: none; flex-shrink: 0;
+}
+.nav-mark {
+  width: 30px; height: 30px;
+  background: var(--text);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-mark svg { display: block; }
+.nav-brand {
+  font-family: var(--display);
+  font-size: 17px; font-weight: 700;
+  color: var(--text); letter-spacing: -.025em;
+}
+.nav-links {
+  display: flex; gap: 2px;
+  position: absolute; left: 50%; transform: translateX(-50%);
+}
+.nav-link {
+  padding: 6px 14px; border-radius: 8px;
+  font-size: 14px; font-weight: 500;
+  color: var(--text2); text-decoration: none;
+  transition: color .15s, background .15s;
+}
+.nav-link:hover { color: var(--text); background: var(--surface2); }
+.nav-actions { display: flex; gap: 8px; align-items: center; margin-left: auto; }
+.btn {
+  padding: 8px 18px; border-radius: 9px;
+  font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: all .15s;
+  font-family: var(--sans); border: none;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border); color: var(--text2);
+}
+.btn-ghost:hover { border-color: var(--text3); color: var(--text); background: var(--surface2); }
+.btn-dark { background: var(--text); color: #fff; }
+.btn-dark:hover { background: #2d2926; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,.15); }
+.btn-lg { padding: 13px 28px; font-size: 15px; border-radius: 11px; }
+
+/* ── HERO ── */
+.hero {
+  padding: 148px 48px 80px;
+  text-align: center;
+  max-width: 860px;
+  margin: 0 auto;
+  position: relative;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 14px 5px 10px;
+  margin-bottom: 28px;
+  font-size: 12px; font-weight: 500; color: var(--text2);
+  box-shadow: var(--shadow);
+  animation: fadeUp .6s cubic-bezier(.22,1,.36,1) both .05s;
+}
+.badge-dot {
+  width: 7px; height: 7px;
+  background: var(--green); border-radius: 50%;
+  animation: pulse 2.2s ease-in-out infinite;
+}
+.hero h1 {
+  font-family: var(--display);
+  font-size: clamp(46px, 7.5vw, 76px);
+  font-weight: 800;
+  line-height: 1.03;
+  letter-spacing: -.035em;
+  color: var(--text);
+  margin-bottom: 22px;
+  animation: fadeUp .6s cubic-bezier(.22,1,.36,1) both .1s;
+}
+.grad-text {
+  background: linear-gradient(130deg, var(--accent) 0%, #8B5CF6 55%, #EC4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: 17px; color: var(--text2);
+  line-height: 1.7; max-width: 520px;
+  margin: 0 auto 36px;
+  animation: fadeUp .6s cubic-bezier(.22,1,.36,1) both .15s;
+}
+.hero-actions {
+  display: flex; gap: 10px; justify-content: center; margin-bottom: 12px;
+  animation: fadeUp .6s cubic-bezier(.22,1,.36,1) both .2s;
+}
+.hero-fine {
+  font-size: 12px; color: var(--text3);
+  animation: fadeUp .6s cubic-bezier(.22,1,.36,1) both .25s;
+}
+.arrow-icon {
+  display: inline-block;
+  transition: transform .15s;
+}
+.btn:hover .arrow-icon { transform: translateX(3px); }
+
+/* ── HERO MOCKUP ── */
+.hero-visual {
+  max-width: 960px;
+  margin: 60px auto 0;
+  position: relative;
+  animation: fadeUp .9s cubic-bezier(.22,1,.36,1) both .35s;
+}
+.hero-glow {
+  position: absolute;
+  top: -100px; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 400px;
+  background: radial-gradient(ellipse at 50% 40%, rgba(59,110,245,.09) 0%, rgba(139,92,246,.06) 40%, transparent 70%);
+  pointer-events: none;
+}
+.browser-frame {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.7) inset;
+  position: relative;
+}
+.browser-bar {
+  display: flex; align-items: center; gap: 6px;
+  padding: 12px 16px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border2);
+}
+.b-dot { width: 10px; height: 10px; border-radius: 50%; }
+.browser-url {
+  flex: 1; margin: 0 10px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 5px; padding: 4px 12px;
+  font-size: 11px; color: var(--text3);
+}
+.browser-body {
+  display: flex; height: 400px; overflow: hidden;
+  position: relative;
+}
+.browser-scan {
+  position: absolute; left: 0; right: 0; height: 48px;
+  background: linear-gradient(transparent, rgba(59,110,245,.03), transparent);
+  pointer-events: none;
+  animation: scanLine 5s linear infinite;
+}
+.b-sidebar {
+  width: 200px; flex-shrink: 0;
+  border-right: 1px solid var(--border2);
+  padding: 14px 10px;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.b-nav {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; border-radius: 7px;
+  font-size: 12px; color: var(--text3);
+}
+.b-nav.active { background: var(--accent-lo); color: var(--accent); font-weight: 600; }
+.b-nav-ic { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.b-main { flex: 1; padding: 18px; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+.b-search { display: flex; gap: 8px; }
+.b-input {
+  flex: 1; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 7px; padding: 9px 13px;
+  font-size: 12px; color: var(--text2); font-family: var(--sans);
+}
+.b-analyze {
+  padding: 9px 16px; background: var(--text); color: #fff;
+  border: none; border-radius: 7px;
+  font-size: 12px; font-weight: 500; font-family: var(--sans); cursor: default;
+  white-space: nowrap;
+}
+.b-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.b-card {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 13px;
+}
+.b-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }
+.b-av {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; color: #fff;
+}
+.b-sc { font-family: var(--display); font-size: 20px; font-weight: 700; }
+.b-name { font-size: 11px; font-weight: 600; color: var(--text); }
+.b-handle { font-size: 10px; color: var(--text3); margin-bottom: 7px; }
+.b-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 6px; }
+.b-fill { height: 100%; border-radius: 2px; }
+.b-badge {
+  display: inline-block; font-size: 9px; font-weight: 600;
+  padding: 2px 7px; border-radius: 4px; margin-top: 5px;
+}
+
+/* floating chips around mockup */
+.hero-chip {
+  position: absolute;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: var(--shadow);
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.chip-1 {
+  left: -60px; top: 80px;
+  animation: floatSlow 5s ease-in-out infinite;
+}
+.chip-2 {
+  right: -60px; top: 60px;
+  animation: floatSlow 6s ease-in-out infinite .8s;
+}
+.chip-3 {
+  right: -50px; bottom: 80px;
+  animation: floatSlow 5.5s ease-in-out infinite 1.2s;
+}
+.chip-ic { font-size: 16px; margin-right: 6px; }
+.chip-label { font-weight: 600; color: var(--text); font-size: 13px; }
+.chip-sub { font-size: 11px; color: var(--text3); }
+
+/* ── STATS BAR ── */
+.stats-bar {
+  border-top: 1px solid var(--border2);
+  border-bottom: 1px solid var(--border2);
+  background: var(--surface);
+  padding: 28px 48px;
+  display: flex; justify-content: center;
+}
+.stats-inner {
+  display: flex; max-width: 1000px; width: 100%;
+  justify-content: space-between;
+}
+.stat-item {
+  display: flex; align-items: center; gap: 12px;
+}
+.stat-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+}
+.stat-num {
+  font-family: var(--display);
+  font-size: 22px; font-weight: 700;
+  color: var(--text); letter-spacing: -.02em; line-height: 1.1;
+}
+.stat-lbl { font-size: 12px; color: var(--text3); }
+.stat-sep { width: 1px; background: var(--border2); align-self: stretch; }
+
+/* ── FEATURE SPLIT ── */
+.features-wrap { background: var(--bg); }
+.feat-split {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+  padding: 96px 80px;
+  max-width: 1200px; margin: 0 auto;
+}
+.feat-split + .feat-split { border-top: 1px solid var(--border2); }
+.feat-split.flip { }
+.feat-split.flip .feat-visual { order: -1; }
+.feat-label {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 16px;
+}
+.feat-label-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+.feat-split h2 {
+  font-family: var(--display);
+  font-size: clamp(28px, 3.5vw, 42px);
+  font-weight: 700; line-height: 1.1;
+  letter-spacing: -.025em;
+  color: var(--text); margin-bottom: 14px;
+}
+.feat-sub {
+  font-size: 15px; color: var(--text2);
+  line-height: 1.7; margin-bottom: 28px;
+}
+.feat-points { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.feat-points li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 14px; color: var(--text2); line-height: 1.5;
+}
+.feat-check {
+  width: 18px; height: 18px; border-radius: 5px;
+  background: var(--green-lo); border: 1px solid var(--green-mid);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+  font-size: 10px; color: var(--green);
+}
+
+/* ── SCORE CARD VISUAL ── */
+.score-card-wrap {
+  position: relative;
+}
+.score-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: var(--shadow-lg);
+}
+.score-card-head {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 22px;
+}
+.score-profile { display: flex; align-items: center; gap: 12px; }
+.score-av {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(135deg, #FBBF24, #F59E0B);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: #fff;
+}
+.score-name { font-weight: 600; font-size: 15px; color: var(--text); }
+.score-handle { font-size: 12px; color: var(--text3); }
+.score-big-wrap { text-align: right; }
+.score-big {
+  font-family: var(--display);
+  font-size: 56px; font-weight: 800;
+  color: var(--green); letter-spacing: -.03em; line-height: 1;
+}
+.score-verdict {
+  display: inline-block; font-size: 11px; font-weight: 600;
+  padding: 3px 10px; border-radius: 6px;
+  background: var(--green-lo); color: var(--green);
+  border: 1px solid var(--green-mid); margin-top: 4px;
+}
+.factor-list { display: flex; flex-direction: column; gap: 11px; }
+.fac { }
+.fac-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.fac-name { font-size: 12px; color: var(--text2); font-weight: 500; }
+.fac-val { font-size: 12px; font-weight: 700; color: var(--text); }
+.fac-track { height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.fac-fill {
+  height: 100%; border-radius: 3px;
+  transition: width 1.1s cubic-bezier(.22,1,.36,1);
+}
+.score-card-wrap .float-tag {
+  position: absolute;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 13px;
+  box-shadow: var(--shadow);
+  font-size: 12px;
+  animation: float 5s ease-in-out infinite;
+}
+.float-tag-1 { top: -20px; right: 20px; animation-delay: .3s; }
+.float-tag-2 { bottom: -16px; left: 16px; animation-delay: 1s; }
+.float-tag-val { font-weight: 700; color: var(--text); font-size: 14px; }
+.float-tag-lbl { color: var(--text3); }
+
+/* ── DATA VISUAL ── */
+.data-visual {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+.dv-header {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border2);
+  padding: 16px 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+.dv-av {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, #A78BFA, #8B5CF6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.dv-name { font-weight: 600; font-size: 14px; }
+.dv-handle { font-size: 12px; color: var(--text3); }
+.dv-live {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600;
+  padding: 4px 10px; border-radius: 6px;
+  background: var(--green-lo); color: var(--green);
+  border: 1px solid var(--green-mid);
+}
+.dv-live-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--green); animation: pulse 2s infinite;
+}
+.dv-body { padding: 20px; }
+.dv-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 11px 0; border-bottom: 1px solid var(--border2);
+  font-size: 13px;
+}
+.dv-row:last-child { border-bottom: none; }
+.dv-lbl { color: var(--text2); }
+.dv-val { font-weight: 600; color: var(--text); }
+.dv-val.green { color: var(--green); }
+.dv-val.amber { color: var(--amber); }
+.dv-posts {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+  margin-top: 14px;
+}
+.dv-post {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+
+/* ── OUTREACH VISUAL ── */
+.outreach-visual {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  max-width: 640px; margin: 0 auto;
+}
+.ov-header {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border2);
+  padding: 14px 20px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; font-weight: 500; color: var(--text2);
+}
+.ov-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); }
+.ov-body { padding: 24px; }
+.ov-to {
+  display: flex; align-items: center; gap: 8px;
+  padding-bottom: 14px; border-bottom: 1px solid var(--border2); margin-bottom: 16px;
+}
+.ov-to-label { font-size: 12px; color: var(--text3); min-width: 32px; }
+.ov-to-chip {
+  background: var(--accent-lo); border: 1px solid var(--accent-mid);
+  border-radius: 6px; padding: 3px 10px;
+  font-size: 12px; color: var(--accent); font-weight: 500;
+}
+.ov-text {
+  font-size: 14px; line-height: 1.8; color: var(--text2);
+}
+.ov-text p { margin-bottom: 12px; }
+.ov-text p:last-child { margin-bottom: 0; }
+.ov-highlight { color: var(--text); font-weight: 500; }
+.ov-btns {
+  display: flex; gap: 8px; margin-top: 20px;
+  padding-top: 16px; border-top: 1px solid var(--border2);
+}
+.ov-btn {
+  padding: 8px 16px; border-radius: 8px;
+  font-size: 13px; font-weight: 500; font-family: var(--sans);
+  cursor: default; border: none;
+}
+.ov-btn-pri { background: var(--text); color: #fff; }
+.ov-btn-sec { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+
+/* ── HOW IT WORKS ── */
+.how-section {
+  padding: 100px 48px;
+  text-align: center;
+  background: var(--surface);
+  border-top: 1px solid var(--border2);
+  border-bottom: 1px solid var(--border2);
+}
+.how-inner { max-width: 1100px; margin: 0 auto; }
+.how-section h2 { font-family: var(--display); font-size: clamp(28px, 4vw, 44px); font-weight: 700; letter-spacing: -.025em; margin-bottom: 8px; }
+.how-sub { font-size: 16px; color: var(--text2); margin-bottom: 60px; }
+.how-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; position: relative; }
+.how-steps::before {
+  content: '';
+  position: absolute;
+  top: 28px; left: calc(16% + 20px); right: calc(16% + 20px);
+  height: 1px;
+  background: linear-gradient(90deg, var(--border2), var(--accent-mid), var(--border2));
+}
+.how-step { text-align: center; }
+.how-num {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 18px;
+  font-family: var(--display);
+  font-size: 20px; font-weight: 700;
+  color: var(--text); box-shadow: var(--shadow);
+  position: relative; z-index: 1;
+}
+.how-step-title {
+  font-family: var(--display);
+  font-size: 17px; font-weight: 700;
+  color: var(--text); margin-bottom: 8px;
+  letter-spacing: -.01em;
+}
+.how-step-desc { font-size: 14px; color: var(--text2); line-height: 1.65; }
+
+/* ── PRICING ── */
+#pricing {
+  padding: 100px 48px;
+  max-width: 1160px; margin: 0 auto;
+  text-align: center;
+}
+#pricing > .reveal > h2 { font-family: var(--display); font-size: clamp(30px, 4vw, 48px); font-weight: 700; letter-spacing: -.025em; margin-bottom: 8px; }
+.pricing-sub { font-size: 16px; color: var(--text2); margin-bottom: 52px; }
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: left; }
+.plan {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 18px; padding: 28px;
+  display: flex; flex-direction: column;
+  transition: box-shadow .2s, transform .2s;
+}
+.plan:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+.plan.featured {
+  background: var(--text); border-color: var(--text);
+  color: #fff;
+}
+.plan-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 5px; margin-bottom: 16px;
+  width: fit-content;
+}
+.plan-badge.popular { background: rgba(255,255,255,.12); color: rgba(255,255,255,.9); }
+.plan-badge.free { background: var(--surface2); color: var(--text3); }
+.plan-badge.growth { background: var(--accent-lo); color: var(--accent); }
+.plan-name {
+  font-family: var(--display);
+  font-size: 18px; font-weight: 700; margin-bottom: 4px; color: inherit;
+}
+.plan-desc { font-size: 13px; color: var(--text2); margin-bottom: 22px; }
+.plan.featured .plan-desc { color: rgba(255,255,255,.55); }
+.plan-price {
+  font-family: var(--display);
+  font-size: 44px; font-weight: 800;
+  letter-spacing: -.035em; color: inherit; margin-bottom: 3px; line-height: 1;
+}
+.plan-period { font-size: 13px; color: var(--text3); margin-bottom: 24px; }
+.plan.featured .plan-period { color: rgba(255,255,255,.45); }
+.plan-sep { height: 1px; background: var(--border2); margin-bottom: 20px; }
+.plan.featured .plan-sep { background: rgba(255,255,255,.1); }
+.plan-features { list-style: none; flex: 1; margin-bottom: 28px; display: flex; flex-direction: column; gap: 11px; }
+.plan-features li {
+  display: flex; align-items: flex-start; gap: 9px;
+  font-size: 13px; color: var(--text2);
+}
+.plan.featured .plan-features li { color: rgba(255,255,255,.72); }
+.plan-features li::before {
+  content: '✓'; font-size: 11px; font-weight: 800;
+  color: var(--green); flex-shrink: 0; margin-top: 2px;
+}
+.plan.featured .plan-features li::before { color: #4ADE80; }
+.plan-cta {
+  display: block; text-align: center;
+  padding: 12px; border-radius: 10px;
+  font-size: 14px; font-weight: 600;
+  text-decoration: none; cursor: pointer; border: none;
+  font-family: var(--sans); transition: all .15s;
+}
+.plan-cta-outline {
+  border: 1px solid var(--border); color: var(--text);
+  background: transparent;
+}
+.plan-cta-outline:hover { border-color: var(--text); background: var(--surface2); }
+.plan-cta-white { background: #fff; color: var(--text); }
+.plan-cta-white:hover { background: #f0f0ee; }
+.plan-cta-accent {
+  background: var(--accent); color: #fff;
+}
+.plan-cta-accent:hover { background: #2a5ee8; transform: translateY(-1px); }
+
+/* ── CTA ── */
+.cta-section {
+  background: var(--text);
+  padding: 100px 48px; text-align: center;
+}
+.cta-section h2 {
+  font-family: var(--display);
+  font-size: clamp(30px, 4.5vw, 52px);
+  font-weight: 800; color: #fff;
+  letter-spacing: -.03em; margin-bottom: 14px;
+}
+.cta-section p { font-size: 16px; color: rgba(255,255,255,.5); margin-bottom: 36px; }
+.btn-white { background: #fff; color: var(--text); }
+.btn-white:hover { background: #eeecea; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,0,0,.2); }
+.cta-fine { font-size: 12px; color: rgba(255,255,255,.3); margin-top: 12px; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border2);
+  padding: 36px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+.footer-mark {
+  width: 26px; height: 26px; background: var(--text);
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
+}
+.footer-brand {
+  font-family: var(--display); font-size: 14px; font-weight: 700;
+  color: var(--text); letter-spacing: -.02em;
+}
+.footer-links { display: flex; gap: 24px; }
+.footer-link {
+  font-size: 13px; color: var(--text3);
+  text-decoration: none; transition: color .15s;
+}
+.footer-link:hover { color: var(--text2); }
+.footer-copy { font-size: 12px; color: var(--text3); }
 </style>
-
 </head>
 <body>
 
 <!-- NAV -->
 <nav>
-  <a class="logo" href="#">
-    <div class="logo-mark"></div>
-    <span class="logo-text">Vettly</span>
+  <a href="/" class="nav-logo">
+    <div class="nav-mark">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <circle cx="7" cy="7" r="3" fill="white"/>
+        <circle cx="7" cy="7" r="6" stroke="white" stroke-width="1.5" fill="none"/>
+      </svg>
+    </div>
+    <span class="nav-brand">Vettly</span>
   </a>
   <div class="nav-links">
-    <a class="nav-a" href="#features"><span data-i18n="nav_features">Features</span></a>
-    <a class="nav-a" href="#scoring"><span data-i18n="nav_scoring">Scoring</span></a>
-    <a class="nav-a" href="#pricing"><span data-i18n="nav_pricing">Pricing</span></a>
+    <a href="#features" class="nav-link">Features</a>
+    <a href="#how" class="nav-link">How it works</a>
+    <a href="#pricing" class="nav-link">Pricing</a>
   </div>
-  <div class="nav-r"><div class="lang-drop" id="lang-drop">
-  <button class="lang-drop-btn" onclick="toggleLangMenu()">
-    <span id="lang-current-flag">🇬🇧</span>
-    <span id="lang-current-code">EN</span>
-    <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-  </button>
-  <div class="lang-menu" id="lang-menu">
-    <button class="lang-option" onclick="setLang('en','🇬🇧','EN')">🇬🇧 English</button>
-    <button class="lang-option" onclick="setLang('tr','🇹🇷','TR')">🇹🇷 Türkçe</button>
-    <button class="lang-option" onclick="setLang('ru','🇷🇺','RU')">🇷🇺 Русский</button>
-    <button class="lang-option" onclick="setLang('fr','🇫🇷','FR')">🇫🇷 Français</button>
-  </div>
-</div>
-    <a href="/auth.html" class="btn btn-ghost"><span data-i18n="nav_signin">Sign in</span></a>
-    <a href="/dashboard.html" class="btn btn-solid"><span data-i18n="nav_start">Start free →</span></a>
+  <div class="nav-actions">
+    <a href="/auth.html" class="btn btn-ghost">Log in</a>
+    <a href="/auth.html" class="btn btn-dark">Start free <span class="arrow-icon">→</span></a>
   </div>
 </nav>
 
-<!-- HERO — centered -->
-<div class="hero">
-  <div class="badge rise"><div class="badge-dot"></div><span data-i18n="hero_badge">Influencer ROI Intelligence</span></div>
-  <h1 class="rise d1"><span data-i18n="hero_h1_1">Stop guessing.</span><br><span data-i18n="hero_h1_2">Start</span> <span><span data-i18n="hero_h1_accent">knowing.</span></span></h1>
-  <p class="hero-sub rise d2"><span data-i18n="hero_sub">Vettly scores influencers on 5 conversion signals — so you know who drives real sales before you spend a dollar.</span></p>
-  <div class="hero-btns rise d3">
-    <a href="/dashboard.html" class="btn btn-solid btn-lg"><span data-i18n="hero_cta1">Start free →</span></a>
-    <a href="#features" class="btn btn-ghost btn-lg"><span data-i18n="hero_cta2">See how it works</span></a>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    AI-powered influencer scoring
   </div>
-  <p class="hero-fine rise d4"><span data-i18n="hero_fine">No credit card · Free tier available · Any niche</span></p>
-</div>
+  <h1>Find influencers who<br><span class="grad-text">actually convert.</span></h1>
+  <p class="hero-sub">Vettly scores Instagram accounts on 7 ROI factors — engagement quality, niche depth, fraud signals, and more. Stop guessing. Know before you spend.</p>
+  <div class="hero-actions">
+    <a href="/auth.html" class="btn btn-dark btn-lg">Start for free <span class="arrow-icon">→</span></a>
+    <a href="#how" class="btn btn-ghost btn-lg">See how it works</a>
+  </div>
+  <p class="hero-fine">No credit card required · 2 free analyses included</p>
+</section>
 
-<!-- FULL DASHBOARD -->
-<div class="dash-section rise d3">
-  <div class="dash-glow-wrap">
-    <div class="dash-glow"></div>
-    <div class="dash-frame">
-      <!-- Browser bar -->
-      <div class="dash-bar">
-        <div class="dash-dot" style="background:#FF5F57"></div>
-        <div class="dash-dot" style="background:#FFBD2E"></div>
-        <div class="dash-dot" style="background:#28C840"></div>
-        <div class="dash-url">app.vettly.io/dashboard</div>
-        <button class="dash-analyze">Analyze →</button>
-      </div>
+<!-- HERO MOCKUP -->
+<div style="padding: 0 48px; max-width: 1060px; margin: 0 auto 0; position: relative;" class="reveal">
+  <div class="hero-glow"></div>
 
-      <!-- App -->
-      <div class="dash-body">
-        <div class="dash-scan"></div>
+  <!-- floating chips -->
+  <div class="hero-chip chip-1">
+    <span class="chip-ic">✅</span>
+    <span class="chip-label">89</span>
+    <span class="chip-sub"> · Elite ROI</span>
+  </div>
+  <div class="hero-chip chip-2">
+    <span class="chip-ic">🔍</span>
+    <span class="chip-label">Real data</span>
+    <span class="chip-sub"> · Apify</span>
+  </div>
+  <div class="hero-chip chip-3">
+    <span class="chip-ic">🛡</span>
+    <span class="chip-label">No fraud</span>
+    <span class="chip-sub"> detected</span>
+  </div>
 
-        <!-- Sidebar -->
-        <div class="dash-side">
-          <div class="dash-slogo">
-            <div class="dash-slm"></div>
-            <span style="font-family:var(--syne);font-size:12px;font-weight:700;color:var(--ink)">Vettly</span>
-          </div>
-          <div class="dash-si on"><div class="dash-si-sq"></div>Discovery</div>
-          <div class="dash-si"><div class="dash-si-sq"></div>Campaigns</div>
-          <div class="dash-si"><div class="dash-si-sq"></div>Analytics</div>
-          <div class="dash-si"><div class="dash-si-sq"></div>Outreach</div>
-          <div class="dash-quota">
-            <div class="dash-quota-label">Pro plan</div>
-            <div class="dash-quota-bar"><div class="dash-quota-fill"></div></div>
-            <div class="dash-quota-note">31 / 50 analyses used</div>
-          </div>
+  <div class="browser-frame">
+    <div class="browser-bar">
+      <div class="b-dot" style="background:#FF5F57"></div>
+      <div class="b-dot" style="background:#FFBD2E"></div>
+      <div class="b-dot" style="background:#28C840"></div>
+      <div class="browser-url">vettly-eight.vercel.app/dashboard.html</div>
+    </div>
+    <div class="browser-body">
+      <div class="browser-scan"></div>
+      <div class="b-sidebar">
+        <div style="padding:8px 10px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Workspace</div>
+        <div class="b-nav active"><span class="b-nav-ic"></span>Discovery</div>
+        <div class="b-nav"><span class="b-nav-ic"></span>Outreach</div>
+        <div class="b-nav"><span class="b-nav-ic"></span>Analytics</div>
+        <div style="flex:1"></div>
+        <div style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:11px;">
+          <div style="color:var(--text);font-weight:600;margin-bottom:2px">Free plan</div>
+          <div style="color:var(--text3)">1 / 2 used</div>
+          <div style="height:3px;background:var(--border);border-radius:2px;margin-top:6px"><div style="width:50%;height:100%;background:var(--accent);border-radius:2px"></div></div>
         </div>
-
-        <!-- Main -->
-        <div class="dash-main">
-          <!-- Top row -->
-          <div class="dash-toprow">
-            <div class="dash-heading">Influencer Discovery</div>
-            <div class="dash-search"><div class="dash-search-c"></div><div class="dash-search-t">Search by niche, handle, category...</div></div>
-            <button class="dash-abtn">Analyze →</button>
-          </div>
-
-          <!-- Filters -->
-          <div class="dash-filters">
-            <div class="dash-f on">All categories</div>
-            <div class="dash-f">Skincare</div>
-            <div class="dash-f">Makeup</div>
-            <div class="dash-f">Fashion</div>
-            <div class="dash-f">Fitness</div>
-            <div class="dash-f on">Instagram</div>
-            <div class="dash-f">TikTok</div>
-            <div class="dash-f" style="margin-left:auto;border-color:var(--accent-mid);color:var(--accent)">Sort: ROI Score ↓</div>
-          </div>
-
-          <!-- Stats -->
-          <div class="dash-stats">
-            <div class="dash-stat"><div class="dash-stat-n" style="color:var(--ink)">24</div><div class="dash-stat-l">Found</div></div>
-            <div class="dash-stat" style="background:var(--green-lo);border-color:rgba(52,199,122,.15)"><div class="dash-stat-n" style="color:var(--green)">8</div><div class="dash-stat-l" style="color:rgba(52,199,122,.5)">High ROI</div></div>
-            <div class="dash-stat" style="background:var(--amber-lo);border-color:rgba(232,150,42,.15)"><div class="dash-stat-n" style="color:var(--amber)">11</div><div class="dash-stat-l" style="color:rgba(232,150,42,.5)">Aesthetic</div></div>
-            <div class="dash-stat" style="background:var(--red-lo);border-color:rgba(217,80,80,.15)"><div class="dash-stat-n" style="color:var(--red)">5</div><div class="dash-stat-l" style="color:rgba(217,80,80,.5)">Risk</div></div>
-          </div>
-
-          <!-- Cards 3-col grid -->
-          <div class="dash-grid">
-            <!-- Card 1 -->
-            <div class="dash-card" style="border-top:2px solid rgba(52,199,122,.4)">
-              <div class="dash-card-top">
-                <div class="dash-card-info">
-                  <div class="dash-av" style="background:rgba(79,140,245,.12);border:1px solid rgba(79,140,245,.25);color:var(--accent)">SR</div>
-                  <div><div class="dash-name">Sophia Reeves</div><div class="dash-meta">@sophiareeves · 15.1K · Skincare</div></div>
-                </div>
-                <div class="dash-score-wrap">
-                  <div class="dash-score" style="color:var(--green)">89</div>
-                  <div class="dash-verdict" style="background:var(--green-lo);color:var(--green)">High ROI</div>
-                </div>
-              </div>
-              <div class="dash-bars">
-                <div class="dash-bar-row"><div class="dash-bar-label"><span>Comment quality</span><span style="color:var(--green)">92</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:92%;background:var(--green)"></div></div></div>
-                <div class="dash-bar-row"><div class="dash-bar-label"><span>Before/after ratio</span><span style="color:var(--green)">88</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:88%;background:var(--green)"></div></div></div>
-                <div class="dash-bar-row"><div class="dash-bar-label"><span>Audience fit</span><span style="color:var(--amber)">85</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:85%;background:var(--amber)"></div></div></div>
-              </div>
-              <div class="dash-card-actions">
-                <div class="dash-card-btn pri">Outreach</div>
-                <div class="dash-card-btn">+ Campaign</div>
-              </div>
+      </div>
+      <div class="b-main">
+        <div class="b-search">
+          <div class="b-input">@handle — analyze any account</div>
+          <div class="b-analyze">Analyze →</div>
+        </div>
+        <div class="b-cards">
+          <div class="b-card">
+            <div class="b-card-top">
+              <div class="b-av" style="background:linear-gradient(135deg,#FBBF24,#F59E0B)">SR</div>
+              <div class="b-sc" style="color:#16A34A">89</div>
             </div>
-            <!-- Card 2 -->
-            <div class="dash-card" style="border-top:2px solid rgba(52,199,122,.4)">
-              <div class="dash-card-top">
-                <div class="dash-card-info">
-                  <div class="dash-av" style="background:rgba(52,199,122,.12);border:1px solid rgba(52,199,122,.25);color:var(--green)">CP</div>
-                  <div><div class="dash-name">Chloe Park</div><div class="dash-meta">@chloepark · 44.8K · Skincare</div></div>
-                </div>
-                <div class="dash-score-wrap">
-                  <div class="dash-score" style="color:var(--green)">82</div>
-                  <div class="dash-verdict" style="background:var(--green-lo);color:var(--green)">High ROI</div>
-                </div>
-              </div>
-              <div class="dash-bars">
-                <div class="dash-bar-row"><div class="dash-bar-label"><span>Comment quality</span><span style="color:var(--green)">88</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:88%;background:var(--green)"></div></div></div>
-                <div class="dash-bar-row"><div class="dash-bar-label"><span>Before/after ratio</span><span style="color:var(--green)">79</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:79%;background:var(--green)"></div></div></div>
-                <div class="dash-bar-row"><div class="dash-bar-label"><span>Audience fit</span><span style="color:var(--amber)">75</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:75%;background:var(--amber)"></div></div></div>
-              </div>
-              <div class="dash-card-actions">
-                <div class="dash-card-btn pri">Outreach</div>
-                <div class="dash-card-btn">+ Campaign</div>
-              </div>
+            <div class="b-name">Sophia Reeves</div>
+            <div class="b-handle">@sophiareeves · 15.1K</div>
+            <div class="b-track"><div class="b-fill" style="width:89%;background:#16A34A"></div></div>
+            <div class="b-badge" style="background:rgba(22,163,74,.08);color:#16A34A;border:1px solid rgba(22,163,74,.2)">Elite ROI</div>
+          </div>
+          <div class="b-card">
+            <div class="b-card-top">
+              <div class="b-av" style="background:linear-gradient(135deg,#60A5FA,#3B82F6)">CP</div>
+              <div class="b-sc" style="color:#16A34A">74</div>
             </div>
-            <!-- Card 3 -->
-            <div class="dash-card" style="border-top:2px solid rgba(232,150,42,.3)">
-              <div class="dash-card-top">
-                <div class="dash-card-info">
-                  <div class="dash-av" style="background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:#A78BFA">ZO</div>
-                  <div><div class="dash-name">Zara Okafor</div><div class="dash-meta">@zaraokafor · 67K · Makeup</div></div>
-                </div>
-                <div class="dash-score-wrap">
-                  <div class="dash-score" style="color:var(--amber)">58</div>
-                  <div class="dash-verdict" style="background:var(--amber-lo);color:var(--amber)">Aesthetic</div>
-                </div>
-              </div>
-              <div class="dash-bars">
-                <div class="dash-bar-row"><div class="dash-bar-label"><span>Comment quality</span><span style="color:var(--red)">35</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:35%;background:var(--amber)"></div></div></div>
-                <div class="dash-bar-row"><div class="dash-bar-label"><span>Before/after ratio</span><span style="color:var(--amber)">62</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:62%;background:var(--amber)"></div></div></div>
-                <div class="dash-bar-row"><div class="dash-bar-label"><span>Audience fit</span><span style="color:var(--amber)">60</span></div><div class="dash-bar-track"><div class="dash-bar-fill" style="width:60%;background:var(--amber)"></div></div></div>
-              </div>
-              <div class="dash-card-actions">
-                <div class="dash-card-btn">Outreach</div>
-                <div class="dash-card-btn">+ Campaign</div>
-              </div>
+            <div class="b-name">Chloe Park</div>
+            <div class="b-handle">@chloepark · 44.8K</div>
+            <div class="b-track"><div class="b-fill" style="width:74%;background:#16A34A"></div></div>
+            <div class="b-badge" style="background:rgba(22,163,74,.08);color:#16A34A;border:1px solid rgba(22,163,74,.2)">High ROI</div>
+          </div>
+          <div class="b-card">
+            <div class="b-card-top">
+              <div class="b-av" style="background:linear-gradient(135deg,#A78BFA,#7C3AED)">MC</div>
+              <div class="b-sc" style="color:#D97706">58</div>
             </div>
+            <div class="b-name">Maya Chen</div>
+            <div class="b-handle">@mayachen · 118K</div>
+            <div class="b-track"><div class="b-fill" style="width:58%;background:#D97706"></div></div>
+            <div class="b-badge" style="background:rgba(217,119,6,.08);color:#D97706;border:1px solid rgba(217,119,6,.2)">Mid ROI</div>
           </div>
         </div>
       </div>
@@ -441,122 +843,214 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
   </div>
 </div>
 
-<!-- PROOF -->
-<div class="proof" style="margin-top:0">
-  <div class="proof-row">
-    <div class="proof-item"><div class="proof-n"><span>240</span>+</div><div class="proof-l"><span data-i18n="proof_1l">brands using Vettly</span></div></div>
-    <div class="proof-item"><div class="proof-n"><span>4.6</span>×</div><div class="proof-l"><span data-i18n="proof_2l">higher ROI vs. follower-based picks</span></div></div>
-    <div class="proof-item"><div class="proof-n"><span>60</span>s</div><div class="proof-l"><span data-i18n="proof_3l">to get a full conversion verdict</span></div></div>
-    <div class="proof-item"><div class="proof-n" style="font-size:20px;padding-top:3px">Any niche</div><div class="proof-l">beauty, fashion, fitness & more</div></div>
+<!-- STATS BAR -->
+<div class="stats-bar" style="margin-top:72px">
+  <div class="stats-inner">
+    <div class="stat-item reveal">
+      <div class="stat-icon" style="background:var(--accent-lo)">📊</div>
+      <div>
+        <div class="stat-num">7</div>
+        <div class="stat-lbl">Scoring factors</div>
+      </div>
+    </div>
+    <div class="stat-sep"></div>
+    <div class="stat-item reveal reveal-d1">
+      <div class="stat-icon" style="background:var(--green-lo)">📡</div>
+      <div>
+        <div class="stat-num">Real</div>
+        <div class="stat-lbl">Instagram data</div>
+      </div>
+    </div>
+    <div class="stat-sep"></div>
+    <div class="stat-item reveal reveal-d2">
+      <div class="stat-icon" style="background:rgba(139,92,246,.08)">🤖</div>
+      <div>
+        <div class="stat-num">AI</div>
+        <div class="stat-lbl">Fraud detection</div>
+      </div>
+    </div>
+    <div class="stat-sep"></div>
+    <div class="stat-item reveal reveal-d3">
+      <div class="stat-icon" style="background:rgba(236,72,153,.08)">⚡</div>
+      <div>
+        <div class="stat-num">Free</div>
+        <div class="stat-lbl">To get started</div>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- FEATURES -->
-<section id="features">
-  <div class="sec">
-    <div class="sec-tag"><span data-i18n="nav_features">Features</span></div>
-    <div class="sec-h"><span data-i18n="feat_h">Everything in one place.</span></div>
-    <div class="feat-grid">
-      <div class="feat-cell">
-        <div class="feat-cell-title" data-i18n="feat_1t">ROI scoring</div>
-        <div class="feat-cell-desc" data-i18n="feat_1d">5 conversion signals combined into one clear verdict.</div>
-      </div>
-      <div class="feat-cell">
-        <div class="feat-cell-title" data-i18n="feat_2t">Plain-English reasoning</div>
-        <div class="feat-cell-desc" data-i18n="feat_2d">Every score explains itself. No guessing what the number means.</div>
-      </div>
-      <div class="feat-cell">
-        <div class="feat-cell-title" data-i18n="feat_3t">Niche benchmarking</div>
-        <div class="feat-cell-desc" data-i18n="feat_3d">See how each influencer ranks within their category.</div>
-      </div>
-      <div class="feat-cell">
-        <div class="feat-cell-title" data-i18n="feat_4t">Outreach templates</div>
-        <div class="feat-cell-desc" data-i18n="feat_4d">Personalized DM and email drafts, built from their actual content.</div>
-      </div>
-      <div class="feat-cell">
-        <div class="feat-cell-title" data-i18n="feat_5t">Campaign tracker</div>
-        <div class="feat-cell-desc" data-i18n="feat_5d">Move deals through a pipeline. From first DM to final results.</div>
-      </div>
-      <div class="feat-cell">
-        <div class="feat-cell-title" data-i18n="feat_6t">Score alerts</div>
-        <div class="feat-cell-desc" data-i18n="feat_6d">Get notified when a score drops. Catch red flags early.</div>
-      </div>
-    </div>
-  </div>
-</section>
+<div class="features-wrap" id="features">
 
-<!-- SCORING -->
-<section id="scoring">
-  <div class="sec">
-    <div class="sec-tag" data-i18n="scoring_tag">Scoring system</div>
-    <div class="sec-h" data-i18n="scoring_h">5 signals that predict sales.</div>
-    <div class="scoring-wrap">
-      <div>
-        <div class="factor-row"><div class="factor-name" data-i18n="factor_1">Product-question comments</div><div class="factor-w" style="color:var(--accent)">35%</div></div>
-        <div class="factor-row"><div class="factor-name" data-i18n="factor_2">Before / after content ratio</div><div class="factor-w" style="color:var(--green)">25%</div></div>
-        <div class="factor-row"><div class="factor-name" data-i18n="factor_3">Audience demographic fit</div><div class="factor-w" style="color:var(--amber)">20%</div></div>
-        <div class="factor-row"><div class="factor-name" data-i18n="factor_4">Niche consistency</div><div class="factor-w" style="color:#A78BFA">15%</div></div>
-        <div class="factor-row"><div class="factor-name" data-i18n="factor_5">Authenticity penalty</div><div class="factor-w" style="color:var(--red)">−5%</div></div>
-        <div style="margin-top:16px;background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:14px 16px">
-          <div style="font-size:11px;color:var(--ink3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em" data-i18n="verticals_label">Works across all verticals</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px">
-            <span style="font-size:11px;padding:3px 10px;border-radius:5px;background:var(--accent-lo);border:1px solid var(--accent-mid);color:var(--accent)">Beauty</span>
-            <span style="font-size:11px;padding:3px 10px;border-radius:5px;background:var(--s3);border:1px solid var(--b1);color:var(--ink3)">Fashion</span>
-            <span style="font-size:11px;padding:3px 10px;border-radius:5px;background:var(--s3);border:1px solid var(--b1);color:var(--ink3)">Fitness</span>
-            <span style="font-size:11px;padding:3px 10px;border-radius:5px;background:var(--s3);border:1px solid var(--b1);color:var(--ink3)">Food</span>
-            <span style="font-size:11px;padding:3px 10px;border-radius:5px;background:var(--s3);border:1px solid var(--b1);color:var(--ink3)">Tech</span>
-            <span style="font-size:11px;padding:3px 10px;border-radius:5px;background:var(--s3);border:1px solid var(--b1);color:var(--ink3)">Finance</span>
-            <span style="font-size:11px;padding:3px 10px;border-radius:5px;background:var(--s3);border:1px solid var(--b2);color:var(--ink2)">+ more</span>
+  <!-- Feature 1: Scoring -->
+  <div class="feat-split">
+    <div class="feat-text reveal">
+      <div class="feat-label"><span class="feat-label-dot"></span>ROI Scoring</div>
+      <h2>A score built for conversion,<br>not vanity.</h2>
+      <p class="feat-sub">Follower count tells you nothing. Vettly measures what actually drives sales — comment intent, content consistency, niche depth, and fraud signals.</p>
+      <ul class="feat-points">
+        <li><span class="feat-check">✓</span>Engagement quality, not just rate</li>
+        <li><span class="feat-check">✓</span>Beauty keyword depth and recency</li>
+        <li><span class="feat-check">✓</span>Authenticity penalty for over-sponsored accounts</li>
+        <li><span class="feat-check">✓</span>Growth momentum — trending up or down?</li>
+      </ul>
+    </div>
+    <div class="feat-visual reveal reveal-d2">
+      <div class="score-card-wrap">
+        <div class="float-tag float-tag-1">
+          <span class="float-tag-val">44%</span>
+          <span class="float-tag-lbl"> purchase-intent comments</span>
+        </div>
+        <div class="float-tag float-tag-2">
+          <span class="float-tag-val">Top 12%</span>
+          <span class="float-tag-lbl"> in skincare</span>
+        </div>
+        <div class="score-card" id="score-demo-card">
+          <div class="score-card-head">
+            <div class="score-profile">
+              <div class="score-av">SR</div>
+              <div>
+                <div class="score-name">Sophia Reeves</div>
+                <div class="score-handle">@sophiareeves · 15.1K followers</div>
+              </div>
+            </div>
+            <div class="score-big-wrap">
+              <div class="score-big" id="score-number">0</div>
+              <div class="score-verdict">Elite ROI</div>
+            </div>
+          </div>
+          <div class="factor-list">
+            <div class="fac">
+              <div class="fac-top"><span class="fac-name">Engagement Quality <span style="color:var(--text3)">·35%</span></span><span class="fac-val">92</span></div>
+              <div class="fac-track"><div class="fac-fill" id="f1" style="width:0%;background:#16A34A"></div></div>
+            </div>
+            <div class="fac">
+              <div class="fac-top"><span class="fac-name">Before/After Ratio <span style="color:var(--text3)">·25%</span></span><span class="fac-val">88</span></div>
+              <div class="fac-track"><div class="fac-fill" id="f2" style="width:0%;background:#16A34A"></div></div>
+            </div>
+            <div class="fac">
+              <div class="fac-top"><span class="fac-name">Audience Fit <span style="color:var(--text3)">·20%</span></span><span class="fac-val">85</span></div>
+              <div class="fac-track"><div class="fac-fill" id="f3" style="width:0%;background:#16A34A"></div></div>
+            </div>
+            <div class="fac">
+              <div class="fac-top"><span class="fac-name">Niche Consistency <span style="color:var(--text3)">·15%</span></span><span class="fac-val">95</span></div>
+              <div class="fac-track"><div class="fac-fill" id="f4" style="width:0%;background:#16A34A"></div></div>
+            </div>
+            <div class="fac">
+              <div class="fac-top"><span class="fac-name">Authenticity <span style="color:var(--text3)">·5%</span></span><span class="fac-val">100</span></div>
+              <div class="fac-track"><div class="fac-fill" id="f5" style="width:0%;background:#16A34A"></div></div>
+            </div>
           </div>
         </div>
       </div>
-      <div>
-        <div class="verdict-box" style="background:var(--green-lo);border-color:rgba(52,199,122,.2)">
-          <div class="vb-head"><div class="vb-title" style="color:var(--green)" data-i18n="verdict_high_t">High conversion</div><div class="vb-range" style="color:var(--green)">70–100</div></div>
-          <div class="vb-desc" style="color:var(--green)" data-i18n="verdict_high_d">Strong purchase-intent signals. Recommended for direct conversion campaigns.</div>
+    </div>
+  </div>
+
+  <!-- Feature 2: Real Data -->
+  <div class="feat-split flip">
+    <div class="feat-text reveal">
+      <div class="feat-label"><span class="feat-label-dot"></span>Real Instagram Data</div>
+      <h2>Actual posts. Actual comments.<br>No estimates.</h2>
+      <p class="feat-sub">We pull real data directly from Instagram — recent posts, engagement numbers, comment patterns, hashtags. Every score is based on what's actually happening on the account right now.</p>
+      <ul class="feat-points">
+        <li><span class="feat-check">✓</span>Up-to-date post and engagement data</li>
+        <li><span class="feat-check">✓</span>AI analyzes comment sentiment for purchase intent</li>
+        <li><span class="feat-check">✓</span>Fraud signals: ghost followers, engagement spikes, hashtag spam</li>
+        <li><span class="feat-check">✓</span>Results cached 7 days so you don't re-spend API calls</li>
+      </ul>
+    </div>
+    <div class="feat-visual reveal reveal-d2">
+      <div class="data-visual">
+        <div class="dv-header">
+          <div class="dv-av">SR</div>
+          <div>
+            <div class="dv-name">@sophiareeves</div>
+            <div class="dv-handle">Skincare · Instagram</div>
+          </div>
+          <div class="dv-live"><span class="dv-live-dot"></span>Live data</div>
         </div>
-        <div class="verdict-box" style="background:var(--amber-lo);border-color:rgba(232,150,42,.2)">
-          <div class="vb-head"><div class="vb-title" style="color:var(--amber)" data-i18n="verdict_mid_t">Aesthetic</div><div class="vb-range" style="color:var(--amber)">40–69</div></div>
-          <div class="vb-desc" style="color:var(--amber)" data-i18n="verdict_mid_d">Good content quality but low buying intent. Use for awareness, not conversion.</div>
-        </div>
-        <div class="verdict-box" style="background:var(--red-lo);border-color:rgba(217,80,80,.2)">
-          <div class="vb-head"><div class="vb-title" style="color:var(--red)" data-i18n="verdict_low_t">Risk</div><div class="vb-range" style="color:var(--red)">0–39</div></div>
-          <div class="vb-desc" style="color:var(--red)" data-i18n="verdict_low_d">Suspicious signals detected. Not recommended for paid partnerships.</div>
+        <div class="dv-body">
+          <div class="dv-row"><span class="dv-lbl">Followers</span><span class="dv-val">15,100</span></div>
+          <div class="dv-row"><span class="dv-lbl">Avg engagement rate</span><span class="dv-val green">6.2%</span></div>
+          <div class="dv-row"><span class="dv-lbl">Purchase-intent comments</span><span class="dv-val green">44%</span></div>
+          <div class="dv-row"><span class="dv-lbl">Spam ratio</span><span class="dv-val green">3%</span></div>
+          <div class="dv-row"><span class="dv-lbl">Fraud risk</span><span class="dv-val green">None detected</span></div>
+          <div class="dv-row"><span class="dv-lbl">Avg posts per week</span><span class="dv-val">4.2</span></div>
+          <div class="dv-posts">
+            <div class="dv-post">🧴</div>
+            <div class="dv-post">✨</div>
+            <div class="dv-post">💆</div>
+            <div class="dv-post">🪞</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</section>
 
-<!-- TESTIMONIALS -->
-<section>
-  <div class="sec">
-    <div class="sec-tag" data-i18n="test_tag">What brands say</div>
-    <div class="sec-h" data-i18n="test_h">Brands that stopped guessing.</div>
-    <div class="quote-grid">
-      <div class="qcard">
-        <div class="qstars">★★★★★</div>
-        <div class="qtext">"We used to spend 3 days vetting influencers in spreadsheets. Vettly cuts that to 20 minutes."</div>
-        <div class="qperson">
-          <div class="qav" style="background:var(--accent-lo);color:var(--accent)">JK</div>
-          <div><div class="qname">Jamie K.</div><div class="qrole">Founder, skincare brand</div></div>
+  <!-- Feature 3: Outreach -->
+  <div class="feat-split">
+    <div class="feat-text reveal">
+      <div class="feat-label"><span class="feat-label-dot"></span>Outreach Templates</div>
+      <h2>From score to DM<br>in one click.</h2>
+      <p class="feat-sub">After scoring, Vettly generates a personalized outreach template based on the influencer's niche and content style. Copy, send, done.</p>
+      <ul class="feat-points">
+        <li><span class="feat-check">✓</span>Auto-generated based on their actual content</li>
+        <li><span class="feat-check">✓</span>Track sent / replied status</li>
+        <li><span class="feat-check">✓</span>Outreach history across all analyzed influencers</li>
+      </ul>
+    </div>
+    <div class="feat-visual reveal reveal-d2">
+      <div class="outreach-visual">
+        <div class="ov-header">
+          <div class="ov-dot"></div>
+          Outreach template — Sophia Reeves
+        </div>
+        <div class="ov-body">
+          <div class="ov-to">
+            <span class="ov-to-label">To</span>
+            <div class="ov-to-chip">@sophiareeves</div>
+            <span style="font-size:11px;color:var(--text3);margin-left:4px">· 15.1K · Skincare</span>
+          </div>
+          <div class="ov-text">
+            <p>Hi <span class="ov-highlight">Sophia</span>,</p>
+            <p>I've been following your <span class="ov-highlight">skincare</span> content and it genuinely stood out to me.</p>
+            <p><span class="ov-highlight">[Brand name]</span> creates skincare products, and I think your audience would love what we make.</p>
+            <p>Would you be open to a complimentary product? No obligations — share only if you love it.</p>
+            <p style="color:var(--text3)">[Your name]</p>
+          </div>
+          <div class="ov-btns">
+            <div class="ov-btn ov-btn-pri">Copy to clipboard</div>
+            <div class="ov-btn ov-btn-sec">Mark as sent</div>
+          </div>
         </div>
       </div>
-      <div class="qcard">
-        <div class="qstars">★★★★★</div>
-        <div class="qtext">"The High ROI verdict paid for 6 months of the subscription on the first collaboration alone."</div>
-        <div class="qperson">
-          <div class="qav" style="background:var(--green-lo);color:var(--green)">AR</div>
-          <div><div class="qname">Alicia R.</div><div class="qrole">CMO, DTC fashion label</div></div>
-        </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how">
+  <div class="how-inner">
+    <div class="reveal">
+      <h2>How it works</h2>
+      <p class="how-sub">Three steps from handle to decision.</p>
+    </div>
+    <div class="how-steps">
+      <div class="how-step reveal reveal-d1">
+        <div class="how-num">1</div>
+        <div class="how-step-title">Enter an Instagram handle</div>
+        <div class="how-step-desc">Type any public Instagram account. Vettly pulls their recent posts, engagement, and comment data in real time.</div>
       </div>
-      <div class="qcard">
-        <div class="qstars">★★★★★</div>
-        <div class="qtext">"Finally a tool that tells me why, not just who. The comment signal alone is worth the subscription."</div>
-        <div class="qperson">
-          <div class="qav" style="background:rgba(167,139,250,.12);color:#A78BFA">MT</div>
-          <div><div class="qname">Marcus T.</div><div class="qrole">Growth lead, supplement brand</div></div>
-        </div>
+      <div class="how-step reveal reveal-d2">
+        <div class="how-num">2</div>
+        <div class="how-step-title">Get a 0–100 ROI score</div>
+        <div class="how-step-desc">Our 7-factor algorithm weighs engagement quality, niche consistency, authenticity signals, momentum, and fraud risk.</div>
+      </div>
+      <div class="how-step reveal reveal-d3">
+        <div class="how-num">3</div>
+        <div class="how-step-title">Reach out with confidence</div>
+        <div class="how-step-desc">View the full breakdown, see why they scored that way, and send a personalized outreach template — all in one place.</div>
       </div>
     </div>
   </div>
@@ -564,187 +1058,147 @@ footer{display:flex;justify-content:space-between;align-items:center;padding:28p
 
 <!-- PRICING -->
 <section id="pricing">
-  <div class="sec">
-    <div class="sec-tag"><span data-i18n="nav_pricing">Pricing</span></div>
-    <div class="sec-h" data-i18n="pricing_h">Start free. Scale when ready.</div>
-    <div class="pricing-grid">
-      <div class="plan">
-        <div class="ptier">Free</div>
-        <div class="pprice"><sup></sup>$0<sub>/mo</sub></div>
-        <div class="pnote" data-i18n="plan_free_note">Try before you commit.</div>
-        <ul class="pfeats">
-          <li><span class="fon">✓</span> 5 analyses per month</li>
-          <li><span class="fon">✓</span> High / Mid / Risk verdict</li>
-          <li><span class="fon">✓</span> Platform & category filters</li>
-          <li><span class="foff">–</span> <span style="color:var(--ink3)">Score breakdown</span></li>
-          <li><span class="foff">–</span> <span style="color:var(--ink3)">Outreach templates</span></li>
-          <li><span class="foff">–</span> <span style="color:var(--ink3)">Campaign tracker</span></li>
-        </ul>
-        <a href="/dashboard.html" class="btn btn-ghost" style="width:100%;padding:10px;text-align:center"><span data-i18n="btn_free">Get started free</span></a>
-      </div>
-      <div class="plan pop">
-        <div class="pbadge">POPULAR</div>
-        <div class="ptier">Pro</div>
-        <div class="pprice"><sup>$</sup>19<sub>/mo</sub></div>
-        <div class="pnote" data-i18n="plan_pro_note">One good decision covers the cost.</div>
-        <ul class="pfeats">
-          <li><span class="fon">✓</span> 50 analyses per month</li>
-          <li><span class="fon">✓</span> Full score breakdown + explanation</li>
-          <li><span class="fon">✓</span> Niche benchmarking</li>
-          <li><span class="fon">✓</span> Outreach template generator</li>
-          <li><span class="fon">✓</span> Campaign tracker</li>
-          <li><span class="fon">✓</span> Weekly score alerts</li>
-        </ul>
-        <button class="btn btn-solid" style="width:100%;padding:10px" onclick="startPlan('pro')"><span data-i18n="btn_pro">Start Pro →</span></button>
-      </div>
-      <div class="plan">
-        <div class="ptier">Growth</div>
-        <div class="pprice"><sup>$</sup>49<sub>/mo</sub></div>
-        <div class="pnote" data-i18n="plan_growth_note">For agencies and multi-niche brands.</div>
-        <ul class="pfeats">
-          <li><span class="fon">✓</span> Unlimited analyses</li>
-          <li><span class="fon">✓</span> Everything in Pro</li>
-          <li><span class="fon">✓</span> Multi-niche support</li>
-          <li><span class="fon">✓</span> Bulk comparison (20+)</li>
-          <li><span class="fon">✓</span> Pattern insights</li>
-          <li><span class="fon">✓</span> CSV export · 3 seats</li>
-        </ul>
-        <button class="btn btn-ghost" style="width:100%;padding:10px" onclick="startPlan('growth')"><span data-i18n="btn_growth">Start Growth →</span></button>
-      </div>
+  <div class="reveal">
+    <h2>Simple, honest pricing.</h2>
+    <p class="pricing-sub">Start free. Upgrade when you're ready.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="plan reveal reveal-d1">
+      <div class="plan-badge free">Free</div>
+      <div class="plan-name">Starter</div>
+      <div class="plan-desc">Try it before you commit.</div>
+      <div class="plan-price">$0</div>
+      <div class="plan-period">forever free</div>
+      <div class="plan-sep"></div>
+      <ul class="plan-features">
+        <li>2 influencer analyses</li>
+        <li>Full 7-factor breakdown</li>
+        <li>Outreach template generation</li>
+        <li>Analysis history</li>
+      </ul>
+      <a href="/auth.html" class="plan-cta plan-cta-outline">Get started free</a>
+    </div>
+    <div class="plan featured reveal reveal-d2">
+      <div class="plan-badge popular">Most popular</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-desc">For brands running regular campaigns.</div>
+      <div class="plan-price">$9</div>
+      <div class="plan-period">per month</div>
+      <div class="plan-sep"></div>
+      <ul class="plan-features">
+        <li>50 analyses per month</li>
+        <li>Full 7-factor breakdown</li>
+        <li>AI comment sentiment analysis</li>
+        <li>Fraud detection scoring</li>
+        <li>Outreach tracking</li>
+        <li>Analytics dashboard</li>
+      </ul>
+      <a href="/auth.html" class="plan-cta plan-cta-white">Start Pro →</a>
+    </div>
+    <div class="plan reveal reveal-d3">
+      <div class="plan-badge growth">Growth</div>
+      <div class="plan-name">Growth</div>
+      <div class="plan-desc">For agencies and power users.</div>
+      <div class="plan-price">$49</div>
+      <div class="plan-period">per month</div>
+      <div class="plan-sep"></div>
+      <ul class="plan-features">
+        <li>Unlimited analyses</li>
+        <li>Everything in Pro</li>
+        <li>Priority data refresh</li>
+        <li>Bulk handle analysis</li>
+        <li>API access (coming soon)</li>
+      </ul>
+      <a href="/auth.html" class="plan-cta plan-cta-accent">Start Growth →</a>
     </div>
   </div>
 </section>
 
 <!-- CTA -->
-<div class="cta-wrap">
-  <div class="cta">
-    <div class="cta-h">Know before<br>you <span>spend.</span></div>
-    <div class="cta-sub">The only influencer tool that explains its reasoning. Start free in 60 seconds.</div>
-    <div class="cta-btns">
-      <a href="/dashboard.html" class="btn btn-solid btn-lg"><span data-i18n="cta_btn1">Start free — no card needed</span></a>
-    </div>
-  </div>
-</div>
+<section class="cta-section">
+  <h2 class="reveal">Start vetting smarter today.</h2>
+  <p class="reveal reveal-d1">Two free analyses. No credit card. No guesswork.</p>
+  <a href="/auth.html" class="btn btn-white btn-lg reveal reveal-d2">Create free account <span class="arrow-icon">→</span></a>
+  <p class="cta-fine reveal reveal-d3">Takes 30 seconds to sign up.</p>
+</section>
 
 <!-- FOOTER -->
-<div class="footer-border">
-  <footer>
-    <div class="flogo">Vettly</div>
-    <div class="flinks">
-      <a class="flink" href="#"><span data-i18n="nav_features">Features</span></a>
-      <a class="flink" href="#"><span data-i18n="nav_pricing">Pricing</span></a>
-      <a class="flink" href="#">Privacy</a>
-      <a class="flink" href="#">Terms</a>
+<footer>
+  <a href="/" class="footer-logo">
+    <div class="footer-mark">
+      <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+        <circle cx="7" cy="7" r="3" fill="white"/>
+        <circle cx="7" cy="7" r="6" stroke="white" stroke-width="1.5" fill="none"/>
+      </svg>
     </div>
-    <div class="fcopy">© 2025 Vettly</div>
-  </footer>
-</div>
+    <span class="footer-brand">Vettly</span>
+  </a>
+  <div class="footer-links">
+    <a href="#features" class="footer-link">Features</a>
+    <a href="#pricing" class="footer-link">Pricing</a>
+    <a href="/auth.html" class="footer-link">Sign in</a>
+  </div>
+  <span class="footer-copy">© 2025 Vettly. All rights reserved.</span>
+</footer>
 
 <script>
-// Insert lang switcher
-I18N.apply();
-</script>
-
-<script>
-var TRANSLATIONS = {
-  en: { hero_h1_1:"Stop guessing.", hero_h1_2:"Start", hero_h1_accent:"knowing.", hero_sub:"Vettly scores influencers on 5 conversion signals — so you know who drives real sales before you spend a dollar.", nav_features:"Features", nav_scoring:"Scoring", nav_pricing:"Pricing", nav_signin:"Sign in", nav_start:"Start free →", hero_cta1:"Start free →", hero_cta2:"See how it works", hero_fine:"No credit card · Free tier available · Any niche", btn_free:"Get started free", btn_pro:"Start Pro →", btn_growth:"Start Growth →", feat_h:"Everything in one place.", proof_1l:"brands using Vettly", proof_2l:"higher ROI vs. follower-based picks", proof_3l:"to get a full conversion verdict", cta_btn1:"Start free — no card needed", cta_btn2:"Book a demo" },
-  tr: { hero_h1_1:"Tahmin etmeyi bırak.", hero_h1_2:"Gerçeği", hero_h1_accent:"öğren.", hero_sub:"Vettly, influencer'ları 5 dönüşüm sinyaline göre puanlar — bir kuruş harcamadan kimin gerçek satış getirdiğini öğren.", nav_features:"Özellikler", nav_scoring:"Puanlama", nav_pricing:"Fiyatlar", nav_signin:"Giriş yap", nav_start:"Ücretsiz başla →", hero_cta1:"Ücretsiz başla →", hero_cta2:"Nasıl çalışır", hero_fine:"Kredi kartı gerekmez · Ücretsiz plan mevcut · Her niş", btn_free:"Ücretsiz başla", btn_pro:"Pro'ya başla →", btn_growth:"Büyüme'ye başla →", feat_h:"Her şey tek yerde.", proof_1l:"Vettly kullanan marka", proof_2l:"Takipçi bazlı seçime kıyasla yüksek ROI", proof_3l:"Tam dönüşüm kararı için", cta_btn1:"Ücretsiz başla — kart gerekmez", cta_btn2:"Demo al",
-    feat_1t:"ROI puanlaması", feat_1d:"5 dönüşüm sinyali tek net karara dönüşür.",
-    feat_2t:"Sade açıklama", feat_2d:"Her puan kendini açıklar. Sayının ne anlama geldiğini tahmin etmene gerek yok.",
-    feat_3t:"Niş karşılaştırması", feat_3d:"Her influencer'ın kendi kategorisinde nasıl sıralandığını gör.",
-    feat_4t:"Outreach şablonları", feat_4d:"Kişiselleştirilmiş DM ve e-posta taslakları, gerçek içeriklerine göre hazırlanır.",
-    feat_5t:"Kampanya takibi", feat_5d:"Anlaşmaları pipeline'da ilerlet. İlk mesajdan son sonuca kadar.",
-    feat_6t:"Puan uyarıları", feat_6d:"Puan düştüğünde bildirim al. Tehlike işaretlerini erken yakala.",
-    scoring_tag:"Puanlama sistemi", scoring_h:"Satışı öngören 5 sinyal.",
-    factor_1:"Ürün sorusu yorumları", factor_2:"Önce / sonra içerik oranı",
-    factor_3:"Kitle demografik uyumu", factor_4:"Niş tutarlılığı", factor_5:"Özgünlük cezası",
-    verticals_label:"Tüm sektörlerde çalışır",
-    verdict_high_t:"Yüksek dönüşüm", verdict_high_d:"Güçlü satın alma niyeti sinyalleri. Doğrudan dönüşüm kampanyaları için önerilir.",
-    verdict_mid_t:"Estetik", verdict_mid_d:"İyi içerik kalitesi ama düşük satın alma niyeti. Farkındalık için kullan.",
-    verdict_low_t:"Risk", verdict_low_d:"Şüpheli sinyaller tespit edildi. Ücretli iş birlikleri için önerilmez.",
-    test_tag:"Markalar ne diyor", test_h:"Tahmin etmeyi bırakan markalar.",
-    pricing_tag:"Fiyatlar", pricing_h:"Ücretsiz başla. Hazır olunca büyü.",
-    plan_free_note:"Taahhüt etmeden önce dene.", plan_pro_note:"Tek iyi karar maliyeti karşılar.", plan_growth_note:"Ajanslar ve çok nişli markalar için." },
-  ru: { hero_h1_1:"Прекрати угадывать.", hero_h1_2:"Начни", hero_h1_accent:"знать.", hero_sub:"Vettly оценивает инфлюенсеров по 5 сигналам конверсии — узнай, кто приносит реальные продажи, до того как потратишь деньги.", nav_features:"Функции", nav_scoring:"Оценка", nav_pricing:"Цены", nav_signin:"Войти", nav_start:"Начать бесплатно →", hero_cta1:"Начать бесплатно →", hero_cta2:"Как это работает", hero_fine:"Без кредитной карты · Бесплатный тариф · Любая ниша", btn_free:"Начать бесплатно", btn_pro:"Начать Про →", btn_growth:"Начать Рост →", feat_h:"Всё в одном месте.", proof_1l:"брендов используют Vettly", proof_2l:"выше ROI vs выбор по подписчикам", proof_3l:"для полного вердикта конверсии", cta_btn1:"Начать бесплатно — карта не нужна", cta_btn2:"Заказать демо",
-    feat_1t:"Оценка ROI", feat_1d:"5 сигналов конверсии объединены в один чёткий вердикт.",
-    feat_2t:"Простые объяснения", feat_2d:"Каждая оценка объясняет себя. Не нужно гадать, что означает число.",
-    feat_3t:"Сравнение в нише", feat_3d:"Посмотри, как каждый инфлюенсер ранжируется в своей категории.",
-    feat_4t:"Шаблоны outreach", feat_4d:"Персонализированные DM и черновики писем на основе реального контента.",
-    feat_5t:"Трекер кампаний", feat_5d:"Продвигай сделки по пайплайну. От первого сообщения до результата.",
-    feat_6t:"Уведомления об оценках", feat_6d:"Получай уведомления при падении оценки. Замечай красные флаги заранее.",
-    scoring_tag:"Система оценки", scoring_h:"5 сигналов, которые предсказывают продажи.",
-    factor_1:"Комментарии о продукте", factor_2:"Соотношение до/после",
-    factor_3:"Демографическое соответствие", factor_4:"Последовательность в нише", factor_5:"Штраф за неаутентичность",
-    verticals_label:"Работает во всех нишах",
-    verdict_high_t:"Высокая конверсия", verdict_high_d:"Сильные сигналы намерения купить. Рекомендуется для прямых конверсионных кампаний.",
-    verdict_mid_t:"Эстетика", verdict_mid_d:"Хорошее качество контента, но низкое намерение купить. Используй для охвата.",
-    verdict_low_t:"Риск", verdict_low_d:"Обнаружены подозрительные сигналы. Не рекомендуется для платных партнёрств.",
-    test_tag:"Что говорят бренды", test_h:"Бренды, которые перестали угадывать.",
-    pricing_tag:"Цены", pricing_h:"Начни бесплатно. Масштабируйся когда готов.",
-    plan_free_note:"Попробуй без обязательств.", plan_pro_note:"Одно правильное решение покрывает стоимость.", plan_growth_note:"Для агентств и мультинишевых брендов." },
-  fr: { hero_h1_1:"Arrête de deviner.", hero_h1_2:"Commence à", hero_h1_accent:"savoir.", hero_sub:"Vettly évalue les influenceurs sur 5 signaux de conversion — sache qui génère de vraies ventes avant de dépenser un centime.", nav_features:"Fonctionnalités", nav_scoring:"Notation", nav_pricing:"Tarifs", nav_signin:"Se connecter", nav_start:"Commencer gratuitement →", hero_cta1:"Commencer gratuitement →", hero_cta2:"Voir comment ça marche", hero_fine:"Pas de carte bancaire · Offre gratuite · Toute niche", btn_free:"Commencer gratuitement", btn_pro:"Démarrer Pro →", btn_growth:"Démarrer Croissance →", feat_h:"Tout au même endroit.", proof_1l:"marques utilisent Vettly", proof_2l:"ROI plus élevé vs sélection par abonnés", proof_3l:"pour un verdict de conversion complet", cta_btn1:"Commencer gratuitement — sans carte", cta_btn2:"Réserver une démo",
-    feat_1t:"Notation ROI", feat_1d:"5 signaux de conversion combinés en un verdict clair.",
-    feat_2t:"Explication claire", feat_2d:"Chaque score s'explique. Pas besoin de deviner ce que le chiffre signifie.",
-    feat_3t:"Benchmark de niche", feat_3d:"Vois comment chaque influenceur se classe dans sa catégorie.",
-    feat_4t:"Modèles d'outreach", feat_4d:"Brouillons DM et e-mail personnalisés, basés sur leur vrai contenu.",
-    feat_5t:"Suivi de campagne", feat_5d:"Fais progresser les deals dans un pipeline. Du premier DM aux résultats.",
-    feat_6t:"Alertes de score", feat_6d:"Reçois une notification quand un score baisse. Détecte les signaux d'alarme tôt.",
-    scoring_tag:"Système de notation", scoring_h:"5 signaux qui prédisent les ventes.",
-    factor_1:"Commentaires sur les produits", factor_2:"Ratio contenu avant/après",
-    factor_3:"Adéquation démographique", factor_4:"Cohérence de niche", factor_5:"Pénalité d'authenticité",
-    verticals_label:"Fonctionne dans tous les secteurs",
-    verdict_high_t:"Haute conversion", verdict_high_d:"Forts signaux d'intention d'achat. Recommandé pour les campagnes de conversion directe.",
-    verdict_mid_t:"Esthétique", verdict_mid_d:"Bonne qualité de contenu mais faible intention d'achat. Utilise pour la notoriété.",
-    verdict_low_t:"Risque", verdict_low_d:"Signaux suspects détectés. Non recommandé pour les partenariats payants.",
-    test_tag:"Ce que disent les marques", test_h:"Les marques qui ont arrêté de deviner.",
-    pricing_tag:"Tarifs", pricing_h:"Commence gratuitement. Grandis quand tu es prêt.",
-    plan_free_note:"Essaie sans engagement.", plan_pro_note:"Une bonne décision couvre le coût.", plan_growth_note:"Pour les agences et marques multi-niches." }
-};
-
-var currentLang = localStorage.getItem('vettly_lang') || 'en';
-
-function applyLang(lang) {
-  var t = TRANSLATIONS[lang];
-  if (!t) return;
-  document.querySelectorAll('[data-i18n]').forEach(function(el) {
-    var key = el.getAttribute('data-i18n');
-    if (t[key]) el.textContent = t[key];
+// ── SCROLL REVEAL ────────────────────────────────────────────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+    }
   });
-}
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-function setLang(code, flag, label) {
-  currentLang = code;
-  localStorage.setItem('vettly_lang', code);
-  document.getElementById('lang-current-flag').textContent = flag;
-  document.getElementById('lang-current-code').textContent = label;
-  document.getElementById('lang-menu').classList.remove('open');
-  applyLang(code);
-}
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-function toggleLangMenu() {
-  document.getElementById('lang-menu').classList.toggle('open');
-}
+// ── SCORE CARD ANIMATION ─────────────────────────────────────────────────────
+const scoreCard = document.getElementById('score-demo-card');
+let scoreAnimated = false;
 
-document.addEventListener('click', function(e) {
-  var drop = document.getElementById('lang-drop');
-  if (drop && !drop.contains(e.target)) {
-    var menu = document.getElementById('lang-menu');
-    if (menu) menu.classList.remove('open');
+const scoreObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !scoreAnimated) {
+      scoreAnimated = true;
+      animateScore();
+    }
+  });
+}, { threshold: 0.4 });
+
+if (scoreCard) scoreObserver.observe(scoreCard);
+
+function animateScore() {
+  // Count up score
+  const el = document.getElementById('score-number');
+  const target = 89;
+  const duration = 900;
+  const start = performance.now();
+
+  function step(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(eased * target);
+    if (progress < 1) requestAnimationFrame(step);
   }
-});
+  requestAnimationFrame(step);
 
-// Apply on load
-var flags = {en:'🇬🇧',tr:'🇹🇷',ru:'🇷🇺',fr:'🇫🇷'};
-var codes = {en:'EN',tr:'TR',ru:'RU',fr:'FR'};
-document.getElementById('lang-current-flag').textContent = flags[currentLang] || '🇬🇧';
-document.getElementById('lang-current-code').textContent = codes[currentLang] || 'EN';
-applyLang(currentLang);
-</script>
+  // Fill factor bars with stagger
+  const bars = [
+    { id: 'f1', width: 92, delay: 100 },
+    { id: 'f2', width: 88, delay: 220 },
+    { id: 'f3', width: 85, delay: 340 },
+    { id: 'f4', width: 95, delay: 460 },
+    { id: 'f5', width: 100, delay: 580 },
+  ];
 
-
-<script>
-async function startPlan(plan) {
-  window.location.href = '/auth.html?plan=' + plan;
+  bars.forEach(({ id, width, delay }) => {
+    setTimeout(() => {
+      const bar = document.getElementById(id);
+      if (bar) bar.style.width = width + '%';
+    }, delay);
+  });
 }
 </script>
 </body>
