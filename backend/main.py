@@ -25,7 +25,6 @@ class ScoreRequest(BaseModel):
     handle: str
     user_email: str = None
     category: str = "beauty"
-    bypass_cache: bool = False
 
     @field_validator("handle")
     @classmethod
