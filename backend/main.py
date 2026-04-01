@@ -137,8 +137,9 @@ def apply_referral(req: ReferralRequest):
     if not sb:
         raise HTTPException(status_code=503, detail="DB unavailable")
 
-    # Check not already redeemed
-    existing = sb.table("referrals").select("id").eq("new_email", req.new_email).execute()
+    # Dedup check — stored as a special record in analyses table (no schema change needed)
+    ref_handle = f"_ref:{req.new_email}"
+    existing = sb.table("analyses").select("id").eq("handle", ref_handle).execute()
     if existing.data:
         raise HTTPException(status_code=409, detail="Referral already applied")
 
@@ -151,10 +152,12 @@ def apply_referral(req: ReferralRequest):
     increment_limit(sb, referrer_email, REFERRAL_BONUS_REFERRER)
     increment_limit(sb, req.new_email, REFERRAL_BONUS_NEW)
 
-    # Record referral
-    sb.table("referrals").insert({
-        "referrer_email": referrer_email,
-        "new_email": req.new_email,
+    # Record referral in analyses table (handle=_ref:{email}, score=0, label=referral)
+    sb.table("analyses").insert({
+        "handle": ref_handle,
+        "score": 0,
+        "label": "referral",
+        "result": {"referrer_email": referrer_email, "new_email": req.new_email},
     }).execute()
 
     return {"status": "applied", "referrer_bonus": REFERRAL_BONUS_REFERRER, "new_user_bonus": REFERRAL_BONUS_NEW}
