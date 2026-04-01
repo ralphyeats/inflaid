@@ -27,7 +27,7 @@ def score_niche(raw: dict) -> int:
     coverage = niche_count / len(posts)
 
     total_keywords = sum(_keyword_count(p, keywords) for p in posts)
-    depth_score = min(1.0, (total_keywords / len(posts)) / 5)
+    depth_score = min(1.0, (total_keywords / len(posts)) / 3)
 
     recent_posts = posts[:6]
     recent_niche = sum(1 for p in recent_posts if _has_keyword(p, keywords)) / len(recent_posts)

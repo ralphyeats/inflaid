@@ -8,11 +8,36 @@ Each category defines its niche keywords and factor weights.
 CATEGORY_CONFIG: dict = {
     "beauty": {
         "keywords": [
+            # English — product types
             "skincare", "makeup", "beauty", "skin", "glow", "routine", "serum",
-            "moisturizer", "foundation", "lipstick", "hair", "cosmetic", "fashion",
-            "style", "makyaj", "guzellik", "cilt", "ruj", "fondoten", "kirpik",
-            "макияж", "красота", "уход", "косметика", "beaute", "maquillage",
-            "belleza", "maquillaje",
+            "moisturizer", "foundation", "lipstick", "hair", "cosmetic", "blush",
+            "bronzer", "highlighter", "concealer", "eyeliner", "mascara", "eyeshadow",
+            "contour", "primer", "toner", "sunscreen", "spf", "retinol", "niacinamide",
+            "perfume", "fragrance", "deodorant", "shampoo", "conditioner", "haircare",
+            "nail", "lash", "brow", "lip", "bb cream", "cc cream", "face wash",
+            "exfoliant", "peeling", "face mask", "sheet mask", "eye cream",
+            # English — content formats
+            "grwm", "get ready with me", "tutorial", "haul", "unboxing", "review",
+            "ootd", "look", "transformation", "skincare routine", "night routine",
+            "morning routine", "self care", "selfcare",
+            # Turkish — product types
+            "makyaj", "guzellik", "güzellik", "cilt", "ruj", "fondoten", "kirpik",
+            "allık", "allik", "bronzer", "kaş", "kas", "göz", "goz", "pudra",
+            "eyeliner", "maskara", "kontür", "kontur", "astar", "toner", "nemlendirici",
+            "yüz yıkama", "yuz yikama", "peeling", "maske", "göz kremi", "goz kremi",
+            "güneş kremi", "gunes kremi", "spf", "serum", "parfüm", "parfum",
+            "deodorant", "şampuan", "sampuan", "saç bakım", "sac bakim", "oje",
+            "dudak", "kaş kalemi", "rimel", "bb krem", "cc krem", "highlighter",
+            # Turkish — content formats
+            "bakım rutini", "bakim rutini", "gece rutini", "sabah rutini",
+            "inceleme", "deneme", "kutu açılımı", "kutu acilimi", "önce sonra",
+            "once sonra", "makyaj tutorial", "cilt bakım", "cilt bakim",
+            # Russian
+            "макияж", "красота", "уход", "косметика", "помада", "тональный",
+            "тушь", "тени", "румяна", "хайлайтер", "сыворотка", "увлажняющий",
+            # French / Spanish
+            "beaute", "beauté", "maquillage", "soin", "routine beaute",
+            "belleza", "maquillaje", "cuidado", "labial", "rutina",
         ],
         "factor_weights": {
             "engagement":   0.30,
