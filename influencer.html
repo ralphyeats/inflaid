@@ -142,8 +142,18 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 .obtn-ghost{background:transparent;border:1px solid var(--b2);color:var(--ink2)}
 .obtn-ghost:hover{border-color:var(--b3);color:var(--ink)}
 
+/* WARNING FLAGS */
+.warn-list{display:flex;flex-direction:column;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05)}
+.warn-item{display:flex;align-items:flex-start;gap:8px;font-size:11px;color:var(--amber);line-height:1.5}
+.warn-dot{width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px}
+
 /* NOT RECOMMENDED */
 .not-rec{background:var(--red-lo);border:1px solid var(--red-mid);border-radius:9px;padding:14px 16px;font-size:13px;color:var(--red);line-height:1.6;margin-bottom:12px}
+
+/* SAVE BUTTON */
+.save-topbtn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--sans);transition:all .15s;border:1px solid var(--b2);background:transparent;color:var(--ink2)}
+.save-topbtn:hover{border-color:var(--amber-mid);color:var(--amber)}
+.save-topbtn.saved{border-color:var(--amber-mid);background:var(--amber-lo);color:var(--amber)}
 @media(max-width:768px){
   .sidebar{display:none}
   .main{width:100vw}
@@ -199,8 +209,11 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
     <div class="topbar-sep"></div>
     <div class="topbar-crumb" id="tb-crumb">Loading...</div>
     <div class="topbar-actions">
+      <button class="save-topbtn" id="save-topbtn" onclick="toggleSave()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" id="save-icon"><path d="M6 1L7.5 4.5H11L8.25 6.75L9.25 10.25L6 8.25L2.75 10.25L3.75 6.75L1 4.5H4.5L6 1Z" stroke-linejoin="round"/></svg>
+        <span id="save-label">Save</span>
+      </button>
       <button class="tbtn tbtn-ghost" onclick="copyTemplate()">Copy outreach</button>
-      <button class="tbtn tbtn-solid">Add to campaign</button>
     </div>
   </div>
 
@@ -394,6 +407,8 @@ function render(inf){
   const vc=document.getElementById("verdict-card-wrap");
   if(v){
     const vc_colors=verdictColors(v.verdict);
+    const flags=v.warning_flags||[];
+    const flagsHtml=flags.length?`<div class="warn-list">${flags.map(f=>`<div class="warn-item"><div class="warn-dot"></div>${f}</div>`).join('')}</div>`:'';
     vc.innerHTML=`<div class="verdict-card" style="background:${vc_colors.bg};border-color:${vc_colors.brd}">
       <div class="verdict-label-row">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L9 5.5H13.5L9.75 8.5L11.25 13L7 10.25L2.75 13L4.25 8.5L0.5 5.5H5L7 1Z" fill="${vc_colors.col}" opacity=".7"/></svg>
@@ -413,6 +428,7 @@ function render(inf){
           <span class="vmv" style="color:${riskColor(v.risk)}">${v.risk||"—"}</span>
         </div>
       </div>
+      ${flagsHtml}
     </div>`;
   } else {
     // fallback: best for
@@ -448,6 +464,7 @@ function render(inf){
     rc.innerHTML=`<div class="section-card fadeup d2">
       <div class="sec-title">ROI Forecast</div>
       <span class="roi-confidence">${roi.confidence||"medium"} confidence</span>
+      ${roi.confidence_explanation?`<div class="roi-note" style="margin-bottom:12px;padding:10px 12px;background:var(--s2);border-radius:7px;border:1px solid var(--b1)">${roi.confidence_explanation}</div>`:''}
       <div class="roi-grid">
         <div class="roi-cell">
           <div class="roi-cell-label">Estimated reach</div>
@@ -460,6 +477,7 @@ function render(inf){
           <div class="roi-cell-sub">estimated orders</div>
         </div>
       </div>
+      ${roi.reach_explanation?`<div class="roi-note" style="margin-bottom:10px">${roi.reach_explanation}</div>`:''}
       <div class="roi-aov-row">
         <span class="roi-aov-label">Your average order value ($)</span>
         <input class="roi-aov-input" id="aov-input" type="number" min="0" placeholder="e.g. 45" oninput="updateRevenue()">
@@ -468,7 +486,8 @@ function render(inf){
         <span class="roi-rev-label">Estimated revenue</span>
         <span class="roi-rev-val" id="revenue-val">Enter AOV above</span>
       </div>
-      ${roi.note?`<div class="roi-note">${roi.note}</div>`:""}
+      ${roi.conversion_explanation?`<div class="roi-note" style="margin-top:10px">${roi.conversion_explanation}</div>`:''}
+      ${roi.note?`<div class="roi-note" style="margin-top:6px;color:var(--ink3)">${roi.note}</div>`:""}
     </div>`;
   } else {rc.innerHTML="";}
 
@@ -520,20 +539,55 @@ function showError(msg){
 
 function historyKey(email){return"vettly_history_"+email;}
 
+let _currentHandle=null;
+
+function updateSaveBtn(saved){
+  const btn=document.getElementById("save-topbtn");
+  const lbl=document.getElementById("save-label");
+  const icon=document.getElementById("save-icon");
+  if(!btn)return;
+  btn.classList.toggle("saved",!!saved);
+  lbl.textContent=saved?"Saved":"Save";
+  icon.setAttribute("fill",saved?"currentColor":"none");
+}
+
+function toggleSave(){
+  const email=window._currentEmail;
+  if(!email||!_currentHandle)return;
+  const key=historyKey(email);
+  try{
+    const history=JSON.parse(localStorage.getItem(key)||"[]");
+    const inf=history.find(r=>r.handle===_currentHandle||r.handle===_currentHandle.replace(/^@?/,"@"));
+    if(inf){
+      inf.saved=!inf.saved;
+      localStorage.setItem(key,JSON.stringify(history));
+      updateSaveBtn(inf.saved);
+    }
+  }catch(e){}
+}
+
 async function init(){
   const params=new URLSearchParams(window.location.search);
   const handle=params.get("handle");
   if(!handle){showError("No influencer specified.");return;}
   showLoading();
 
+  _currentHandle=handle;
   const {data:sessionData}=await sb.auth.getSession();
   const email=sessionData?.session?.user?.email;
+  window._currentEmail=email;
 
   // Update sidebar
   if(email){
-    const initials=email.slice(0,2).toUpperCase();
+    const rawName = sessionData.session.user.user_metadata?.full_name
+      || sessionData.session.user.user_metadata?.name
+      || email.split("@")[0].replace(/[._-]/g," ").replace(/\b\w/g,c=>c.toUpperCase());
+    const initials = rawName.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
     document.getElementById("sb-av").textContent=initials;
-    document.getElementById("sb-name").textContent=email.split("@")[0];
+    document.getElementById("sb-name").textContent=rawName;
+    sb.from("users").select("plan").eq("email",email).then(({data})=>{
+      if(data&&data[0]) document.getElementById("sb-plan").textContent=data[0].plan.charAt(0).toUpperCase()+data[0].plan.slice(1)+" plan";
+    });
   }
 
   // Try localStorage cache first
@@ -541,7 +595,7 @@ async function init(){
     try{
       const history=JSON.parse(localStorage.getItem(historyKey(email))||"[]");
       const cached=history.find(r=>r.handle===handle||r.handle===handle.replace(/^@?/,"@"));
-      if(cached){render(cached);return;}
+      if(cached){render(cached);updateSaveBtn(!!cached.saved);return;}
     }catch(e){}
   }
 
