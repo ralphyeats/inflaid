@@ -75,6 +75,31 @@ def health():
     return {"status": "ok"}
 
 
+@app.get("/debug-posts/{handle}")
+def debug_posts(handle: str):
+    import os
+    from apify_client import ApifyClient
+    token = os.getenv("APIFY_TOKEN")
+    if not token:
+        return {"error": "no token"}
+    client = ApifyClient(token)
+    run = client.actor("apify/instagram-profile-scraper").call(
+        run_input={"usernames": [handle.lstrip("@")], "resultsLimit": 24}
+    )
+    items = list(client.dataset(run["defaultDatasetId"]).iterate_items())
+    if not items:
+        return {"error": "no items"}
+    p = items[0]
+    posts = p.get("latestPosts") or []
+    return {
+        "post_count": len(posts),
+        "input_keys": list(p.keys())[:10],
+        "first_post_keys": list(posts[0].keys()) if posts else [],
+        "likes_sample": [x.get("likesCount") for x in posts[:5]],
+        "comments_sample": [x.get("commentsCount") for x in posts[:5]],
+    }
+
+
 
 @app.post("/create-checkout")
 def create_checkout(req: CheckoutRequest):
