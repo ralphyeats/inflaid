@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vettly — Influencer Score</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27><rect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%234F8CF5%27/><text x=%2716%27 y=%2723%27 text-anchor=%27middle%27 font-size=%2720%27 font-family=%27system-ui%27 font-weight=%27bold%27 fill=%27white%27>V</text></svg>">
+<style>
+:root{
+  --bg:#07090D;--s1:#0B0F16;--s2:#0F1520;--s3:#131A26;
+  --b1:#1C2638;--b2:#24304A;
+  --accent:#4F8CF5;--accent-lo:rgba(79,140,245,.08);--accent-mid:rgba(79,140,245,.22);
+  --green:#34C77A;--green-lo:rgba(52,199,122,.08);--green-mid:rgba(52,199,122,.2);
+  --amber:#E8962A;--amber-lo:rgba(232,150,42,.08);--amber-mid:rgba(232,150,42,.2);
+  --red:#D95050;--red-lo:rgba(217,80,80,.08);--red-mid:rgba(217,80,80,.2);
+  --ink:#DDE4F0;--ink2:#8896B0;--ink3:#3D4E68;
+  --syne:'Syne',sans-serif;--sans:'Geist',-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;-webkit-font-smoothing:antialiased;min-height:100vh}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fadeup{animation:fadeUp .4s cubic-bezier(.22,1,.36,1) both}
+.d1{animation-delay:.06s}.d2{animation-delay:.12s}.d3{animation-delay:.18s}
+
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--b1);position:sticky;top:0;background:var(--bg);z-index:10}
+.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-mark{width:20px;height:20px;background:var(--accent);border-radius:4px;position:relative;flex-shrink:0}
+.logo-mark::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6px;height:6px;background:#fff;border-radius:50%}
+.logo-text{font-family:var(--syne);font-size:14px;font-weight:700;color:var(--ink);letter-spacing:-.02em}
+.nav-cta{padding:6px 16px;background:var(--accent);border:none;border-radius:7px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);text-decoration:none;transition:background .15s}
+.nav-cta:hover{background:#5F9AF7}
+
+/* LAYOUT */
+.page{max-width:720px;margin:0 auto;padding:32px 20px 80px}
+
+/* PROFILE HEADER */
+.profile-header{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.p-av{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0}
+.p-name{font-family:var(--syne);font-size:20px;font-weight:700;color:var(--ink);letter-spacing:-.02em;margin-bottom:2px}
+.p-handle{font-size:13px;color:var(--ink3)}
+.p-followers{font-size:12px;color:var(--ink2);margin-top:3px}
+
+/* SCORE BAND */
+.score-band{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:24px;margin-bottom:16px;display:flex;align-items:center;gap:24px}
+.score-num{font-family:var(--syne);font-size:64px;font-weight:800;letter-spacing:-.04em;line-height:1}
+.score-right{flex:1}
+.score-label{font-size:13px;font-weight:500;display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:10px;border:1px solid;margin-bottom:8px}
+.score-insight{font-size:12px;color:var(--ink2);line-height:1.65}
+
+/* VERDICT */
+.verdict-section{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:20px;margin-bottom:16px}
+.sec-title{font-family:var(--syne);font-size:13px;font-weight:600;color:var(--ink);margin-bottom:14px;letter-spacing:-.01em}
+.verdict-label{font-family:var(--syne);font-size:15px;font-weight:700;margin-bottom:10px}
+.verdict-reason{font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:12px}
+.verdict-action{border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.6;font-weight:500;border-left:3px solid}
+.verdict-meta-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--b1);font-size:12px}
+.verdict-meta-row:last-child{border-bottom:none}
+.vml{color:var(--ink3)}
+
+/* BREAKDOWN */
+.breakdown-section{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:20px;margin-bottom:16px}
+.factor-row{display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid var(--b1)}
+.factor-row:last-child{border-bottom:none}
+.factor-name{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:2px}
+.factor-desc{font-size:11px;color:var(--ink3)}
+.factor-val{font-family:var(--syne);font-size:16px;font-weight:700;text-align:right;min-width:36px}
+.factor-track{width:64px;height:3px;background:var(--b1);border-radius:2px;overflow:hidden}
+.factor-fill{height:3px;border-radius:2px}
+
+/* CTA BANNER */
+.cta-banner{background:var(--accent-lo);border:1px solid var(--accent-mid);border-radius:14px;padding:24px;text-align:center;margin-bottom:16px}
+.cta-title{font-family:var(--syne);font-size:17px;font-weight:700;color:var(--ink);margin-bottom:6px;letter-spacing:-.02em}
+.cta-sub{font-size:13px;color:var(--ink2);margin-bottom:18px;line-height:1.6}
+.cta-btn{display:inline-block;padding:11px 28px;background:var(--accent);border:none;border-radius:9px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--syne);text-decoration:none;letter-spacing:-.01em;transition:background .15s}
+.cta-btn:hover{background:#5F9AF7}
+
+/* CACHED NOTE */
+.cached-note{font-size:11px;color:var(--ink3);text-align:center;margin-top:20px}
+
+/* ERROR */
+.error-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;text-align:center;gap:12px;color:var(--ink2)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-logo" href="/">
+    <div class="logo-mark"></div>
+    <span class="logo-text">Vettly</span>
+  </a>
+  <a class="nav-cta" href="/auth.html">Analyze influencers free →</a>
+</nav>
+
+<div class="page" id="page" style="display:none"></div>
+<div id="error-wrap" style="display:none" class="error-wrap">
+  <div style="font-size:32px">⚠</div>
+  <div style="font-size:15px;font-weight:500;color:var(--ink)">Profile not found</div>
+  <div style="font-size:13px" id="error-msg">This influencer hasn't been analyzed yet.</div>
+  <a href="/auth.html" class="cta-btn" style="margin-top:8px">Analyze them now →</a>
+</div>
+
+<script>
+const API = "https://vettly-production-63d5.up.railway.app";
+
+const LBL={
+  elite:{bg:"var(--green-lo)",col:"var(--green)",brd:"var(--green-mid)",txt:"Elite ROI potential"},
+  high:{bg:"var(--green-lo)",col:"var(--green)",brd:"var(--green-mid)",txt:"High conversion potential"},
+  mid:{bg:"var(--amber-lo)",col:"var(--amber)",brd:"var(--amber-mid)",txt:"Conversion uncertain"},
+  risky:{bg:"var(--red-lo)",col:"var(--red)",brd:"var(--red-mid)",txt:"Risky — review carefully"},
+  avoid:{bg:"var(--red-lo)",col:"var(--red)",brd:"var(--red-mid)",txt:"Not recommended"}
+};
+
+function sc(s){return s>=70?"var(--green)":s>=40?"var(--amber)":"var(--red)";}
+function scHex(s){return s>=70?"#34C77A":s>=40?"#E8962A":"#D95050";}
+function fmtFollowers(n){
+  if(!n||n==="—")return null;
+  if(typeof n==="string")return n;
+  if(n>=1000000)return(n/1000000).toFixed(1)+"M followers";
+  if(n>=1000)return(n/1000).toFixed(1)+"K followers";
+  return n.toLocaleString()+" followers";
+}
+function verdictColors(v){
+  if(v==="gifted")return{bg:"var(--green-lo)",col:"var(--green)",brd:"var(--green-mid)"};
+  if(v==="paid")return{bg:"var(--accent-lo)",col:"var(--accent)",brd:"var(--accent-mid)"};
+  return{bg:"var(--red-lo)",col:"var(--red)",brd:"var(--red-mid)"};
+}
+function riskColor(r){
+  if(!r)return"var(--ink2)";
+  const lo=r.toLowerCase();
+  if(lo.includes("low"))return"var(--green)";
+  if(lo.includes("med"))return"var(--amber)";
+  return"var(--red)";
+}
+function randomColor(h){
+  const c=["#4F8CF5","#34C77A","#A78BFA","#F59E0B","#C084FC","#F87171"];
+  let n=0;for(const ch of h)n+=ch.charCodeAt(0);return c[n%c.length];
+}
+function timeAgo(iso){
+  const d=Math.floor((Date.now()-new Date(iso))/86400000);
+  if(d===0)return"today";if(d===1)return"yesterday";if(d<7)return d+"d ago";
+  if(d<30)return Math.floor(d/7)+"w ago";return Math.floor(d/30)+"mo ago";
+}
+
+function render(d){
+  const label=d.label||"mid";
+  const l=LBL[label]||LBL.mid;
+  const v=d.verdict||null;
+  const color=randomColor(d.handle||"x");
+  const initials=(d.name||d.handle||"?").slice(0,2).toUpperCase();
+  const followersStr=fmtFollowers(d.followers);
+  const breakdown=d.breakdown||[];
+
+  document.title=`${d.name||d.handle} — Vettly Score`;
+
+  // Open Graph meta (dynamic)
+  document.querySelector('meta[name="description"]')?.setAttribute("content",
+    `${d.name||d.handle} scored ${d.score}/100 on Vettly — ${l.txt}`);
+
+  let html=`
+  <div class="profile-header fadeup">
+    <div class="p-av" style="background:${color}18;border:1px solid ${color}30;color:${color}">${initials}</div>
+    <div>
+      <div class="p-name">${d.name||d.handle}</div>
+      <div class="p-handle">${d.handle}</div>
+      ${followersStr?`<div class="p-followers">${followersStr}</div>`:""}
+    </div>
+  </div>
+
+  <div class="score-band fadeup d1">
+    <div class="score-num" style="color:${sc(d.score)}">${d.score}</div>
+    <div class="score-right">
+      <div class="score-label" style="background:${l.bg};color:${l.col};border-color:${l.brd}">${l.txt}</div>
+      <div class="score-insight">${d.insight||""}</div>
+    </div>
+  </div>`;
+
+  if(v){
+    const vc=verdictColors(v.verdict);
+    html+=`<div class="verdict-section fadeup d2">
+      <div class="sec-title">Campaign recommendation</div>
+      <div class="verdict-label" style="color:${vc.col}">${v.verdict_label||v.verdict}</div>
+      <div class="verdict-reason">${v.reason||""}</div>
+      <div class="verdict-action" style="background:${vc.bg};border-color:${vc.col};color:${vc.col}">${v.action||""}</div>
+      <div style="margin-top:14px">
+        <div class="verdict-meta-row"><span class="vml">Campaign type</span><span>${v.campaign_type||"—"}</span></div>
+        <div class="verdict-meta-row"><span class="vml">Budget range</span><span style="color:${vc.col}">${v.budget_range||"—"}</span></div>
+        <div class="verdict-meta-row"><span class="vml">Risk level</span><span style="color:${riskColor(v.risk)}">${v.risk||"—"}</span></div>
+      </div>
+    </div>`;
+  }
+
+  if(breakdown.length){
+    html+=`<div class="breakdown-section fadeup d2">
+      <div class="sec-title">Score breakdown</div>
+      ${breakdown.map(f=>{
+        const val=f.val??f.value??0;
+        return`<div class="factor-row">
+          <div style="flex:1">
+            <div class="factor-name">${f.label||f.key||"—"}</div>
+            <div class="factor-desc">${f.description||""}</div>
+          </div>
+          <div class="factor-val" style="color:${scHex(val)}">${val}</div>
+          <div class="factor-track"><div class="factor-fill" style="width:${val}%;background:${scHex(val)}"></div></div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  html+=`<div class="cta-banner fadeup d3">
+    <div class="cta-title">Analyze your own influencers</div>
+    <div class="cta-sub">Vettly scores any Instagram profile in seconds — engagement, niche alignment, authenticity, and ROI forecast. Free to start.</div>
+    <a class="cta-btn" href="/auth.html">Start for free →</a>
+  </div>`;
+
+  if(d.cached_at){
+    html+=`<div class="cached-note">Score last updated ${timeAgo(d.cached_at)}</div>`;
+  }
+
+  document.getElementById("page").innerHTML=html;
+  document.getElementById("page").style.display="block";
+}
+
+function showError(msg){
+  document.getElementById("error-msg").textContent=msg;
+  document.getElementById("error-wrap").style.display="flex";
+}
+
+async function init(){
+  const params=new URLSearchParams(window.location.search);
+  const handle=params.get("handle");
+  if(!handle){showError("No influencer specified.");return;}
+
+  // Normalize handle
+  const normalized=handle.startsWith("@")?handle:"@"+handle;
+
+  try{
+    const res=await fetch(`${API}/public/profile/${encodeURIComponent(normalized)}`);
+    if(res.status===404){showError("This influencer hasn't been analyzed yet.");return;}
+    if(!res.ok)throw new Error(`API ${res.status}`);
+    const data=await res.json();
+    render(data);
+  }catch(e){
+    showError("Could not load profile. "+e.message);
+  }
+}
+
+init();
+</script>
+</body>
+</html>

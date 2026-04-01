@@ -88,9 +88,24 @@ class CheckoutRequest(BaseModel):
     user_email: str
 
 
+class ReferralRequest(BaseModel):
+    referrer_code: str   # btoa(referrer_email) from frontend
+    new_email: str
+
+
+REFERRAL_BONUS_REFERRER = 5
+REFERRAL_BONUS_NEW      = 2
+
+
 def get_user_usage(sb, email):
     r = sb.table("users").select("analyses_used,analyses_limit,plan").eq("email", email).execute()
     return r.data[0] if r.data else None
+
+
+def increment_limit(sb, email, amount: int):
+    u = sb.table("users").select("analyses_limit").eq("email", email).execute()
+    if u.data:
+        sb.table("users").update({"analyses_limit": u.data[0]["analyses_limit"] + amount}).eq("email", email).execute()
 
 
 def increment_usage(sb, email):
@@ -102,6 +117,76 @@ def increment_usage(sb, email):
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.post("/referral/apply")
+def apply_referral(req: ReferralRequest):
+    import base64
+    from auth import get_supabase
+
+    # Decode referrer email from code
+    try:
+        referrer_email = base64.b64decode(req.referrer_code.encode()).decode()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid referral code")
+
+    if referrer_email == req.new_email:
+        raise HTTPException(status_code=400, detail="Cannot refer yourself")
+
+    sb = get_supabase()
+    if not sb:
+        raise HTTPException(status_code=503, detail="DB unavailable")
+
+    # Check not already redeemed
+    existing = sb.table("referrals").select("id").eq("new_email", req.new_email).execute()
+    if existing.data:
+        raise HTTPException(status_code=409, detail="Referral already applied")
+
+    # Check referrer exists
+    referrer = sb.table("users").select("email,analyses_limit").eq("email", referrer_email).execute()
+    if not referrer.data:
+        raise HTTPException(status_code=404, detail="Referrer not found")
+
+    # Apply bonuses
+    increment_limit(sb, referrer_email, REFERRAL_BONUS_REFERRER)
+    increment_limit(sb, req.new_email, REFERRAL_BONUS_NEW)
+
+    # Record referral
+    sb.table("referrals").insert({
+        "referrer_email": referrer_email,
+        "new_email": req.new_email,
+    }).execute()
+
+    return {"status": "applied", "referrer_bonus": REFERRAL_BONUS_REFERRER, "new_user_bonus": REFERRAL_BONUS_NEW}
+
+
+@app.get("/public/profile/{handle}")
+def public_profile(handle: str):
+    """Public endpoint — returns cached score for a handle. No auth required."""
+    from auth import get_supabase
+    sb = get_supabase()
+    if not sb:
+        raise HTTPException(status_code=503, detail="DB unavailable")
+    try:
+        result = sb.table("analyses").select("result,created_at").eq("handle", handle).order("created_at", desc=True).limit(1).execute()
+        if result.data:
+            r = result.data[0]["result"]
+            # Return only public-safe fields (no user data)
+            return {
+                "handle": r.get("handle"),
+                "score": r.get("score"),
+                "label": r.get("label"),
+                "name": r.get("name"),
+                "followers": r.get("followers"),
+                "breakdown": r.get("breakdown", []),
+                "insight": r.get("insight"),
+                "verdict": r.get("verdict"),
+                "roi_estimate": r.get("roi_estimate"),
+                "cached_at": result.data[0]["created_at"],
+            }
+    except Exception as e:
+        print(f"Public profile error: {e}")
+    raise HTTPException(status_code=404, detail="Profile not found")
 
 
 

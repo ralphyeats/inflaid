@@ -144,9 +144,32 @@ async function signUp() {
   const btn = event.target;
   btn.disabled = true; btn.textContent = "Creating account...";
   const { error } = await sb.auth.signUp({ email, password });
-  if (error) { showMsg(error.message, "error"); btn.disabled = false; btn.textContent = "Create account →"; }
-  else showMsg("Check your email to confirm your account.", "success");
+  if (error) { showMsg(error.message, "error"); btn.disabled = false; btn.textContent = "Create account →"; return; }
+
+  // Apply referral bonus if ?ref= present
+  const refCode = new URLSearchParams(window.location.search).get("ref");
+  if (refCode) {
+    try {
+      await fetch("https://vettly-production-63d5.up.railway.app/referral/apply", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ referrer_code: refCode, new_email: email })
+      });
+    } catch(e) { /* non-blocking */ }
+  }
+
+  showMsg("Check your email to confirm your account." + (refCode ? " Your referral bonus will be applied on first login." : ""), "success");
 }
+
+// Pre-fill signup tab if referred
+(function(){
+  const ref = new URLSearchParams(window.location.search).get("ref");
+  if (ref) {
+    document.addEventListener("DOMContentLoaded", () => {
+      const tabs = document.querySelectorAll(".tab");
+      if (tabs[1]) tabs[1].click();
+    });
+  }
+})();
 
 // Check if already logged in
 sb.auth.getSession().then(({ data }) => {
