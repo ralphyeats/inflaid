@@ -106,7 +106,7 @@ def score(req: ScoreRequest):
     if sb and req.user_email:
         u = get_user_usage(sb, req.user_email)
         if u:
-            if u["analyses_used"] >= u["analyses_limit"]:
+            if u["analyses_limit"] > 0 and u["analyses_used"] >= u["analyses_limit"]:
                 raise HTTPException(status_code=429, detail=f"limit_reached:{u['plan']}")
         else:
             sb.table("users").insert({"email": req.user_email, "plan": "free", "analyses_used": 0, "analyses_limit": 2}).execute()
