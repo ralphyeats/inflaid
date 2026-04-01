@@ -11,7 +11,8 @@ Formula:
 Labels: elite(85+) | high(70+) | mid(50+) | risky(30+) | avoid(<30)
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Optional
 
 from factors.engagement import score_engagement
 from factors.rhythm import score_rhythm
@@ -22,6 +23,8 @@ from factors.momentum import score_momentum
 from factors.fraud import compute_fraud_multiplier
 from factors.sentiment import score_sentiment
 from categories.config import get_category_config
+from verdict import compute_verdict
+from roi import compute_roi_estimate
 
 LABELS = {
     "engagement":   "Engagement Quality",
@@ -40,6 +43,8 @@ class ScoreResult:
     label: str
     breakdown: list
     insight: str
+    verdict: Optional[dict] = field(default=None)
+    roi_estimate: Optional[dict] = field(default=None)
 
 
 def compute_score(raw: dict) -> ScoreResult:
@@ -77,8 +82,13 @@ def compute_score(raw: dict) -> ScoreResult:
     ]
     insight = _build_insight(final_score, label, scores, fraud_multiplier, sentiment)
 
+    followers = raw.get("followers") or 0
+    verdict_data  = compute_verdict(final_score, followers, scores, label)
+    roi_data      = compute_roi_estimate(raw, scores)
+
     return ScoreResult(handle=handle, score=final_score, label=label,
-                       breakdown=breakdown, insight=insight)
+                       breakdown=breakdown, insight=insight,
+                       verdict=verdict_data, roi_estimate=roi_data)
 
 
 def _label(score: int) -> str:

@@ -45,6 +45,25 @@ class FactorOut(BaseModel):
     contribution: float
 
 
+class VerdictOut(BaseModel):
+    verdict: str
+    verdict_label: str
+    reason: str
+    action: str
+    campaign_type: str
+    budget_range: str
+    risk: str
+
+
+class RoiEstimateOut(BaseModel):
+    estimated_reach_low: Optional[int]
+    estimated_reach_high: Optional[int]
+    estimated_conversions_low: Optional[int]
+    estimated_conversions_high: Optional[int]
+    confidence: str
+    note: str
+
+
 class ScoreResponse(BaseModel):
     handle: str
     score: int
@@ -52,6 +71,12 @@ class ScoreResponse(BaseModel):
     breakdown: list[FactorOut]
     insight: str
     mock: bool = True
+    # Profile data (previously missing)
+    followers: Optional[int] = None
+    name: Optional[str] = None
+    # Decision layer
+    verdict: Optional[VerdictOut] = None
+    roi_estimate: Optional[RoiEstimateOut] = None
 
 
 class CheckoutRequest(BaseModel):
@@ -143,6 +168,10 @@ def score(req: ScoreRequest):
         ],
         insight=result.insight,
         mock=raw.get("mock", True),
+        followers=raw.get("followers") or None,
+        name=raw.get("name") or None,
+        verdict=VerdictOut(**result.verdict) if result.verdict else None,
+        roi_estimate=RoiEstimateOut(**result.roi_estimate) if result.roi_estimate else None,
     )
 
     try:
