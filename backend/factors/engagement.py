@@ -5,6 +5,10 @@ def score_engagement(raw: dict) -> int:
     if not posts:
         return 50
 
+    posts = [p for p in posts if p.get("likesCount") is not None]
+    if not posts:
+        return 50
+
     n = len(posts)
     avg_likes = sum(p.get("likesCount", 0) for p in posts) / n
     avg_comments = sum(p.get("commentsCount", 0) for p in posts) / n

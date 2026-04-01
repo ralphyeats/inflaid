@@ -90,7 +90,7 @@ def _fetch_apify(handle):
     try:
         client = ApifyClient(token)
         run = client.actor("apify/instagram-profile-scraper").call(
-            run_input={"usernames": [handle.lstrip("@")]}
+            run_input={"usernames": [handle.lstrip("@")], "maxPosts": 24}
         )
         items = list(client.dataset(run["defaultDatasetId"]).iterate_items())
         if not items:

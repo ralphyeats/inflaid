@@ -1,5 +1,5 @@
 def score_momentum(raw: dict) -> int:
-    posts = raw.get("posts", [])
+    posts = [p for p in raw.get("posts", []) if p.get("likesCount") is not None]
 
     if len(posts) < 13:
         return 50

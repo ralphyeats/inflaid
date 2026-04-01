@@ -10,7 +10,15 @@ def score_audience(raw: dict) -> int:
 
     n = len(posts)
     avg_engagement = sum(p.get("likesCount", 0) + p.get("commentsCount", 0) for p in posts) / n
-    expected = followers * 0.03
+    if followers < 10_000:
+        expected_rate = 0.05
+    elif followers < 100_000:
+        expected_rate = 0.03
+    elif followers < 1_000_000:
+        expected_rate = 0.015
+    else:
+        expected_rate = 0.005
+    expected = followers * expected_rate
     fulfillment = avg_engagement / max(expected, 1)
 
     if fulfillment >= 1.0 and ff_ratio >= 5:
