@@ -407,16 +407,29 @@ function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.v
       headers:{"Content-Type":"application/json"},
       body: JSON.stringify({handle, user_email: currentUserEmail, category: curCat==="all"?"beauty":curCat})
     });
-    if(res.status === 429) {
-      const err = await res.json();
-      if(err.detail && err.detail.startsWith("limit_reached")) {
-        showToast("You\'ve reached your analysis limit. Upgrade to continue.", "error");
+    if(!res.ok) {
+      const err = await res.json().catch(()=>({}));
+      const detail = err.detail || "";
+      if(res.status === 429 && detail.startsWith("limit_reached")) {
+        showToast("You've reached your analysis limit. Upgrade to continue.", "error");
         const upgradeBtn = document.querySelector(".upgrade-btn");
         if(upgradeBtn) upgradeBtn.style.display = "block";
         return;
       }
+      if(res.status === 422 && detail === "private_account") {
+        showToast(`${handle} is a private account — cannot analyze.`, "error"); return;
+      }
+      if(res.status === 404 && detail === "profile_not_found") {
+        showToast(`${handle} not found — check the handle and try again.`, "error"); return;
+      }
+      if(res.status === 504 && detail === "scraper_timeout") {
+        showToast("Analysis timed out. The server may be cold-starting — try again in 30 seconds.", "error"); return;
+      }
+      if(detail.startsWith("scraper_error:")) {
+        showToast("Could not fetch profile data. Try again in a moment.", "error"); return;
+      }
+      throw new Error(`API error ${res.status}`);
     }
-    if(!res.ok) throw new Error(`API error ${res.status}`);
     const data = await res.json();
 
     // Build a display object compatible with renderCard()

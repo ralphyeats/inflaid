@@ -239,9 +239,17 @@ def score(req: ScoreRequest):
     try:
         raw = fetch_profile(req.handle, req.category)
     except PrivateAccountError:
-        raise HTTPException(status_code=422, detail="Private account — cannot analyze")
+        raise HTTPException(status_code=422, detail="private_account")
     except Exception as e:
-        raise HTTPException(status_code=502, detail=f"Scraper error: {e}")
+        from scraper import ScraperError
+        if isinstance(e, ScraperError):
+            msg = str(e)
+            if "timed out" in msg.lower():
+                raise HTTPException(status_code=504, detail="scraper_timeout")
+            if "no data" in msg.lower() or "incorrect" in msg.lower():
+                raise HTTPException(status_code=404, detail="profile_not_found")
+            raise HTTPException(status_code=502, detail=f"scraper_error:{msg}")
+        raise HTTPException(status_code=502, detail=f"scraper_error:{e}")
 
     raw["handle"] = req.handle
     result = compute_score(raw)
