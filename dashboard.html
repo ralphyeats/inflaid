@@ -348,7 +348,7 @@ function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.v
     const res = await fetch(`${API}/score`, {
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({handle, user_email: currentUserEmail, category: selectedCategory})
+      body: JSON.stringify({handle, user_email: currentUserEmail, category: curCat==="all"?"beauty":curCat})
     });
     if(res.status === 429) {
       const err = await res.json();
