@@ -1,5 +1,6 @@
 import os
 import stripe
+from typing import Optional
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
@@ -23,7 +24,7 @@ stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 class ScoreRequest(BaseModel):
     handle: str
-    user_email: str = None
+    user_email: Optional[str] = None
     category: str = "beauty"
 
     @field_validator("handle")
