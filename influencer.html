@@ -795,6 +795,9 @@ async function init(){
     if(!res.ok){
       const err=await res.json().catch(()=>({}));
       const detail=err.detail||"";
+      if(res.status===401){
+        window.location.href="/auth.html"; return;
+      }
       if(res.status===429&&detail.startsWith("limit_reached")){
         showError("You've used all your analyses.<br><a href='/dashboard.html' style='color:var(--accent);font-size:13px'>← Go back to upgrade your plan</a>");
         return;

@@ -223,25 +223,34 @@ def create_checkout(req: CheckoutRequest):
 def score(req: ScoreRequest):
     from auth import get_cached, save_analysis, get_supabase
 
-    sb = get_supabase() if req.user_email else None
+    # Require a logged-in user — no anonymous analyses allowed
+    if not req.user_email:
+        raise HTTPException(status_code=401, detail="auth_required")
 
-    # Check limit
-    if sb and req.user_email:
-        u = get_user_usage(sb, req.user_email)
-        if u:
-            if u["analyses_limit"] > 0 and u["analyses_used"] >= u["analyses_limit"]:
-                raise HTTPException(status_code=429, detail=f"limit_reached:{u['plan']}")
-        else:
-            sb.table("users").insert({"email": req.user_email, "plan": "free", "analyses_used": 0, "analyses_limit": 2}).execute()
+    sb = get_supabase()
 
-    # Cache check
+    # Get user record; create on first use (post-signup)
+    u = get_user_usage(sb, req.user_email)
+    if not u:
+        sb.table("users").insert({
+            "email": req.user_email,
+            "plan": "free",
+            "analyses_used": 0,
+            "analyses_limit": PLAN_LIMITS["free"]
+        }).execute()
+        u = {"plan": "free", "analyses_used": 0, "analyses_limit": PLAN_LIMITS["free"]}
+
+    # Enforce plan limit
+    if u["analyses_limit"] > 0 and u["analyses_used"] >= u["analyses_limit"]:
+        raise HTTPException(status_code=429, detail=f"limit_reached:{u['plan']}")
+
+    # Cache check — still counts against usage
     cached = get_cached(req.handle)
     if cached:
-        if sb and req.user_email:
-            try:
-                increment_usage(sb, req.user_email)
-            except Exception as e:
-                print(f"Usage increment error: {e}")
+        try:
+            increment_usage(sb, req.user_email)
+        except Exception as e:
+            print(f"Usage increment error: {e}")
         return ScoreResponse(**cached)
 
     # Scrape + score
@@ -285,11 +294,10 @@ def score(req: ScoreRequest):
     except Exception as e:
         print(f"Cache save error: {e}")
 
-    if sb and req.user_email:
-        try:
-            increment_usage(sb, req.user_email)
-        except Exception as e:
-            print(f"Usage increment error: {e}")
+    try:
+        increment_usage(sb, req.user_email)
+    except Exception as e:
+        print(f"Usage increment error: {e}")
 
     return response
 
