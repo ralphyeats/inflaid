@@ -115,7 +115,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 .ac-reason{font-size:12px;color:var(--ink2);line-height:1.65;margin-top:14px;padding-top:14px;border-top:1px solid rgba(0,0,0,.07)}
 
 /* CARDS */
-.card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px}
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px;position:relative;z-index:1}
 .card-title{font-family:var(--syne);font-size:13px;font-weight:600;color:var(--ink);margin-bottom:14px;letter-spacing:-.01em}
 
 /* ROI */
@@ -144,7 +144,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 .expander-body.open{display:block}
 
 /* DECISION BAR */
-.decision-bar{border-radius:12px;padding:20px 24px;border:1.5px solid;margin-bottom:18px;display:none;align-items:flex-start;gap:0;max-width:1060px;margin-left:auto;margin-right:auto}
+.decision-bar{border-radius:12px;padding:20px 24px;border:1.5px solid;margin-bottom:18px;display:none;align-items:flex-start;gap:0;max-width:1060px;margin-left:auto;margin-right:auto;position:relative;z-index:2}
 .db-left{min-width:210px;border-right:1px solid rgba(0,0,0,.09);padding-right:22px;margin-right:22px}
 .db-eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:6px}
 .db-verdict-label{font-family:var(--syne);font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:8px}
@@ -465,19 +465,21 @@ function render(inf){
     }
     const DIRECTIVES={avoid:"Do NOT proceed. Skip this influencer.",risky:"Do NOT pay upfront. Gifted trial only.",mid:"Do not scale. Test with gifted campaign first.",high:"Proceed. Do not pay upfront on first collab.",elite:"Scale immediately. Prioritize this collab."};
     const directive=DIRECTIVES[inf.label]||"";
+    const confCol=roi?confDotColor(roi.confidence):null;
     dBar.style.cssText=`display:flex;background:${dc.bg};border-color:${dc.brd}`;
     dBar.innerHTML=`
       <div class="db-left">
         <div class="db-eyebrow" style="color:${dc.col}">Vettly Decision</div>
-        <div class="db-verdict-label" style="color:${dc.col}">${v.verdict_label||v.verdict}</div>
-        <div class="db-action" style="color:${dc.col}">${v.action||""}</div>
+        <div class="db-verdict-label" style="color:${dc.col}">${v.verdict_label||v.verdict}${v.campaign_type?` — ${v.campaign_type}`:""}</div>
         ${directive?`<div class="db-directive" style="color:${dc.col}">${directive}</div>`:""}
+        <div class="db-action" style="color:${dc.col};margin-top:6px">${v.action||""}</div>
+        ${v.reason?`<div style="font-size:11px;margin-top:8px;color:${dc.col};opacity:.8;line-height:1.45"><strong>Why →</strong> ${v.reason}</div>`:""}
       </div>
       <div class="db-pills">
         ${v.budget_range?`<div class="db-pill"><div class="db-pill-label">Budget</div><div class="db-pill-val" style="color:var(--ink)">${v.budget_range}</div></div>`:""}
         ${v.risk?`<div class="db-pill"><div class="db-pill-label">Risk</div><div class="db-pill-val" style="color:${riskColor(v.risk)}">${v.risk}</div></div>`:""}
-        ${v.campaign_type?`<div class="db-pill"><div class="db-pill-label">Type</div><div class="db-pill-val" style="color:var(--ink)">${v.campaign_type}</div></div>`:""}
         ${roiStr!=="—"?`<div class="db-pill"><div class="db-pill-label">Expected ROI</div><div class="db-pill-val" style="color:var(--green)">${roiStr}</div></div>`:""}
+        ${roi?.confidence?`<div class="db-pill"><div class="db-pill-label">Confidence</div><div class="db-pill-val" style="color:${confCol}">${roi.confidence}</div></div>`:""}
       </div>`;
   } else { dBar.style.display="none"; }
 
@@ -525,9 +527,6 @@ function render(inf){
       <div class="card-title">Campaign Plan</div>
       <div class="camp-checklist">
         <div class="camp-item"><span class="camp-key">Action</span><span class="camp-val">${v.action||"—"}</span></div>
-        ${v.campaign_type?`<div class="camp-item"><span class="camp-key">Type</span><span class="camp-val">${v.campaign_type}</span></div>`:""}
-        ${v.budget_range?`<div class="camp-item"><span class="camp-key">Budget</span><span class="camp-val" style="color:${dc.col};font-weight:600">${v.budget_range}</span></div>`:""}
-        ${v.risk?`<div class="camp-item"><span class="camp-key">Risk</span><span class="camp-val" style="color:${riskColor(v.risk)};font-weight:600">${v.risk}</span></div>`:""}
         ${v.reason?`<div class="camp-item"><span class="camp-key">Why</span><span class="camp-val" style="color:var(--ink2);font-size:12px">${v.reason}</span></div>`:""}
       </div>
     </div>`;
@@ -596,7 +595,7 @@ function render(inf){
         ${worstLoss>0?`<div style="background:var(--red-lo);border:1px solid var(--red-mid);border-radius:8px;padding:10px 13px">
           <div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--red);font-weight:700;margin-bottom:3px">Worst case</div>
           <div style="font-family:var(--syne);font-size:16px;font-weight:800;color:var(--red)">-$${worstLoss}</div>
-          <div style="font-size:10px;color:var(--ink3);margin-top:2px">if only ${roi.estimated_conversions_low} orders</div>
+          <div style="font-size:10px;color:var(--ink3);margin-top:2px">if only ${roi.estimated_conversions_low} orders — still ${fmtNum(roi.estimated_reach_low)} views</div>
         </div>`:""}
       </div>`:""}
       ${roi.note?`<div class="roi-note">${roi.note}</div>`:""}
@@ -611,28 +610,18 @@ function render(inf){
     if(breakdown.length>=2){
       const sorted=[...breakdown].sort((a,b)=>(b.val??b.value??0)-(a.val??a.value??0));
       const best=sorted[0], worst=sorted[sorted.length-1];
-      const bestVal=best.val??best.value??0;
-      const worstVal=worst.val??worst.value??0;
-      const bestWt=best.weight??0;const worstWt=worst.weight??0;
-      const fmtWt=w=>Math.abs(w)<=1?Math.round(Math.abs(w)*100)+"%":Math.abs(w)+"%";
       sigWrap.innerHTML=`<div class="card">
         <div class="card-title">Key Signals</div>
         <div class="signals-grid">
           <div class="signal-box" style="background:var(--green-lo);border-color:var(--green-mid)">
             <div class="signal-eyebrow" style="color:var(--green)">Biggest Strength</div>
-            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
-              <div class="signal-text">${best.name||best.label||"—"}</div>
-              <div style="font-family:var(--syne);font-size:20px;font-weight:800;color:var(--green);line-height:1">${bestVal}<span style="font-size:11px;font-weight:400;color:var(--green);opacity:.7">/100</span></div>
-            </div>
-            <div class="signal-sub" style="color:var(--ink2)">${best.desc||best.description||""} <span style="color:var(--green);font-weight:500">(${fmtWt(bestWt)} weight)</span></div>
+            <div class="signal-text">${best.name||best.label||"—"}</div>
+            <div class="signal-sub" style="color:var(--ink2);font-weight:500;margin-top:4px">${best.desc||best.description||""}</div>
           </div>
           <div class="signal-box" style="background:var(--red-lo);border-color:var(--red-mid)">
             <div class="signal-eyebrow" style="color:var(--red)">Biggest Risk</div>
-            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
-              <div class="signal-text">${worst.name||worst.label||"—"}</div>
-              <div style="font-family:var(--syne);font-size:20px;font-weight:800;color:var(--red);line-height:1">${worstVal}<span style="font-size:11px;font-weight:400;color:var(--red);opacity:.7">/100</span></div>
-            </div>
-            <div class="signal-sub" style="color:var(--ink2)">${worst.desc||worst.description||""} <span style="color:var(--red);font-weight:500">(${fmtWt(worstWt)} weight)</span></div>
+            <div class="signal-text">${worst.name||worst.label||"—"}</div>
+            <div class="signal-sub" style="color:var(--ink2);font-weight:500;margin-top:4px">${worst.desc||worst.description||""}</div>
           </div>
         </div>
       </div>`;
