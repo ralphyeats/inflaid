@@ -250,7 +250,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
       <div class="usage-top"><span id="usage-plan">—</span><span style="color:var(--ink2)" id="usage-count">—</span></div>
       <div class="usage-bar"><div class="usage-fill" id="usage-fill" style="width:0%"></div></div>
       <div style="font-size:10px;color:var(--ink3)" id="usage-remaining">Loading...</div>
-      <button class="upgrade-btn" onclick="upgradePlan('growth')">Upgrade to Growth →</button>
+      <button class="upgrade-btn" id="upgrade-btn" onclick="upgradePlan(nextPlan())">Upgrade plan →</button>
     </div>
     <div class="referral-box" id="referral-box" style="display:none">
       <div class="referral-title">Invite friends · +5 analyses each</div>
@@ -414,9 +414,9 @@ function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.v
       const err = await res.json().catch(()=>({}));
       const detail = err.detail || "";
       if(res.status === 429 && detail.startsWith("limit_reached")) {
-        showToast("You've reached your analysis limit. Upgrade to continue.", "error");
+        showToast("Analysis limit reached — upgrade your plan to continue.", "error");
         const upgradeBtn = document.querySelector(".upgrade-btn");
-        if(upgradeBtn) upgradeBtn.style.display = "block";
+        if(upgradeBtn){ upgradeBtn.style.display = "block"; upgradeBtn.scrollIntoView({behavior:"smooth",block:"nearest"}); }
         return;
       }
       if(res.status === 422 && detail === "private_account") {
@@ -779,7 +779,8 @@ sb.auth.getSession().then(({ data }) => {
   sb.from("users").select("plan,analyses_used,analyses_limit").eq("email", email).then(({data}) => {
     if (data && data[0]) {
       const u = data[0];
-      const PLAN_LIMITS = { trial: 5, starter: 20, growth: 75, pro: 200 };
+      const PLAN_LIMITS = { free: 2, trial: 2, starter: 20, growth: 75, pro: 200 };
+      _currentPlan = u.plan;
       const planName = u.plan.charAt(0).toUpperCase() + u.plan.slice(1) + " plan";
       const remaining = u.analyses_limit > 0 ? u.analyses_limit - u.analyses_used : "∞";
       const pct = u.analyses_limit > 0 ? Math.min(100, (u.analyses_used / u.analyses_limit) * 100) : 100;
@@ -789,13 +790,13 @@ sb.auth.getSession().then(({ data }) => {
       document.getElementById("usage-fill").style.background = pct >= 90 ? "var(--red)" : pct >= 70 ? "var(--amber)" : "var(--accent)";
       document.getElementById("usage-remaining").textContent = u.analyses_limit > 0 ? remaining + " analyses remaining" : "Unlimited analyses";
       document.getElementById("user-plan").textContent = planName;
-      const upgradeBtn = document.querySelector(".upgrade-btn");
+      const upgradeBtn = document.getElementById("upgrade-btn");
       if (u.plan === "pro" || u.plan === "growth") {
         upgradeBtn.style.display = "none";
-      } else if (u.plan === "starter") {
-        upgradeBtn.textContent = "Upgrade to Growth →";
       } else {
-        upgradeBtn.textContent = "Upgrade plan →";
+        const NEXT = { free:"Starter", trial:"Starter", starter:"Growth" };
+        upgradeBtn.textContent = `Upgrade to ${NEXT[u.plan] || "Growth"} →`;
+        upgradeBtn.style.display = "block";
       }
     }
   });
@@ -822,6 +823,13 @@ async function upgradePlan(plan) {
     const d = await res.json();
     if (d.url) window.location.href = d.url;
   } catch(e) { showToast("Payment error: " + e.message, "error"); }
+}
+
+let _currentPlan = "free";
+function nextPlan() {
+  if (_currentPlan === "free" || _currentPlan === "trial") return "starter";
+  if (_currentPlan === "starter") return "growth";
+  return "pro";
 }
 
 function logout() {

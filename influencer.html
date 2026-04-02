@@ -792,7 +792,15 @@ async function init(){
     const body={handle};
     if(email)body.user_email=email;
     const res=await fetch(`${API}/score`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-    if(!res.ok)throw new Error(`API ${res.status}`);
+    if(!res.ok){
+      const err=await res.json().catch(()=>({}));
+      const detail=err.detail||"";
+      if(res.status===429&&detail.startsWith("limit_reached")){
+        showError("You've used all your analyses.<br><a href='/dashboard.html' style='color:var(--accent);font-size:13px'>← Go back to upgrade your plan</a>");
+        return;
+      }
+      throw new Error(`API ${res.status}`);
+    }
     const data=await res.json();
 
     const inf={

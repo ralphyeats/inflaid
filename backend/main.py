@@ -21,7 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-PLAN_LIMITS = {"starter": 20, "growth": 75, "pro": 200}
+PLAN_LIMITS = {"free": 2, "trial": 2, "starter": 20, "growth": 75, "pro": 200}
 PLAN_PRICE_IDS = {
     "starter": os.getenv("STRIPE_STARTER_PRICE"),
     "growth":  os.getenv("STRIPE_GROWTH_PRICE"),
@@ -232,7 +232,7 @@ def score(req: ScoreRequest):
             if u["analyses_limit"] > 0 and u["analyses_used"] >= u["analyses_limit"]:
                 raise HTTPException(status_code=429, detail=f"limit_reached:{u['plan']}")
         else:
-            sb.table("users").insert({"email": req.user_email, "plan": "trial", "analyses_used": 0, "analyses_limit": 5}).execute()
+            sb.table("users").insert({"email": req.user_email, "plan": "free", "analyses_used": 0, "analyses_limit": 2}).execute()
 
     # Cache check
     cached = get_cached(req.handle)
