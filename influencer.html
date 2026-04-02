@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vettly — Influencer Detail</title>
+<meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <style>
@@ -530,8 +531,9 @@ function render(inf){
     ${catStr?`<div class="id-stat"><span class="id-stat-label">Category</span><span class="id-stat-val">${catStr}</span></div>`:""}
     <div class="id-stat"><span class="id-stat-label">Tier</span><span class="id-stat-val" style="color:${sc(inf.score)}">${inf.bench||"Analyzed"}</span></div>`;
 
-  // Score — hide raw number, show tier badge only
-  document.getElementById("s-big").style.display="none";
+  // Score
+  const sBig=document.getElementById("s-big");
+  sBig.textContent=inf.score;sBig.style.color=sc(inf.score);sBig.style.display="";
   const badge=document.getElementById("s-badge");
   badge.textContent=l.txt;badge.style.background=l.bg;badge.style.color=l.col;badge.style.borderColor=l.brd;
   document.getElementById("s-tier").textContent=inf.bench||"";
