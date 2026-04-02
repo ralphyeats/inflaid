@@ -767,6 +767,20 @@ nav {
 .pricing-strip span { font-size: 13px; color: var(--text3); }
 .pricing-fine { font-size: 12px; color: var(--text3); margin-top: 28px; }
 
+/* TESTIMONIALS */
+.testi-section { padding: 96px 24px; max-width: 1100px; margin: 0 auto; text-align: center; }
+.testi-label { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 14px; }
+.testi-heading { font-family: var(--syne); font-size: 36px; font-weight: 700; letter-spacing: -.03em; color: var(--text1); margin-bottom: 48px; }
+.testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: left; }
+.testi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.testi-stars { color: #F59E0B; font-size: 13px; letter-spacing: 2px; }
+.testi-quote { font-size: 14px; line-height: 1.7; color: var(--text2); flex: 1; }
+.testi-author { display: flex; align-items: center; gap: 10px; }
+.testi-av { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text1); }
+.testi-name { font-size: 13px; font-weight: 600; color: var(--text1); }
+.testi-role { font-size: 11px; color: var(--text3); margin-top: 1px; }
+@media (max-width: 900px) { .testi-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; } .testi-heading { font-size: 26px; } }
+
 @media (max-width: 900px) {
   .pricing-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
 }
@@ -1196,6 +1210,51 @@ footer {
         <div class="how-step-desc">View the full breakdown, see why they scored that way, and send a personalized outreach template — all in one place.</div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi-section">
+  <div class="testi-label reveal"><span class="feat-label-dot"></span>What brands are saying</div>
+  <h2 class="testi-heading reveal">Real brands. Real results.</h2>
+  <div class="testi-grid">
+
+    <div class="testi-card reveal reveal-d1">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-quote">"We used to send free product to 10 influencers and hope for the best. After Vettly flagged 3 of them for ghost followers, we redirected that $600 budget to 2 creators that actually converted. First week ROI was 4×."</p>
+      <div class="testi-author">
+        <div class="testi-av" style="background:#E8D5F5">MK</div>
+        <div>
+          <div class="testi-name">Mia K.</div>
+          <div class="testi-role">Founder, Lumē Skincare</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testi-card reveal reveal-d2">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-quote">"The verdict system is exactly what I needed. I don't have time to dig into analytics — I just need a clear yes or no. Vettly gave me that. Scored 40 accounts in one afternoon, shortlisted 8, ran 3 campaigns."</p>
+      <div class="testi-author">
+        <div class="testi-av" style="background:#D5E8F5">JL</div>
+        <div>
+          <div class="testi-name">Jordan L.</div>
+          <div class="testi-role">Growth Lead, Aura Beauty Co.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testi-card reveal reveal-d3">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-quote">"I was about to pay $800 for a sponsored post. Vettly's fraud score flagged a 62% fake follower rate. That single analysis paid for 3 years of the Pro plan. Wish I had this sooner."</p>
+      <div class="testi-author">
+        <div class="testi-av" style="background:#F5E8D5">SR</div>
+        <div>
+          <div class="testi-name">Sofia R.</div>
+          <div class="testi-role">CMO, Bloom Body</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
