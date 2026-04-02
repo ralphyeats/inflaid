@@ -679,6 +679,45 @@ nav {
 }
 .plan-cta-accent:hover { background: #2a5ee8; transform: translateY(-1px); }
 
+/* ── PRICING ADDITIONS ── */
+.plan-badge.starter { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+.plan-usage {
+  font-family: var(--display);
+  font-size: 26px; font-weight: 800; letter-spacing: -.02em;
+  color: var(--text); line-height: 1; margin-bottom: 10px;
+}
+.plan-usage span { font-size: 12px; font-weight: 500; color: var(--text3); letter-spacing: 0; }
+.plan.featured .plan-usage { color: #fff; }
+.plan.featured .plan-usage span { color: rgba(255,255,255,.4); }
+.plan-value {
+  font-size: 11px; line-height: 1.5;
+  color: rgba(255,255,255,.6);
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 7px; padding: 8px 11px;
+  margin-bottom: 14px;
+}
+.pricing-strip {
+  display: flex; justify-content: center; gap: 28px;
+  flex-wrap: wrap; margin-bottom: 48px;
+}
+.pricing-strip span { font-size: 13px; color: var(--text3); }
+.pricing-fine { font-size: 12px; color: var(--text3); margin-top: 28px; }
+
+@media (max-width: 900px) {
+  .pricing-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
+}
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .nav-actions .btn-ghost { display: none; }
+  #pricing { padding: 60px 20px; }
+  .pricing-strip { gap: 10px; }
+  .hero { padding: 110px 20px 60px; }
+  .hero h1 { font-size: clamp(36px, 9vw, 56px); }
+  .hero-actions { flex-direction: column; align-items: center; }
+}
+
 /* ── CTA ── */
 .cta-section {
   background: var(--text);
@@ -1064,59 +1103,75 @@ footer {
 <!-- PRICING -->
 <section id="pricing">
   <div class="reveal">
-    <h2>Simple, honest pricing.</h2>
-    <p class="pricing-sub">Start free. Upgrade when you're ready.</p>
+    <h2>Stop wasting money on influencers.</h2>
+    <p class="pricing-sub">One bad collab costs more than a year of Vettly.<br>Know before you spend.</p>
+  </div>
+  <div class="pricing-strip reveal reveal-d1">
+    <span>✓ 5 free analyses included</span>
+    <span>✓ No credit card required</span>
+    <span>✓ Cancel any time</span>
   </div>
   <div class="pricing-grid">
+
+    <!-- STARTER -->
     <div class="plan reveal reveal-d1">
-      <div class="plan-badge free">Free</div>
+      <div class="plan-badge starter">Starter</div>
       <div class="plan-name">Starter</div>
-      <div class="plan-desc">Try it before you commit.</div>
-      <div class="plan-price">$0</div>
-      <div class="plan-period">forever free</div>
-      <div class="plan-sep"></div>
-      <ul class="plan-features">
-        <li>2 influencer analyses</li>
-        <li>Full 7-factor breakdown</li>
-        <li>Outreach template generation</li>
-        <li>Analysis history</li>
-      </ul>
-      <a href="/auth.html" class="plan-cta plan-cta-outline">Get started free</a>
-    </div>
-    <div class="plan featured reveal reveal-d2">
-      <div class="plan-badge popular">Most popular</div>
-      <div class="plan-name">Pro</div>
-      <div class="plan-desc">For brands running regular campaigns.</div>
-      <div class="plan-price">$9</div>
+      <div class="plan-desc">For brands starting to vet influencers.</div>
+      <div class="plan-usage">20 <span>analyses / mo</span></div>
+      <div class="plan-price">$19</div>
       <div class="plan-period">per month</div>
       <div class="plan-sep"></div>
       <ul class="plan-features">
-        <li>50 analyses per month</li>
-        <li>Full 7-factor breakdown</li>
-        <li>AI comment sentiment analysis</li>
-        <li>Fraud detection scoring</li>
-        <li>Outreach tracking</li>
-        <li>Analytics dashboard</li>
+        <li>Verdict — Test / Avoid / Scale</li>
+        <li>ROI estimation</li>
+        <li>Campaign type recommendation</li>
+        <li>Outreach template</li>
       </ul>
-      <a href="/auth.html" class="plan-cta plan-cta-white">Start Pro →</a>
+      <a href="/auth.html" class="plan-cta plan-cta-outline">Start Free Trial</a>
     </div>
-    <div class="plan reveal reveal-d3">
-      <div class="plan-badge growth">Growth</div>
+
+    <!-- GROWTH (featured) -->
+    <div class="plan featured reveal reveal-d2">
+      <div class="plan-badge popular">Most Popular</div>
       <div class="plan-name">Growth</div>
-      <div class="plan-desc">For agencies and power users.</div>
+      <div class="plan-desc">The full decision system. Know exactly what to do and why.</div>
+      <div class="plan-usage">75 <span>analyses / mo</span></div>
       <div class="plan-price">$49</div>
       <div class="plan-period">per month</div>
       <div class="plan-sep"></div>
       <ul class="plan-features">
-        <li>Unlimited analyses</li>
-        <li>Everything in Pro</li>
-        <li>Priority data refresh</li>
-        <li>Bulk handle analysis</li>
-        <li>API access (coming soon)</li>
+        <li>Full decision output (ROI + Signals + Plan)</li>
+        <li>Break-even + worst-case analysis</li>
+        <li>Key signals with performance benchmarks</li>
+        <li>3-week campaign execution checklist</li>
+        <li>Priority processing</li>
       </ul>
-      <a href="/auth.html" class="plan-cta plan-cta-accent">Start Growth →</a>
+      <div class="plan-value">Avg. brand avoids $400+ in bad collabs per month</div>
+      <a href="/auth.html" class="plan-cta plan-cta-white">Start Free Trial →</a>
     </div>
+
+    <!-- PRO -->
+    <div class="plan reveal reveal-d3">
+      <div class="plan-badge growth">Pro</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-desc">For agencies running multiple brand campaigns.</div>
+      <div class="plan-usage">200 <span>analyses / mo</span></div>
+      <div class="plan-price">$99</div>
+      <div class="plan-period">per month</div>
+      <div class="plan-sep"></div>
+      <ul class="plan-features">
+        <li>Everything in Growth</li>
+        <li>Batch analysis — multiple handles at once</li>
+        <li>Export results to CSV</li>
+        <li>Advanced insights</li>
+        <li>Priority support</li>
+      </ul>
+      <a href="/auth.html" class="plan-cta plan-cta-accent">Start Free Trial →</a>
+    </div>
+
   </div>
+  <p class="pricing-fine reveal reveal-d4">All plans start with 5 free analyses. No credit card required to try.</p>
 </section>
 
 <!-- CTA -->

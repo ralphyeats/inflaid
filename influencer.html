@@ -209,14 +209,38 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 .not-rec{background:var(--red-lo);border:1px solid var(--red-mid);border-radius:9px;padding:12px 16px;font-size:12px;color:var(--red);line-height:1.55}
 
 @media(max-width:768px){
+  /* Core layout */
   .sidebar{display:none}
   .main{width:100vw}
   .topbar{padding:0 12px;gap:8px;height:48px}
   .topbar-actions .tbtn-ghost{display:none}
   .content{padding:12px}
   .layout{grid-template-columns:1fr!important;gap:10px}
+
+  /* Decision Bar: stack verdict first, pills below */
+  .decision-bar{flex-direction:column;padding:16px;gap:0}
+  .db-left{min-width:unset;border-right:none;border-bottom:1px solid rgba(0,0,0,.08);padding-right:0;margin-right:0;padding-bottom:14px;margin-bottom:14px}
+  .db-verdict-label{font-size:18px}
+  .db-pills{flex-wrap:wrap;gap:8px}
+  .db-pill{flex:1;min-width:calc(50% - 4px)}
+
+  /* ROI card: vertical flow, no side-by-side columns */
+  .roi-flows{grid-template-columns:1fr!important}
+  .roi-flow-return{border-left:none!important;border-top:1px solid var(--green-mid)}
   .roi-nums{grid-template-columns:1fr!important}
   .roi-aov-row{flex-direction:column;align-items:stretch;gap:6px}
+  .roi-multiplier{flex-direction:column;align-items:flex-start;gap:4px}
+
+  /* Key Signals: single column */
+  .signals-grid{grid-template-columns:1fr!important}
+
+  /* Cards: reduce padding */
+  .card{padding:16px}
+  .id-card,.score-card,.verdict-sum{padding:16px}
+
+  /* Campaign plan: clean wrapping */
+  .camp-key{min-width:52px}
+  .camp-val{font-size:12px}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -337,6 +361,12 @@ const CATS={skincare:"Skincare",makeup:"Makeup",haircare:"Hair care",fragrance:"
 
 function sc(s){return s>=70?"var(--green)":s>=40?"var(--amber)":"var(--red)";}
 function scHex(s){return s>=70?"#34C77A":s>=40?"#E8962A":"#D95050";}
+function perfTier(val){
+  if(val>=80)return{label:"Top 10% of beauty creators",col:"var(--green)"};
+  if(val>=65)return{label:"Above average for their size",col:"var(--green)"};
+  if(val>=40)return{label:"Average — not a differentiator",col:"var(--amber)"};
+  return{label:"Below average — bottom third",col:"var(--red)"};
+}
 
 function fmtFollowers(n){
   if(!n||n==="—")return"—";
@@ -465,7 +495,6 @@ function render(inf){
     }
     const DIRECTIVES={avoid:"Do NOT proceed. Skip this influencer.",risky:"Do NOT pay upfront. Gifted trial only.",mid:"Do not scale. Test with gifted campaign first.",high:"Proceed. Do not pay upfront on first collab.",elite:"Scale immediately. Prioritize this collab."};
     const directive=DIRECTIVES[inf.label]||"";
-    const confCol=roi?confDotColor(roi.confidence):null;
     dBar.style.cssText=`display:flex;background:${dc.bg};border-color:${dc.brd}`;
     dBar.innerHTML=`
       <div class="db-left">
@@ -479,7 +508,7 @@ function render(inf){
         ${v.budget_range?`<div class="db-pill"><div class="db-pill-label">Budget</div><div class="db-pill-val" style="color:var(--ink)">${v.budget_range}</div></div>`:""}
         ${v.risk?`<div class="db-pill"><div class="db-pill-label">Risk</div><div class="db-pill-val" style="color:${riskColor(v.risk)}">${v.risk}</div></div>`:""}
         ${roiStr!=="—"?`<div class="db-pill"><div class="db-pill-label">Expected ROI</div><div class="db-pill-val" style="color:var(--green)">${roiStr}</div></div>`:""}
-        ${roi?.confidence?`<div class="db-pill"><div class="db-pill-label">Confidence</div><div class="db-pill-val" style="color:${confCol}">${roi.confidence}</div></div>`:""}
+        ${roi?.estimated_conversions_low!=null?`<div class="db-pill"><div class="db-pill-label">Est. Sales</div><div class="db-pill-val" style="color:var(--ink)">${roi.estimated_conversions_low}–${roi.estimated_conversions_high} orders</div></div>`:""}
       </div>`;
   } else { dBar.style.display="none"; }
 
@@ -501,9 +530,8 @@ function render(inf){
     ${catStr?`<div class="id-stat"><span class="id-stat-label">Category</span><span class="id-stat-val">${catStr}</span></div>`:""}
     <div class="id-stat"><span class="id-stat-label">Tier</span><span class="id-stat-val" style="color:${sc(inf.score)}">${inf.bench||"Analyzed"}</span></div>`;
 
-  // Score
-  document.getElementById("s-big").textContent=inf.score;
-  document.getElementById("s-big").style.color=sc(inf.score);
+  // Score — hide raw number, show tier badge only
+  document.getElementById("s-big").style.display="none";
   const badge=document.getElementById("s-badge");
   badge.textContent=l.txt;badge.style.background=l.bg;badge.style.color=l.col;badge.style.borderColor=l.brd;
   document.getElementById("s-tier").textContent=inf.bench||"";
@@ -515,19 +543,39 @@ function render(inf){
     ?`<div class="verdict-sum"><div class="warn-pills">${flags.map(f=>`<span class="warn-pill">${f}</span>`).join('')}</div></div>`
     :"";
 
-  // Not-rec banner
-  document.getElementById("not-rec-wrap").innerHTML=(label==="avoid"||label==="risky")
-    ?`<div class="not-rec">Risk signals detected — bot activity, engagement drops, or over-sponsorship. Review carefully before proceeding.</div>`:"";
+  // Not-rec banner — dynamic based on actual warning flags
+  if(label==="avoid"||label==="risky"){
+    const riskFlags=v?.warning_flags||[];
+    const riskMsg=riskFlags.length>0
+      ?`Risk signals: ${riskFlags.join(" · ")}. Do not proceed without reviewing these.`
+      :"Risk signals detected. Review this profile carefully before proceeding.";
+    document.getElementById("not-rec-wrap").innerHTML=`<div class="not-rec">${riskMsg}</div>`;
+  } else {
+    document.getElementById("not-rec-wrap").innerHTML="";
+  }
 
-  // Campaign checklist
+  // Campaign checklist — execution steps by campaign type
   const acWrap=document.getElementById("action-card-wrap");
   if(v){
     const dc=verdictColors(v.verdict);
+    const ct=(v.campaign_type||v.verdict||"").toLowerCase();
+    const STEPS={
+      gifted:[
+        {week:"Week 1",step:"Ship product — no strings attached"},
+        {week:"Week 2",step:"Follow up once. Ask if they'd share if they love it"},
+        {week:"Week 3",step:"Review: did they post? Track reach + engagement"}
+      ],
+      paid:[
+        {week:"Week 1",step:"Finalize brief, deliverables, and payment terms"},
+        {week:"Week 2",step:"Review content draft before it goes live"},
+        {week:"Week 3",step:"Post goes live — track link clicks and orders"}
+      ]
+    };
+    const steps=STEPS[ct]||STEPS.gifted;
     acWrap.innerHTML=`<div class="card" style="border-color:${dc.brd}">
       <div class="card-title">Campaign Plan</div>
       <div class="camp-checklist">
-        <div class="camp-item"><span class="camp-key">Action</span><span class="camp-val">${v.action||"—"}</span></div>
-        ${v.reason?`<div class="camp-item"><span class="camp-key">Why</span><span class="camp-val" style="color:var(--ink2);font-size:12px">${v.reason}</span></div>`:""}
+        ${steps.map(s=>`<div class="camp-item"><span class="camp-key">${s.week}</span><span class="camp-val">${s.step}</span></div>`).join('')}
       </div>
     </div>`;
   } else {acWrap.innerHTML="";}
@@ -610,18 +658,24 @@ function render(inf){
     if(breakdown.length>=2){
       const sorted=[...breakdown].sort((a,b)=>(b.val??b.value??0)-(a.val??a.value??0));
       const best=sorted[0], worst=sorted[sorted.length-1];
+      const bestVal=best.val??best.value??0, worstVal=worst.val??worst.value??0;
+      const bestTier=perfTier(bestVal), worstTier=perfTier(worstVal);
       sigWrap.innerHTML=`<div class="card">
         <div class="card-title">Key Signals</div>
         <div class="signals-grid">
           <div class="signal-box" style="background:var(--green-lo);border-color:var(--green-mid)">
             <div class="signal-eyebrow" style="color:var(--green)">Biggest Strength</div>
             <div class="signal-text">${best.name||best.label||"—"}</div>
-            <div class="signal-sub" style="color:var(--ink2);font-weight:500;margin-top:4px">${best.desc||best.description||""}</div>
+            <div style="margin:6px 0 3px;height:3px;background:rgba(0,0,0,.08);border-radius:2px"><div style="width:${bestVal}%;height:3px;background:${bestTier.col};border-radius:2px"></div></div>
+            <div style="font-size:10px;font-weight:600;color:${bestTier.col};margin-bottom:5px">${bestTier.label}</div>
+            <div class="signal-sub" style="color:var(--ink2)">${best.desc||best.description||""}</div>
           </div>
           <div class="signal-box" style="background:var(--red-lo);border-color:var(--red-mid)">
             <div class="signal-eyebrow" style="color:var(--red)">Biggest Risk</div>
             <div class="signal-text">${worst.name||worst.label||"—"}</div>
-            <div class="signal-sub" style="color:var(--ink2);font-weight:500;margin-top:4px">${worst.desc||worst.description||""}</div>
+            <div style="margin:6px 0 3px;height:3px;background:rgba(0,0,0,.08);border-radius:2px"><div style="width:${worstVal}%;height:3px;background:${worstTier.col};border-radius:2px"></div></div>
+            <div style="font-size:10px;font-weight:600;color:${worstTier.col};margin-bottom:5px">${worstTier.label}</div>
+            <div class="signal-sub" style="color:var(--ink2)">${worst.desc||worst.description||""}</div>
           </div>
         </div>
       </div>`;
@@ -640,7 +694,7 @@ function render(inf){
     const wtStr=Math.abs(wt)<=1?(wt>=0?"+":"")+Math.round(wt*100)+"%":(wt>0?"+":"")+wt+"%";
     return`<div class="factor-row">
       <div class="factor-left">
-        <div class="factor-name">${name} <span style="font-size:10px;color:var(--ink3);font-weight:400">(${wtStr})</span></div>
+        <div class="factor-name">${name}</div>
         <div class="factor-desc">${desc}</div>
       </div>
       <div class="factor-right">

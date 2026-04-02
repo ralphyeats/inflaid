@@ -190,15 +190,27 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 @media(max-width:768px){
   .sidebar{display:none}
   .body-wrap{flex-direction:column}
-  .main{width:100vw;padding-bottom:56px}
-  .topbar{padding:0 14px;gap:8px;height:48px}
-  .content-area{padding:10px}
+  .main{width:100vw}
+
+  /* Topbar: hide search box, full-width analyze input */
+  .topbar{padding:0 12px;gap:8px;height:52px;flex-wrap:nowrap}
+  .topbar-title{font-size:13px}
+  .search-box{display:none}
+  #analyze-box{flex:1!important;width:auto!important;max-width:none!important;min-width:0}
+
+  /* Content: correct class name, add bottom padding for nav */
+  .content{padding:12px!important;padding-bottom:70px!important}
+
+  /* Grids */
   .inf-grid{grid-template-columns:1fr!important}
   .anl-top{grid-template-columns:1fr 1fr!important}
   .anl-grid{grid-template-columns:1fr!important}
   .outreach-layout{grid-template-columns:1fr!important;height:auto!important}
-  #analyze-box{width:100%!important;max-width:100%!important}
+  .stats-row{gap:6px}
+  .stat-card{padding:8px 10px}
   .disc-toolbar{flex-wrap:wrap;gap:6px}
+
+  /* Mobile bottom nav */
   .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--s1);border-top:1px solid var(--b1);z-index:100}
   .mobile-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;color:var(--ink3);cursor:pointer;border:none;background:none;font-family:var(--sans);transition:color .15s}
   .mobile-nav-item.active{color:var(--accent)}
@@ -301,7 +313,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
             <div class="tpl-meta" id="tpl-meta">Choose from the list to generate a template</div>
           </div>
           <div class="tpl-scores" id="tpl-scores" style="display:none">
-            <div class="tpl-sc"><div class="tpl-sc-n" id="tpl-score">—</div><div class="tpl-sc-l">ROI Score</div></div>
+            <div class="tpl-sc"><div class="tpl-sc-n" id="tpl-score" style="font-size:13px;letter-spacing:-.01em">—</div><div class="tpl-sc-l">ROI Tier</div></div>
             <div class="tpl-sc"><div class="tpl-sc-n" id="tpl-followers" style="color:var(--accent)">—</div><div class="tpl-sc-l">Followers</div></div>
             <div class="tpl-sc"><div class="tpl-sc-n" id="tpl-verdict">—</div><div class="tpl-sc-l">Verdict</div></div>
           </div>
@@ -644,7 +656,7 @@ function _fillOutreachPanel(inf){
   document.getElementById("tpl-meta").textContent=`${inf.handle}${inf.followers!=="—"?" · "+inf.followers:""} · ${inf.platforms.join(" + ")}`;
   document.getElementById("tpl-scores").style.display="flex";
   const sc=document.getElementById("tpl-score");
-  sc.textContent=inf.score; sc.style.color=inf.score>=70?"var(--green)":inf.score>=40?"var(--amber)":"var(--red)";
+  sc.textContent=(l||LBL.mid).txt; sc.style.color=(l||LBL.mid).col;
   document.getElementById("tpl-followers").textContent=inf.followers;
   const vd=document.getElementById("tpl-verdict");
   vd.textContent=l.txt; vd.style.color=l.col;
@@ -767,24 +779,31 @@ sb.auth.getSession().then(({ data }) => {
   sb.from("users").select("plan,analyses_used,analyses_limit").eq("email", email).then(({data}) => {
     if (data && data[0]) {
       const u = data[0];
+      const PLAN_LIMITS = { trial: 5, starter: 20, growth: 75, pro: 200 };
       const planName = u.plan.charAt(0).toUpperCase() + u.plan.slice(1) + " plan";
       const remaining = u.analyses_limit > 0 ? u.analyses_limit - u.analyses_used : "∞";
+      const pct = u.analyses_limit > 0 ? Math.min(100, (u.analyses_used / u.analyses_limit) * 100) : 100;
       document.getElementById("usage-plan").textContent = planName;
       document.getElementById("usage-count").textContent = u.analyses_used + "/" + (u.analyses_limit || "∞");
-      document.getElementById("usage-fill").style.width = u.analyses_limit > 0 ? Math.min(100, (u.analyses_used / u.analyses_limit) * 100) + "%" : "100%";
+      document.getElementById("usage-fill").style.width = pct + "%";
+      document.getElementById("usage-fill").style.background = pct >= 90 ? "var(--red)" : pct >= 70 ? "var(--amber)" : "var(--accent)";
       document.getElementById("usage-remaining").textContent = u.analyses_limit > 0 ? remaining + " analyses remaining" : "Unlimited analyses";
       document.getElementById("user-plan").textContent = planName;
-      if (u.plan === "growth") document.querySelector(".upgrade-btn").style.display = "none";
+      const upgradeBtn = document.querySelector(".upgrade-btn");
+      if (u.plan === "pro" || u.plan === "growth") {
+        upgradeBtn.style.display = "none";
+      } else if (u.plan === "starter") {
+        upgradeBtn.textContent = "Upgrade to Growth →";
+      } else {
+        upgradeBtn.textContent = "Upgrade plan →";
+      }
     }
   });
 
   // Show upgrade success message
   const params = new URLSearchParams(window.location.search);
   if (params.get("upgraded") === "1") {
-    showToast("🎉 Plan upgraded successfully! Welcome to Growth.", "info");
-    document.getElementById("usage-plan").textContent = "Growth plan";
-    document.getElementById("user-plan").textContent = "Growth plan";
-    document.getElementById("usage-remaining").textContent = "Unlimited analyses";
+    showToast("Plan upgraded successfully! Your new analyses are ready.", "info");
     document.querySelector(".upgrade-btn").style.display = "none";
     history.replaceState({}, "", "/dashboard.html");
   }
