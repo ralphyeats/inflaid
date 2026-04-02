@@ -5,18 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vettly — Influencer Detail</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#07090D;--s1:#0B0F16;--s2:#0F1520;--s3:#131A26;
-  --b1:#1C2638;--b2:#24304A;--b3:#2E3C56;
-  --accent:#4F8CF5;--accent-lo:rgba(79,140,245,.08);--accent-mid:rgba(79,140,245,.22);
-  --green:#34C77A;--green-lo:rgba(52,199,122,.08);--green-mid:rgba(52,199,122,.2);
-  --amber:#E8962A;--amber-lo:rgba(232,150,42,.08);--amber-mid:rgba(232,150,42,.2);
-  --red:#D95050;--red-lo:rgba(217,80,80,.08);--red-mid:rgba(217,80,80,.2);
-  --ink:#DDE4F0;--ink2:#8896B0;--ink3:#3D4E68;
-  --syne:'Syne',sans-serif;--sans:'Geist',-apple-system,sans-serif;
+  --bg:#F8F7F4;--s1:#FFFFFF;--s2:#F3F1EE;--s3:#EDEAE5;
+  --b1:#E4E0D9;--b2:#D8D3CB;--b3:#CCC7BE;
+  --accent:#3B6EF5;--accent-lo:rgba(59,110,245,.08);--accent-mid:rgba(59,110,245,.18);
+  --green:#16A34A;--green-lo:rgba(22,163,74,.08);--green-mid:rgba(22,163,74,.2);
+  --amber:#D97706;--amber-lo:rgba(217,119,6,.08);--amber-mid:rgba(217,119,6,.18);
+  --red:#DC2626;--red-lo:rgba(220,38,38,.08);--red-mid:rgba(220,38,38,.18);
+  --ink:#1A1714;--ink2:#6B6360;--ink3:#A09C97;
+  --syne:'Bricolage Grotesque',sans-serif;--sans:'DM Sans',-apple-system,sans-serif;
   --sidebar:220px;
+  --shadow:0 1px 3px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.06);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
@@ -24,7 +25,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.fadeup{animation:fadeUp .4s cubic-bezier(.22,1,.36,1) both}
+.fadeup{animation:fadeUp .35s cubic-bezier(.22,1,.36,1) both}
 .d1{animation-delay:.05s}.d2{animation-delay:.10s}.d3{animation-delay:.15s}.d4{animation-delay:.20s}
 
 /* SIDEBAR */
@@ -58,113 +59,130 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 .tbtn-ghost:hover{border-color:var(--b3);color:var(--ink)}
 .tbtn-solid{background:var(--accent);color:#fff}
 .tbtn-solid:hover{background:#5F9AF7}
+.save-topbtn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--sans);transition:all .15s;border:1px solid var(--b2);background:transparent;color:var(--ink2)}
+.save-topbtn:hover{border-color:var(--amber-mid);color:var(--amber)}
+.save-topbtn.saved{border-color:var(--amber-mid);background:var(--amber-lo);color:var(--amber)}
 
 /* CONTENT */
 .content{flex:1;overflow-y:auto;padding:24px}
-.layout{display:grid;grid-template-columns:280px 1fr;gap:20px;max-width:1100px;margin:0 auto}
+.layout{display:grid;grid-template-columns:268px 1fr;gap:18px;max-width:1060px;margin:0 auto}
 
 /* LEFT COLUMN */
-.profile-card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px;margin-bottom:12px}
-.profile-av{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;margin-bottom:14px}
-.profile-name{font-family:var(--syne);font-size:16px;font-weight:700;color:var(--ink);margin-bottom:3px;letter-spacing:-.02em}
-.profile-handle{font-size:12px;color:var(--ink3);margin-bottom:12px}
-.profile-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
-.ptag{font-size:10px;padding:2px 8px;border-radius:4px;background:var(--s3);border:1px solid var(--b1);color:var(--ink3);text-transform:uppercase;letter-spacing:.04em}
-.profile-stats{display:flex;flex-direction:column;gap:8px}
-.pstat-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--b1)}
-.pstat-row:last-child{border-bottom:none}
-.pstat-label{font-size:12px;color:var(--ink3)}
-.pstat-val{font-size:13px;font-weight:500;color:var(--ink)}
+.left-col{display:flex;flex-direction:column;gap:12px}
 
-.score-card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px;margin-bottom:12px;text-align:center}
-.score-big{font-family:var(--syne);font-size:56px;font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:8px}
-.score-verdict{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 12px;border-radius:10px;font-weight:500;border:1px solid;margin-bottom:10px}
-.score-bench{font-size:12px;color:var(--ink3)}
-.score-bench span{font-weight:500}
+/* IDENTITY CARD */
+.id-card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px}
+.id-av{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;margin-bottom:12px}
+.id-name{font-family:var(--syne);font-size:16px;font-weight:700;color:var(--ink);margin-bottom:2px;letter-spacing:-.02em}
+.id-handle{font-size:12px;color:var(--ink3);margin-bottom:12px}
+.id-stats{display:flex;flex-direction:column;gap:0}
+.id-stat{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--b1)}
+.id-stat:last-child{border-bottom:none}
+.id-stat-label{font-size:11px;color:var(--ink3)}
+.id-stat-val{font-size:12px;font-weight:500;color:var(--ink)}
 
-/* VERDICT CARD */
-.verdict-card{border-radius:12px;padding:18px;margin-bottom:12px;border:1px solid}
-.verdict-label-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
-.verdict-badge{font-family:var(--syne);font-size:13px;font-weight:700;letter-spacing:-.01em}
-.verdict-meta{display:flex;flex-direction:column;gap:7px}
-.verdict-meta-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05)}
-.verdict-meta-row:last-child{border-bottom:none}
-.vml{font-size:11px;color:var(--ink3)}
-.vmv{font-size:12px;font-weight:500}
+/* SCORE CARD */
+.score-card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px;text-align:center}
+.score-big{font-family:var(--syne);font-size:60px;font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:10px}
+.score-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 12px;border-radius:10px;font-weight:500;border:1px solid;margin-bottom:8px}
+.score-tier{font-size:11px;color:var(--ink3)}
+
+/* VERDICT SUMMARY CARD */
+.verdict-sum{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:16px}
+.vs-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.vs-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.vs-label{font-family:var(--syne);font-size:13px;font-weight:700}
+.vs-rows{display:flex;flex-direction:column;gap:0}
+.vs-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.vs-row:last-child{border-bottom:none}
+.vs-key{font-size:11px;color:var(--ink3)}
+.vs-val{font-size:12px;font-weight:500}
+.warn-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.04)}
+.warn-pill{font-size:10px;color:var(--amber);background:var(--amber-lo);border:1px solid var(--amber-mid);border-radius:5px;padding:3px 8px;line-height:1.4}
 
 /* RIGHT COLUMN */
-.section-card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px;margin-bottom:12px}
-.sec-title{font-family:var(--syne);font-size:14px;font-weight:600;color:var(--ink);margin-bottom:16px;letter-spacing:-.01em}
+.right-col{display:flex;flex-direction:column;gap:12px}
 
-/* DECISION CARD */
-.decision-card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px;margin-bottom:12px}
-.decision-reason{font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:12px}
-.decision-action{border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.6;font-weight:500;border-left:3px solid}
+/* ACTION CARD — hero element */
+.action-card{border-radius:12px;padding:20px;border:1px solid}
+.ac-eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.09em;font-weight:600;opacity:.7;margin-bottom:8px}
+.ac-action{font-family:var(--syne);font-size:15px;font-weight:700;letter-spacing:-.02em;line-height:1.45;margin-bottom:14px}
+.ac-meta{display:flex;gap:8px;flex-wrap:wrap}
+.ac-chip{font-size:11px;padding:3px 10px;border-radius:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:var(--ink2)}
 
-/* ROI FORECAST CARD */
-.roi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+/* REASON EXPANDER */
+.reason-toggle{display:flex;align-items:center;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);font-size:11px;color:var(--ink3);cursor:pointer;user-select:none;transition:color .15s;background:none;border-bottom:none;border-left:none;border-right:none;font-family:var(--sans);width:100%;text-align:left}
+.reason-toggle:hover{color:var(--ink2)}
+.reason-toggle svg{transition:transform .2s;flex-shrink:0}
+.reason-toggle.open svg{transform:rotate(180deg)}
+.reason-body{font-size:12px;color:var(--ink2);line-height:1.65;padding-top:10px;display:none}
+.reason-body.open{display:block}
+
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px}
+.card-title{font-family:var(--syne);font-size:13px;font-weight:600;color:var(--ink);margin-bottom:14px;letter-spacing:-.01em}
+
+/* ROI */
+.roi-nums{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .roi-cell{background:var(--s2);border-radius:8px;padding:12px;border:1px solid var(--b1)}
-.roi-cell-label{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-.roi-cell-val{font-family:var(--syne);font-size:18px;font-weight:700;color:var(--ink)}
-.roi-cell-sub{font-size:11px;color:var(--ink3);margin-top:1px}
-.roi-aov-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.roi-aov-label{font-size:12px;color:var(--ink3);white-space:nowrap}
+.roi-cell-lbl{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.roi-cell-val{font-family:var(--syne);font-size:20px;font-weight:700;color:var(--ink)}
+.roi-cell-sub{font-size:10px;color:var(--ink3);margin-top:2px}
+.roi-conf{display:inline-flex;align-items:center;gap:5px;font-size:10px;padding:2px 8px;border-radius:4px;background:var(--s3);border:1px solid var(--b1);color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+.conf-dot{width:5px;height:5px;border-radius:50%;background:var(--green)}
+.roi-aov-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.roi-aov-lbl{font-size:12px;color:var(--ink3);white-space:nowrap}
 .roi-aov-input{flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:7px 10px;color:var(--ink);font-size:13px;font-family:var(--sans);outline:none;transition:border-color .15s}
 .roi-aov-input:focus{border-color:var(--accent)}
-.roi-revenue{background:var(--accent-lo);border:1px solid var(--accent-mid);border-radius:8px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
-.roi-rev-label{font-size:12px;color:var(--ink2)}
-.roi-rev-val{font-family:var(--syne);font-size:16px;font-weight:700;color:var(--accent)}
-.roi-note{font-size:11px;color:var(--ink3);margin-top:10px;line-height:1.5}
-.roi-confidence{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:4px;background:var(--s3);border:1px solid var(--b1);color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:12px}
+.roi-revenue{background:var(--accent-lo);border:1px solid var(--accent-mid);border-radius:8px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center}
+.roi-rev-lbl{font-size:12px;color:var(--ink2)}
+.roi-rev-val{font-family:var(--syne);font-size:15px;font-weight:700;color:var(--accent)}
+.roi-note{font-size:11px;color:var(--ink3);margin-top:8px;line-height:1.5}
 
-/* SCORE BREAKDOWN */
-.factor-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--b1)}
-.factor-row:last-child{border-bottom:none}
-.factor-left{flex:1}
-.factor-name{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:3px}
-.factor-desc{font-size:11px;color:var(--ink3)}
-.factor-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:80px}
-.factor-score{font-family:var(--syne);font-size:16px;font-weight:700}
-.factor-bar-wrap{width:80px}
-.factor-track{height:3px;background:var(--b1);border-radius:2px;overflow:hidden}
-.factor-fill{height:3px;border-radius:2px;transition:width .8s cubic-bezier(.22,1,.36,1)}
+/* EXPANDER — reusable */
+.expander-toggle{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink3);cursor:pointer;user-select:none;transition:color .15s;background:none;border:none;font-family:var(--sans);padding:0;margin-top:10px}
+.expander-toggle:hover{color:var(--ink2)}
+.expander-toggle svg{transition:transform .2s}
+.expander-toggle.open svg{transform:rotate(180deg)}
+.expander-body{font-size:12px;color:var(--ink2);line-height:1.65;padding-top:8px;display:none}
+.expander-body.open{display:block}
 
 /* INSIGHT */
-.insight-box{background:var(--s2);border-radius:9px;padding:14px 16px;font-size:13px;color:var(--ink2);line-height:1.7;border-left:3px solid;font-weight:400}
+.insight-text{font-size:13px;color:var(--ink2);line-height:1.7;border-left:3px solid;padding-left:12px}
+
+/* BREAKDOWN */
+.factor-row{display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid var(--b1)}
+.factor-row:last-child{border-bottom:none}
+.factor-left{flex:1}
+.factor-name{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:2px}
+.factor-desc{font-size:11px;color:var(--ink3)}
+.factor-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:76px}
+.factor-score{font-family:var(--syne);font-size:15px;font-weight:700}
+.factor-track{width:76px;height:2px;background:var(--b1);border-radius:2px;overflow:hidden}
+.factor-fill{height:2px;border-radius:2px;transition:width .8s cubic-bezier(.22,1,.36,1)}
 
 /* OUTREACH */
-.outreach-textarea{width:100%;min-height:180px;background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:13px;color:var(--ink2);font-size:13px;line-height:1.75;resize:none;outline:none;font-family:var(--sans);font-weight:400;transition:border-color .15s;margin-bottom:10px}
-.outreach-textarea:focus{border-color:var(--b2)}
+.outreach-ta{width:100%;min-height:160px;background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:13px;color:var(--ink2);font-size:13px;line-height:1.75;resize:none;outline:none;font-family:var(--sans);transition:border-color .15s;margin-bottom:10px}
+.outreach-ta:focus{border-color:var(--b2)}
 .outreach-btns{display:flex;gap:8px}
-.obtn{flex:1;padding:10px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--sans);text-align:center;transition:all .15s;border:none}
+.obtn{flex:1;padding:9px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--sans);text-align:center;transition:all .15s;border:none}
 .obtn-solid{background:var(--accent);color:#fff}
 .obtn-solid:hover{background:#5F9AF7}
 .obtn-ghost{background:transparent;border:1px solid var(--b2);color:var(--ink2)}
 .obtn-ghost:hover{border-color:var(--b3);color:var(--ink)}
 
-/* WARNING FLAGS */
-.warn-list{display:flex;flex-direction:column;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05)}
-.warn-item{display:flex;align-items:flex-start;gap:8px;font-size:11px;color:var(--amber);line-height:1.5}
-.warn-dot{width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:4px}
+/* NOT-REC BANNER */
+.not-rec{background:var(--red-lo);border:1px solid var(--red-mid);border-radius:9px;padding:12px 16px;font-size:12px;color:var(--red);line-height:1.55}
 
-/* NOT RECOMMENDED */
-.not-rec{background:var(--red-lo);border:1px solid var(--red-mid);border-radius:9px;padding:14px 16px;font-size:13px;color:var(--red);line-height:1.6;margin-bottom:12px}
-
-/* SAVE BUTTON */
-.save-topbtn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--sans);transition:all .15s;border:1px solid var(--b2);background:transparent;color:var(--ink2)}
-.save-topbtn:hover{border-color:var(--amber-mid);color:var(--amber)}
-.save-topbtn.saved{border-color:var(--amber-mid);background:var(--amber-lo);color:var(--amber)}
 @media(max-width:768px){
   .sidebar{display:none}
   .main{width:100vw}
   .topbar{padding:0 12px;gap:8px;height:48px}
-  .topbar-actions .tbtn:not(.tbtn-solid){display:none}
+  .topbar-actions .tbtn-ghost{display:none}
   .content{padding:12px}
-  .layout{grid-template-columns:1fr!important;gap:12px}
-  .roi-grid{grid-template-columns:1fr!important}
+  .layout{grid-template-columns:1fr!important;gap:10px}
+  .roi-nums{grid-template-columns:1fr!important}
   .roi-aov-row{flex-direction:column;align-items:stretch;gap:6px}
-  .profile-card,.score-card,.verdict-card{margin-bottom:8px}
-  .factor-bar-wrap{width:60px}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -220,46 +238,43 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
   <div class="content">
     <div class="layout" id="layout" style="display:none">
 
-      <!-- LEFT -->
-      <div>
-        <div class="profile-card fadeup">
-          <div class="profile-av" id="p-av"></div>
-          <div class="profile-name" id="p-name"></div>
-          <div class="profile-handle" id="p-handle"></div>
-          <div class="profile-tags" id="p-tags"></div>
-          <div class="profile-stats" id="p-stats"></div>
+      <!-- LEFT COLUMN -->
+      <div class="left-col">
+        <div class="id-card fadeup">
+          <div class="id-av" id="p-av"></div>
+          <div class="id-name" id="p-name"></div>
+          <div class="id-handle" id="p-handle"></div>
+          <div class="id-stats" id="p-stats"></div>
         </div>
 
         <div class="score-card fadeup d1">
           <div class="score-big" id="s-big"></div>
-          <div class="score-verdict" id="s-verdict"></div>
-          <div class="score-bench" id="s-bench"></div>
+          <div class="score-badge" id="s-badge"></div>
+          <div class="score-tier" id="s-tier"></div>
         </div>
 
-        <div id="verdict-card-wrap" class="fadeup d2"></div>
+        <div id="verdict-sum-wrap" class="fadeup d2"></div>
       </div>
 
-      <!-- RIGHT -->
-      <div>
-        <div id="not-rec-banner"></div>
-
-        <div id="decision-card-wrap"></div>
-
+      <!-- RIGHT COLUMN -->
+      <div class="right-col">
+        <div id="not-rec-wrap"></div>
+        <div id="action-card-wrap" class="fadeup d1"></div>
         <div id="roi-card-wrap" class="fadeup d2"></div>
 
-        <div class="section-card fadeup d2">
-          <div class="sec-title">Why this score</div>
-          <div class="insight-box" id="insight-box"></div>
+        <div class="card fadeup d2">
+          <div class="card-title">Why this score</div>
+          <div class="insight-text" id="insight-box"></div>
         </div>
 
-        <div class="section-card fadeup d3">
-          <div class="sec-title">Score breakdown</div>
+        <div class="card fadeup d3">
+          <div class="card-title">Score breakdown</div>
           <div id="factor-list"></div>
         </div>
 
-        <div class="section-card fadeup d4">
-          <div class="sec-title">Outreach template</div>
-          <textarea class="outreach-textarea" id="outreach-ta" readonly></textarea>
+        <div class="card fadeup d4">
+          <div class="card-title">Outreach template</div>
+          <textarea class="outreach-ta" id="outreach-ta" readonly></textarea>
           <div class="outreach-btns">
             <button class="obtn obtn-solid" onclick="copyTemplate()">Copy to clipboard</button>
             <button class="obtn obtn-ghost">Mark as sent</button>
@@ -277,15 +292,14 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const RAILWAY_URL = "https://vettly-production-63d5.up.railway.app";
-const API = (window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1")
-  ? RAILWAY_URL : RAILWAY_URL;
+const API = RAILWAY_URL;
 
 const LBL={
   elite:{bg:"var(--green-lo)",col:"var(--green)",brd:"var(--green-mid)",txt:"Elite ROI potential"},
   high:{bg:"var(--green-lo)",col:"var(--green)",brd:"var(--green-mid)",txt:"High conversion potential"},
-  mid:{bg:"var(--amber-lo)",col:"var(--amber)",brd:"var(--amber-mid)",txt:"Aesthetic — conversion uncertain"},
-  risky:{bg:"var(--red-lo)",col:"var(--red)",brd:"var(--red-mid)",txt:"Risk — review carefully"},
-  avoid:{bg:"var(--red-lo)",col:"var(--red)",brd:"var(--red-mid)",txt:"Avoid — not recommended"}
+  mid:{bg:"var(--amber-lo)",col:"var(--amber)",brd:"var(--amber-mid)",txt:"Conversion uncertain"},
+  risky:{bg:"var(--red-lo)",col:"var(--red)",brd:"var(--red-mid)",txt:"Risky — review carefully"},
+  avoid:{bg:"var(--red-lo)",col:"var(--red)",brd:"var(--red-mid)",txt:"Not recommended"}
 };
 const CATS={skincare:"Skincare",makeup:"Makeup",haircare:"Hair care",fragrance:"Fragrance"};
 
@@ -320,6 +334,14 @@ function riskColor(r){
   return"var(--red)";
 }
 
+function confDotColor(c){
+  if(!c)return"var(--amber)";
+  const lo=c.toLowerCase();
+  if(lo==="high")return"var(--green)";
+  if(lo==="low")return"var(--red)";
+  return"var(--amber)";
+}
+
 let _roiData=null;
 
 function calcRevenue(aov){
@@ -335,6 +357,14 @@ function updateRevenue(){
   const el=document.getElementById("revenue-val");
   if(!el||!rev)return;
   el.textContent=aov>0?`$${rev.lo.toLocaleString()} – $${rev.hi.toLocaleString()}`:"Enter AOV above";
+}
+
+function toggleExpander(btnId, bodyId){
+  const btn=document.getElementById(btnId);
+  const body=document.getElementById(bodyId);
+  if(!btn||!body)return;
+  const open=body.classList.toggle("open");
+  btn.classList.toggle("open",open);
 }
 
 function buildTpl(inf){
@@ -382,114 +412,115 @@ function render(inf){
   document.getElementById("p-name").textContent=inf.name||inf.handle;
   document.getElementById("p-handle").textContent=inf.handle;
 
-  const tags=document.getElementById("p-tags");
-  tags.innerHTML="";
-  (inf.platforms||["instagram"]).forEach(p=>{
-    const s=document.createElement("span");s.className="ptag";s.textContent=p;tags.appendChild(s);
-  });
-  if(inf.cat){const c=document.createElement("span");c.className="ptag";c.textContent=CATS[inf.cat]||inf.cat;tags.appendChild(c);}
-
   const followersDisplay=fmtFollowers(inf.followers||inf.followersRaw);
+  const platformStr=(inf.platforms||["instagram"]).map(p=>p[0].toUpperCase()+p.slice(1)).join(", ");
+  const catStr=inf.cat?(CATS[inf.cat]||inf.cat):null;
   document.getElementById("p-stats").innerHTML=`
-    <div class="pstat-row"><span class="pstat-label">Followers</span><span class="pstat-val">${followersDisplay}</span></div>
-    <div class="pstat-row"><span class="pstat-label">Platform</span><span class="pstat-val">${(inf.platforms||["instagram"]).map(p=>p[0].toUpperCase()+p.slice(1)).join(", ")}</span></div>
-    ${inf.cat?`<div class="pstat-row"><span class="pstat-label">Category</span><span class="pstat-val">${CATS[inf.cat]||inf.cat}</span></div>`:""}
-    <div class="pstat-row"><span class="pstat-label">Ranking</span><span class="pstat-val" style="color:${sc(inf.score)}">${inf.bench||"Analyzed"}</span></div>`;
+    <div class="id-stat"><span class="id-stat-label">Followers</span><span class="id-stat-val">${followersDisplay}</span></div>
+    <div class="id-stat"><span class="id-stat-label">Platform</span><span class="id-stat-val">${platformStr}</span></div>
+    ${catStr?`<div class="id-stat"><span class="id-stat-label">Category</span><span class="id-stat-val">${catStr}</span></div>`:""}
+    <div class="id-stat"><span class="id-stat-label">Tier</span><span class="id-stat-val" style="color:${sc(inf.score)}">${inf.bench||"Analyzed"}</span></div>`;
 
   // Score
   document.getElementById("s-big").textContent=inf.score;
   document.getElementById("s-big").style.color=sc(inf.score);
-  const sv=document.getElementById("s-verdict");
-  sv.textContent=l.txt;sv.style.background=l.bg;sv.style.color=l.col;sv.style.borderColor=l.brd;
-  document.getElementById("s-bench").innerHTML=`<span style="color:${sc(inf.score)};font-weight:500">${inf.bench||"Analyzed"}</span>`;
+  const badge=document.getElementById("s-badge");
+  badge.textContent=l.txt;badge.style.background=l.bg;badge.style.color=l.col;badge.style.borderColor=l.brd;
+  document.getElementById("s-tier").textContent=inf.bench||"";
 
-  // Verdict card (left column)
-  const vc=document.getElementById("verdict-card-wrap");
+  // Verdict summary (left column)
+  const vsWrap=document.getElementById("verdict-sum-wrap");
   if(v){
-    const vc_colors=verdictColors(v.verdict);
+    const vc=verdictColors(v.verdict);
     const flags=v.warning_flags||[];
-    const flagsHtml=flags.length?`<div class="warn-list">${flags.map(f=>`<div class="warn-item"><div class="warn-dot"></div>${f}</div>`).join('')}</div>`:'';
-    vc.innerHTML=`<div class="verdict-card" style="background:${vc_colors.bg};border-color:${vc_colors.brd}">
-      <div class="verdict-label-row">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L9 5.5H13.5L9.75 8.5L11.25 13L7 10.25L2.75 13L4.25 8.5L0.5 5.5H5L7 1Z" fill="${vc_colors.col}" opacity=".7"/></svg>
-        <span class="verdict-badge" style="color:${vc_colors.col}">${v.verdict_label||v.verdict}</span>
+    const warnPills=flags.length
+      ?`<div class="warn-pills">${flags.map(f=>`<span class="warn-pill">${f}</span>`).join('')}</div>`
+      :'';
+    vsWrap.innerHTML=`<div class="verdict-sum" style="border-color:${vc.brd}">
+      <div class="vs-header">
+        <div class="vs-dot" style="background:${vc.col}"></div>
+        <span class="vs-label" style="color:${vc.col}">${v.verdict_label||v.verdict}</span>
       </div>
-      <div class="verdict-meta">
-        <div class="verdict-meta-row">
-          <span class="vml">Campaign type</span>
-          <span class="vmv" style="color:var(--ink)">${v.campaign_type||"—"}</span>
-        </div>
-        <div class="verdict-meta-row">
-          <span class="vml">Budget</span>
-          <span class="vmv" style="color:${vc_colors.col};font-size:11px">${v.budget_range||"—"}</span>
-        </div>
-        <div class="verdict-meta-row">
-          <span class="vml">Risk</span>
-          <span class="vmv" style="color:${riskColor(v.risk)}">${v.risk||"—"}</span>
-        </div>
+      <div class="vs-rows">
+        <div class="vs-row"><span class="vs-key">Campaign type</span><span class="vs-val" style="color:var(--ink)">${v.campaign_type||"—"}</span></div>
+        <div class="vs-row"><span class="vs-key">Budget</span><span class="vs-val" style="color:${vc.col}">${v.budget_range||"—"}</span></div>
+        <div class="vs-row"><span class="vs-key">Risk</span><span class="vs-val" style="color:${riskColor(v.risk)}">${v.risk||"—"}</span></div>
       </div>
-      ${flagsHtml}
+      ${warnPills}
     </div>`;
   } else {
-    // fallback: best for
-    const bestFor=inf.bestFor||[];
-    vc.innerHTML=`<div class="verdict-card" style="background:var(--s1);border-color:${bestFor.length?'var(--b1)':'var(--red-mid)'};${bestFor.length?'':'background:var(--red-lo)'}">
-      <div class="best-title" style="font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;font-weight:500">Best for</div>
-      ${bestFor.length
-        ? bestFor.map(b=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--b1);font-size:13px;color:var(--ink2)"><div style="width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0"></div>${b}</div>`).join('')
-        : `<div style="font-size:13px;color:var(--red);line-height:1.55">Not recommended for paid partnerships.</div>`
-      }
-    </div>`;
+    vsWrap.innerHTML="";
   }
 
-  // Not rec banner
-  document.getElementById("not-rec-banner").innerHTML=(label==="avoid"||label==="risky"||label==="low")
+  // Not-rec banner
+  document.getElementById("not-rec-wrap").innerHTML=(label==="avoid"||label==="risky")
     ?`<div class="not-rec">Risk signals detected — bot activity, engagement drops, or over-sponsorship. Review carefully before proceeding.</div>`:"";
 
-  // Decision card (right column top)
-  const dc=document.getElementById("decision-card-wrap");
+  // Action card (right column hero)
+  const acWrap=document.getElementById("action-card-wrap");
   if(v){
-    const dc_colors=verdictColors(v.verdict);
-    dc.innerHTML=`<div class="decision-card fadeup d1">
-      <div class="sec-title">Campaign recommendation</div>
-      <div class="decision-reason">${v.reason||""}</div>
-      <div class="decision-action" style="background:${dc_colors.bg};border-color:${dc_colors.col};color:${dc_colors.col}">${v.action||""}</div>
+    const dc=verdictColors(v.verdict);
+    const hasReason=!!(v.reason&&v.reason.trim());
+    acWrap.innerHTML=`<div class="action-card" style="background:${dc.bg};border-color:${dc.brd}">
+      <div class="ac-eyebrow" style="color:${dc.col}">Campaign recommendation</div>
+      <div class="ac-action" style="color:${dc.col}">${v.action||"No action specified."}</div>
+      <div class="ac-meta">
+        ${v.campaign_type?`<span class="ac-chip">${v.campaign_type}</span>`:""}
+        ${v.budget_range?`<span class="ac-chip">${v.budget_range}</span>`:""}
+        ${v.risk?`<span class="ac-chip" style="color:${riskColor(v.risk)}">${v.risk} risk</span>`:""}
+      </div>
+      ${hasReason?`
+      <button class="reason-toggle" id="reason-btn" onclick="toggleExpander('reason-btn','reason-body')">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 4L5.5 7.5L9 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Why this recommendation
+      </button>
+      <div class="reason-body" id="reason-body">${v.reason}</div>`:""}
     </div>`;
-  } else {dc.innerHTML="";}
+  } else {acWrap.innerHTML="";}
 
-  // ROI Forecast card
-  const rc=document.getElementById("roi-card-wrap");
+  // ROI card
+  const rcWrap=document.getElementById("roi-card-wrap");
   if(roi){
     _roiData=roi;
-    rc.innerHTML=`<div class="section-card fadeup d2">
-      <div class="sec-title">ROI Forecast</div>
-      <span class="roi-confidence">${roi.confidence||"medium"} confidence</span>
-      ${roi.confidence_explanation?`<div class="roi-note" style="margin-bottom:12px;padding:10px 12px;background:var(--s2);border-radius:7px;border:1px solid var(--b1)">${roi.confidence_explanation}</div>`:''}
-      <div class="roi-grid">
+    const confColor=confDotColor(roi.confidence);
+    const hasExplanations=!!(roi.confidence_explanation||roi.reach_explanation||roi.conversion_explanation);
+    const explanationHtml=hasExplanations?`
+      <button class="expander-toggle" id="roi-exp-btn" onclick="toggleExpander('roi-exp-btn','roi-exp-body')">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 4L5.5 7.5L9 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        How we calculated this
+      </button>
+      <div class="expander-body" id="roi-exp-body">
+        ${roi.confidence_explanation?`<p style="margin-bottom:6px">${roi.confidence_explanation}</p>`:""}
+        ${roi.reach_explanation?`<p style="margin-bottom:6px">${roi.reach_explanation}</p>`:""}
+        ${roi.conversion_explanation?`<p>${roi.conversion_explanation}</p>`:""}
+      </div>`:"";
+    rcWrap.innerHTML=`<div class="card">
+      <div class="card-title">ROI Forecast</div>
+      <span class="roi-conf"><span class="conf-dot" style="background:${confColor}"></span>${roi.confidence||"medium"} confidence</span>
+      <div class="roi-nums">
         <div class="roi-cell">
-          <div class="roi-cell-label">Estimated reach</div>
+          <div class="roi-cell-lbl">Est. reach</div>
           <div class="roi-cell-val">${fmtNum(roi.estimated_reach_low)}–${fmtNum(roi.estimated_reach_high)}</div>
           <div class="roi-cell-sub">views per post</div>
         </div>
         <div class="roi-cell">
-          <div class="roi-cell-label">Conversions</div>
+          <div class="roi-cell-lbl">Est. conversions</div>
           <div class="roi-cell-val">${roi.estimated_conversions_low}–${roi.estimated_conversions_high}</div>
-          <div class="roi-cell-sub">estimated orders</div>
+          <div class="roi-cell-sub">orders</div>
         </div>
       </div>
-      ${roi.reach_explanation?`<div class="roi-note" style="margin-bottom:10px">${roi.reach_explanation}</div>`:''}
       <div class="roi-aov-row">
-        <span class="roi-aov-label">Your average order value ($)</span>
+        <span class="roi-aov-lbl">Your avg. order value ($)</span>
         <input class="roi-aov-input" id="aov-input" type="number" min="0" placeholder="e.g. 45" oninput="updateRevenue()">
       </div>
       <div class="roi-revenue">
-        <span class="roi-rev-label">Estimated revenue</span>
+        <span class="roi-rev-lbl">Estimated revenue</span>
         <span class="roi-rev-val" id="revenue-val">Enter AOV above</span>
       </div>
-      ${roi.conversion_explanation?`<div class="roi-note" style="margin-top:10px">${roi.conversion_explanation}</div>`:''}
-      ${roi.note?`<div class="roi-note" style="margin-top:6px;color:var(--ink3)">${roi.note}</div>`:""}
+      ${roi.note?`<div class="roi-note">${roi.note}</div>`:""}
+      ${explanationHtml}
     </div>`;
-  } else {rc.innerHTML="";}
+  } else {rcWrap.innerHTML="";}
 
   // Insight
   const ib=document.getElementById("insight-box");
@@ -511,7 +542,7 @@ function render(inf){
       </div>
       <div class="factor-right">
         <div class="factor-score" style="color:${scHex(val)}">${val}</div>
-        <div class="factor-bar-wrap"><div class="factor-track"><div class="factor-fill" style="width:${val}%;background:${scHex(val)}"></div></div></div>
+        <div class="factor-track"><div class="factor-fill" style="width:${val}%;background:${scHex(val)}"></div></div>
       </div>
     </div>`;
   }).join('');
