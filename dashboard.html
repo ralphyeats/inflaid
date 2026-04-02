@@ -307,8 +307,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
           </div>
           <textarea class="tpl-textarea" id="tpl-textarea" placeholder="Select an influencer to generate a personalized outreach template..." readonly></textarea>
           <div class="tpl-btns">
-            <button class="tpl-btn pri" onclick="copyTpl()">Copy to clipboard</button>
-            <button class="tpl-btn ghost" onclick="markAsSent()">Mark as sent</button>
+            <button class="tpl-btn pri" onclick="copyTpl(event)">Copy to clipboard</button>
+            <button class="tpl-btn ghost" onclick="markAsSent(event)">Mark as sent</button>
           </div>
         </div>
       </div>
@@ -482,9 +482,7 @@ function renderCard(inf, i){
   const apiTag = inf.fromApi
     ? `<span style="font-size:9px;padding:2px 6px;border-radius:3px;background:var(--accent-lo);border:1px solid var(--accent-mid);color:var(--accent);letter-spacing:.04em">LIVE API</span>`
     : '';
-  const detailHref = inf.fromApi
-    ? `/influencer.html?handle=${encodeURIComponent(inf.handle)}`
-    : `/influencer.html?id=${inf.id}`;
+  const detailHref = `/influencer.html?handle=${encodeURIComponent(inf.handle)}`;
   const isSaved = !!inf.saved;
   const saveIcon = `<svg width="12" height="12" viewBox="0 0 12 12" fill="${isSaved?'currentColor':'none'}" stroke="currentColor" stroke-width="1.5"><path d="M6 1L7.5 4.5H11L8.25 6.75L9.25 10.25L6 8.25L2.75 10.25L3.75 6.75L1 4.5H4.5L6 1Z" stroke-linejoin="round"/></svg>`;
 
@@ -653,7 +651,7 @@ function _fillOutreachPanel(inf){
   document.getElementById("tpl-textarea").value=buildTpl(inf);
 }
 
-function copyTpl(){
+function copyTpl(event){
   const ta=document.getElementById("tpl-textarea");
   if(!ta.value||ta.value.startsWith("Select"))return;
   if(navigator.clipboard)navigator.clipboard.writeText(ta.value);
@@ -662,7 +660,7 @@ function copyTpl(){
   setTimeout(()=>{btn.textContent="Copy to clipboard";btn.style.background="var(--accent)";},2000);
 }
 
-function markAsSent(){
+function markAsSent(event){
   if(!selOutreach)return;
   const inf = apiResults.find(r=>r.handle===selOutreach||String(r.id)===String(selOutreach));
   if(!inf)return;

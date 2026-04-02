@@ -3,6 +3,7 @@
   "routes": [
     { "src": "/dashboard", "dest": "/dashboard.html" },
     { "src": "/influencer", "dest": "/influencer.html" },
+    { "src": "/auth", "dest": "/auth.html" },
     { "src": "/dashboard.html", "dest": "/dashboard.html" },
     { "src": "/influencer.html", "dest": "/influencer.html" },
     { "src": "/", "dest": "/index.html" }
