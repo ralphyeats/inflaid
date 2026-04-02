@@ -105,18 +105,14 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 
 /* ACTION CARD — hero element */
 .action-card{border-radius:12px;padding:20px;border:1px solid}
-.ac-eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.09em;font-weight:600;opacity:.7;margin-bottom:8px}
-.ac-action{font-family:var(--syne);font-size:15px;font-weight:700;letter-spacing:-.02em;line-height:1.45;margin-bottom:14px}
-.ac-meta{display:flex;gap:8px;flex-wrap:wrap}
-.ac-chip{font-size:11px;padding:3px 10px;border-radius:5px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:var(--ink2)}
-
-/* REASON EXPANDER */
-.reason-toggle{display:flex;align-items:center;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);font-size:11px;color:var(--ink3);cursor:pointer;user-select:none;transition:color .15s;background:none;border-bottom:none;border-left:none;border-right:none;font-family:var(--sans);width:100%;text-align:left}
-.reason-toggle:hover{color:var(--ink2)}
-.reason-toggle svg{transition:transform .2s;flex-shrink:0}
-.reason-toggle.open svg{transform:rotate(180deg)}
-.reason-body{font-size:12px;color:var(--ink2);line-height:1.65;padding-top:10px;display:none}
-.reason-body.open{display:block}
+.ac-eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.09em;font-weight:600;opacity:.7;margin-bottom:6px}
+.ac-action{font-family:var(--syne);font-size:14px;font-weight:700;letter-spacing:-.02em;line-height:1.5;margin-bottom:16px}
+.ac-rows{display:flex;flex-direction:column;gap:0;border-top:1px solid rgba(0,0,0,.07);margin-top:2px}
+.ac-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+.ac-row:last-child{border-bottom:none}
+.ac-row-key{font-size:11px;color:var(--ink3);font-weight:500}
+.ac-row-val{font-size:12px;font-weight:600}
+.ac-reason{font-size:12px;color:var(--ink2);line-height:1.65;margin-top:14px;padding-top:14px;border-top:1px solid rgba(0,0,0,.07)}
 
 /* CARDS */
 .card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px}
@@ -464,17 +460,12 @@ function render(inf){
     acWrap.innerHTML=`<div class="action-card" style="background:${dc.bg};border-color:${dc.brd}">
       <div class="ac-eyebrow" style="color:${dc.col}">Campaign recommendation</div>
       <div class="ac-action" style="color:${dc.col}">${v.action||"No action specified."}</div>
-      <div class="ac-meta">
-        ${v.campaign_type?`<span class="ac-chip">${v.campaign_type}</span>`:""}
-        ${v.budget_range?`<span class="ac-chip">${v.budget_range}</span>`:""}
-        ${v.risk?`<span class="ac-chip" style="color:${riskColor(v.risk)}">${v.risk} risk</span>`:""}
+      <div class="ac-rows">
+        ${v.campaign_type?`<div class="ac-row"><span class="ac-row-key">Campaign type</span><span class="ac-row-val" style="color:${dc.col}">${v.campaign_type}</span></div>`:""}
+        ${v.budget_range?`<div class="ac-row"><span class="ac-row-key">Estimated budget</span><span class="ac-row-val" style="color:var(--ink)">${v.budget_range}</span></div>`:""}
+        ${v.risk?`<div class="ac-row"><span class="ac-row-key">Risk level</span><span class="ac-row-val" style="color:${riskColor(v.risk)}">${v.risk}</span></div>`:""}
       </div>
-      ${hasReason?`
-      <button class="reason-toggle" id="reason-btn" onclick="toggleExpander('reason-btn','reason-body')">
-        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 4L5.5 7.5L9 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Why this recommendation
-      </button>
-      <div class="reason-body" id="reason-body">${v.reason}</div>`:""}
+      ${hasReason?`<div class="ac-reason">${v.reason}</div>`:""}
     </div>`;
   } else {acWrap.innerHTML="";}
 
