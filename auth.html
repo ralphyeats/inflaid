@@ -41,6 +41,16 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);min-height:10
 .msg.error{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.18);color:var(--red)}
 .msg.success{background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.18);color:var(--green)}
 .fine{font-size:11px;color:var(--ink3);text-align:center;margin-top:20px;line-height:1.6}
+
+@media(max-width:480px){
+  body{padding:16px;align-items:stretch;justify-content:flex-start;padding-top:40px}
+  .logo{justify-content:center;margin-bottom:28px}
+  .card{padding:24px 20px;border-radius:12px}
+  .card-title{font-size:20px}
+  .tabs{margin-bottom:20px}
+  .field input{font-size:16px;padding:11px 14px} /* 16px prevents iOS zoom */
+  .btn-primary{padding:13px;font-size:15px}
+}
 </style>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27><rect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%233B6EF5%27/><text x=%2716%27 y=%2723%27 text-anchor=%27middle%27 font-size=%2720%27 font-family=%27system-ui%27 font-weight=%27bold%27 fill=%27white%27>V</text></svg>">
 </head>

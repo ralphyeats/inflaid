@@ -779,20 +779,89 @@ nav {
 .testi-av { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text1); }
 .testi-name { font-size: 13px; font-weight: 600; color: var(--text1); }
 .testi-role { font-size: 11px; color: var(--text3); margin-top: 1px; }
-@media (max-width: 900px) { .testi-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; } .testi-heading { font-size: 26px; } }
-
 @media (max-width: 900px) {
-  .pricing-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
+  .testi-grid { grid-template-columns: 1fr; max-width: 520px; margin: 0 auto; }
+  .testi-heading { font-size: 26px; }
+  .pricing-grid { grid-template-columns: 1fr; max-width: 460px; margin: 0 auto; }
 }
 @media (max-width: 768px) {
-  nav { padding: 0 20px; }
+  /* ── NAV ── */
+  nav { padding: 0 16px; }
   .nav-links { display: none; }
   .nav-actions .btn-ghost { display: none; }
-  #pricing { padding: 60px 20px; }
-  .pricing-strip { gap: 10px; }
-  .hero { padding: 110px 20px 60px; }
-  .hero h1 { font-size: clamp(36px, 9vw, 56px); }
-  .hero-actions { flex-direction: column; align-items: center; }
+  .nav-actions { gap: 6px; }
+  .btn-dark { padding: 8px 14px; font-size: 13px; }
+
+  /* ── HERO ── */
+  .hero { padding: 100px 16px 48px; }
+  .hero h1 { font-size: clamp(32px, 10vw, 52px); }
+  .hero-sub { font-size: 15px; }
+  .hero-actions { flex-direction: column; align-items: center; gap: 8px; }
+  .btn-lg { padding: 12px 22px; font-size: 14px; width: 100%; max-width: 280px; justify-content: center; }
+
+  /* ── HERO MOCKUP ── */
+  .hero-mockup-wrap { padding: 0 16px !important; }
+  .hero-chip { display: none; }
+  .browser-body { height: auto; flex-direction: column; overflow: visible; }
+  .b-sidebar { display: none; }
+  .b-list-panel { display: none; }
+  .b-detail-panel { flex: 1; padding: 12px; }
+  .b-cards { grid-template-columns: 1fr; }
+  .b-sig-grid { grid-template-columns: 1fr; }
+  .b-roi-split { grid-template-columns: 1fr; gap: 8px; }
+  .b-roi-split > div:nth-child(2) { display: none; }
+  .b-db-pills { gap: 4px; }
+  .b-db-pill { flex: 1; min-width: calc(50% - 4px); }
+
+  /* ── STATS BAR ── */
+  .stats-bar { padding: 20px 16px; }
+  .stats-inner { flex-wrap: wrap; gap: 16px; justify-content: flex-start; }
+  .stat-sep { display: none; }
+  .stat-item { flex: 1; min-width: calc(50% - 8px); }
+
+  /* ── FEATURE SPLITS ── */
+  .feat-split {
+    grid-template-columns: 1fr !important;
+    padding: 56px 16px;
+    gap: 36px;
+  }
+  .feat-split.flip .feat-visual { order: 0; }
+  .feat-split h2 { font-size: clamp(24px, 6vw, 34px); }
+  .feat-sub { font-size: 14px; }
+  .score-card-wrap .float-tag { display: none; }
+  .score-big { font-size: 42px; }
+
+  /* ── HOW IT WORKS ── */
+  .how-section { padding: 64px 16px; }
+  .how-steps {
+    grid-template-columns: 1fr !important;
+    gap: 32px;
+  }
+  .how-steps::before { display: none; }
+
+  /* ── PRICING ── */
+  #pricing { padding: 60px 16px; }
+  .pricing-grid { grid-template-columns: 1fr !important; max-width: 100%; }
+  .pricing-strip { gap: 8px; flex-direction: column; align-items: center; }
+  .pricing-strip span { font-size: 13px; }
+
+  /* ── TESTIMONIALS ── */
+  .testi-section { padding: 56px 16px; }
+  .testi-grid { grid-template-columns: 1fr !important; max-width: 100%; }
+  .testi-heading { font-size: 26px; }
+
+  /* ── CTA ── */
+  .cta-section { padding: 64px 16px; }
+
+  /* ── FOOTER ── */
+  footer {
+    flex-direction: column;
+    gap: 16px;
+    padding: 28px 16px;
+    text-align: center;
+    align-items: center;
+  }
+  .footer-links { gap: 16px; }
 }
 
 /* ── CTA ── */
@@ -877,7 +946,7 @@ footer {
 </section>
 
 <!-- HERO MOCKUP -->
-<div style="padding: 0 48px; max-width: 1060px; margin: 0 auto 0; position: relative;" class="reveal">
+<div style="padding: 0 48px; max-width: 1060px; margin: 0 auto 0; position: relative;" class="reveal hero-mockup-wrap">
   <div class="hero-glow"></div>
 
   <div class="browser-frame">

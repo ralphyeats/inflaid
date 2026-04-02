@@ -189,31 +189,92 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 /* MOBILE BOTTOM NAV */
 .mobile-nav{display:none}
 @media(max-width:768px){
+  /* Core layout — hide sidebar, full-width main */
   .sidebar{display:none}
-  .body-wrap{flex-direction:column}
-  .main{width:100vw}
+  html,body{overflow:auto}
+  body{display:flex;flex-direction:column}
+  .main{width:100%;height:auto;overflow:visible}
 
-  /* Topbar: hide search box, full-width analyze input */
-  .topbar{padding:0 12px;gap:8px;height:52px;flex-wrap:nowrap}
-  .topbar-title{font-size:13px}
+  /* Topbar: stack title + analyze on two rows on very small screens */
+  .topbar{
+    padding:0 12px;
+    height:auto;
+    min-height:52px;
+    flex-wrap:wrap;
+    gap:6px;
+    padding-top:8px;
+    padding-bottom:8px;
+  }
+  .topbar-title{font-size:13px;white-space:nowrap}
   .search-box{display:none}
-  #analyze-box{flex:1!important;width:auto!important;max-width:none!important;min-width:0}
+  /* Analyze box: take full width on mobile */
+  #analyze-box{
+    flex:1 1 100%!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    order:2;
+  }
+  /* The inner flex container that wraps title + analyze box */
+  .topbar > div:last-child{flex:1 1 100%;min-width:0}
 
-  /* Content: correct class name, add bottom padding for nav */
-  .content{padding:12px!important;padding-bottom:70px!important}
+  /* Content */
+  .content{flex:1;overflow-y:auto;padding:12px!important;padding-bottom:72px!important}
 
-  /* Grids */
+  /* Influencer grid: single column */
   .inf-grid{grid-template-columns:1fr!important}
-  .anl-top{grid-template-columns:1fr 1fr!important}
+
+  /* Stats row: 2-up on mobile */
+  .stats-row{gap:6px;flex-wrap:wrap}
+  .stat-card{padding:8px 10px;flex:1 1 calc(50% - 4px);min-width:0}
+  .stat-n{font-size:18px!important}
+
+  /* Filter row */
+  .filter-row{flex-wrap:wrap;gap:6px}
+  .sort-pill{margin-left:0}
+
+  /* Analytics top: 2-col grid */
+  .anl-top{grid-template-columns:1fr 1fr!important;gap:8px}
+  .anl-value{font-size:22px!important}
+
+  /* Analytics secondary grid: single column */
   .anl-grid{grid-template-columns:1fr!important}
-  .outreach-layout{grid-template-columns:1fr!important;height:auto!important}
-  .stats-row{gap:6px}
-  .stat-card{padding:8px 10px}
-  .disc-toolbar{flex-wrap:wrap;gap:6px}
+
+  /* Outreach layout: stack vertically, scroll naturally */
+  .outreach-layout{
+    grid-template-columns:1fr!important;
+    height:auto!important;
+    gap:12px;
+  }
+  .outreach-list{max-height:320px;overflow-y:auto}
+  .tpl-panel{overflow:visible}
+  .tpl-textarea{min-height:140px}
+  .tpl-scores{flex-wrap:wrap}
+  .tpl-sc{flex:1;min-width:calc(33% - 6px)}
+
+  /* Onboarding modal */
+  .ob-modal{padding:24px 16px}
+  .ob-title{font-size:18px}
 
   /* Mobile bottom nav */
-  .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--s1);border-top:1px solid var(--b1);z-index:100}
-  .mobile-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;color:var(--ink3);cursor:pointer;border:none;background:none;font-family:var(--sans);transition:color .15s}
+  .mobile-nav{
+    display:flex;
+    position:fixed;
+    bottom:0;left:0;right:0;
+    height:56px;
+    background:var(--s1);
+    border-top:1px solid var(--b1);
+    z-index:100;
+  }
+  .mobile-nav-item{
+    flex:1;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    gap:3px;font-size:10px;color:var(--ink3);
+    cursor:pointer;border:none;background:none;
+    font-family:var(--sans);transition:color .15s;
+    padding:0;
+  }
   .mobile-nav-item.active{color:var(--accent)}
   .mobile-nav-item svg{width:18px;height:18px;opacity:.5}
   .mobile-nav-item.active svg{opacity:1}
