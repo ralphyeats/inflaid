@@ -83,7 +83,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 
 /* SCORE CARD */
 .score-card{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px;text-align:center}
-.score-big{font-family:var(--syne);font-size:60px;font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:10px}
+.score-big{font-family:var(--syne);font-size:38px;font-weight:700;letter-spacing:-.03em;line-height:1;margin-bottom:6px;color:var(--ink2)!important}
 .score-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 12px;border-radius:10px;font-weight:500;border:1px solid;margin-bottom:8px}
 .score-tier{font-size:11px;color:var(--ink3)}
 
@@ -142,6 +142,43 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 .expander-toggle.open svg{transform:rotate(180deg)}
 .expander-body{font-size:12px;color:var(--ink2);line-height:1.65;padding-top:8px;display:none}
 .expander-body.open{display:block}
+
+/* DECISION BAR */
+.decision-bar{border-radius:12px;padding:20px 24px;border:1.5px solid;margin-bottom:18px;display:none;align-items:flex-start;gap:0;max-width:1060px;margin-left:auto;margin-right:auto}
+.db-left{min-width:210px;border-right:1px solid rgba(0,0,0,.09);padding-right:22px;margin-right:22px}
+.db-eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:6px}
+.db-verdict-label{font-family:var(--syne);font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1;margin-bottom:8px}
+.db-action{font-size:12px;line-height:1.55;opacity:.85;font-weight:500}
+.db-pills{display:flex;gap:10px;flex-wrap:wrap;flex:1;align-items:center}
+.db-pill{display:flex;flex-direction:column;gap:3px;padding:9px 14px;background:rgba(255,255,255,.55);border-radius:8px;border:1px solid rgba(0,0,0,.07)}
+.db-pill-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);font-weight:600}
+.db-pill-val{font-family:var(--syne);font-size:14px;font-weight:700;line-height:1}
+
+/* KEY SIGNALS */
+.signals-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.signal-box{border-radius:9px;padding:14px;border:1px solid}
+.signal-eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;margin-bottom:8px}
+.signal-text{font-size:13px;font-weight:600;color:var(--ink);line-height:1.35;margin-bottom:4px}
+.signal-sub{font-size:11px;line-height:1.55;opacity:.75}
+
+/* CAMPAIGN CHECKLIST */
+.camp-checklist{display:flex;flex-direction:column}
+.camp-item{display:flex;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px solid var(--b1)}
+.camp-item:last-child{border-bottom:none}
+.camp-key{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);font-weight:600;min-width:68px;flex-shrink:0}
+.camp-val{font-size:13px;font-weight:500;color:var(--ink);line-height:1.4}
+
+/* ROI FRICTIONLESS */
+.roi-flows{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--b1);border-radius:9px;overflow:hidden;margin-bottom:12px}
+.roi-flow-cell{padding:14px 16px}
+.roi-flow-spend{background:var(--s2)}
+.roi-flow-return{background:var(--green-lo);border-left:1px solid var(--green-mid)}
+.roi-flow-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);font-weight:600;margin-bottom:5px}
+.roi-flow-val{font-family:var(--syne);font-size:18px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.roi-flow-sub{font-size:10px;color:var(--ink3);margin-top:3px}
+.roi-multiplier{display:flex;justify-content:space-between;align-items:center;background:var(--s2);border-radius:8px;padding:10px 14px;margin-bottom:10px}
+.roi-mult-label{font-size:11px;color:var(--ink2)}
+.roi-mult-val{font-family:var(--syne);font-size:15px;font-weight:700}
 
 /* INSIGHT */
 .insight-text{font-size:13px;color:var(--ink2);line-height:1.7;border-left:3px solid;padding-left:12px}
@@ -232,6 +269,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
   </div>
 
   <div class="content">
+    <div id="decision-bar" class="decision-bar"></div>
     <div class="layout" id="layout" style="display:none">
 
       <!-- LEFT COLUMN -->
@@ -258,13 +296,10 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
         <div id="action-card-wrap" class="fadeup d1"></div>
         <div id="roi-card-wrap" class="fadeup d2"></div>
 
-        <div class="card fadeup d2">
-          <div class="card-title">Why this score</div>
-          <div class="insight-text" id="insight-box"></div>
-        </div>
+        <div id="signals-wrap" class="fadeup d2"></div>
 
         <div class="card fadeup d3">
-          <div class="card-title">Score breakdown</div>
+          <div class="card-title" style="color:var(--ink3);font-size:12px">Score breakdown</div>
           <div id="factor-list"></div>
         </div>
 
@@ -338,7 +373,8 @@ function confDotColor(c){
   return"var(--amber)";
 }
 
-let _roiData=null;
+let _roiData=null, _budgetLow=0, _budgetHigh=0;
+const DEFAULT_AOV=45;
 
 function calcRevenue(aov){
   if(!_roiData)return null;
@@ -347,12 +383,26 @@ function calcRevenue(aov){
   return{lo,hi};
 }
 
+function toggleAovInput(){
+  const row=document.getElementById("aov-adjust-row");
+  if(!row)return;
+  row.style.display=row.style.display==="none"?"flex":"none";
+}
+
 function updateRevenue(){
-  const aov=parseFloat(document.getElementById("aov-input")?.value)||0;
+  const aov=parseFloat(document.getElementById("aov-input")?.value)||DEFAULT_AOV;
   const rev=calcRevenue(aov);
-  const el=document.getElementById("revenue-val");
-  if(!el||!rev)return;
-  el.textContent=aov>0?`$${rev.lo.toLocaleString()} – $${rev.hi.toLocaleString()}`:"Enter AOV above";
+  if(!rev)return;
+  const retEl=document.getElementById("roi-return-val");
+  if(retEl) retEl.textContent=`$${rev.lo.toLocaleString()}–$${rev.hi.toLocaleString()}`;
+  const multEl=document.getElementById("roi-mult-val");
+  if(multEl&&_budgetLow>0){
+    const pLo=Math.round((rev.lo-_budgetLow)/_budgetLow*100);
+    const pHi=_budgetHigh>0?Math.round((rev.hi-_budgetHigh)/_budgetHigh*100):pLo;
+    const pos=pLo>=0;
+    multEl.textContent=pos?`+${pLo}% to +${pHi}%`:`${pLo}% to ${pHi}%`;
+    multEl.style.color=pos?'var(--green)':'var(--red)';
+  }
 }
 
 function toggleExpander(btnId, bodyId){
@@ -399,6 +449,34 @@ function render(inf){
   document.getElementById("tb-crumb").textContent=inf.name||inf.handle;
   document.getElementById("layout").style.display="grid";
 
+  // ── DECISION BAR ─────────────────────────────────────────────────────────
+  const dBar=document.getElementById("decision-bar");
+  if(v){
+    const dc=verdictColors(v.verdict);
+    const bm=v.budget_range?.match(/\$?(\d+)\D+(\d+)/);
+    _budgetLow=bm?parseInt(bm[1]):0; _budgetHigh=bm?parseInt(bm[2]):0;
+    const defRev=calcRevenue(DEFAULT_AOV);
+    let roiStr="—";
+    if(defRev&&_budgetLow>0){
+      const pLo=Math.round((defRev.lo-_budgetLow)/_budgetLow*100);
+      const pHi=_budgetHigh>0?Math.round((defRev.hi-_budgetHigh)/_budgetHigh*100):pLo;
+      roiStr=pLo>=0?`+${pLo}% to +${pHi}%`:`${pLo}%`;
+    }
+    dBar.style.cssText=`display:flex;background:${dc.bg};border-color:${dc.brd}`;
+    dBar.innerHTML=`
+      <div class="db-left">
+        <div class="db-eyebrow" style="color:${dc.col}">Vettly Decision</div>
+        <div class="db-verdict-label" style="color:${dc.col}">${v.verdict_label||v.verdict}</div>
+        <div class="db-action" style="color:${dc.col}">${v.action||""}</div>
+      </div>
+      <div class="db-pills">
+        ${v.budget_range?`<div class="db-pill"><div class="db-pill-label">Budget</div><div class="db-pill-val" style="color:var(--ink)">${v.budget_range}</div></div>`:""}
+        ${v.risk?`<div class="db-pill"><div class="db-pill-label">Risk</div><div class="db-pill-val" style="color:${riskColor(v.risk)}">${v.risk}</div></div>`:""}
+        ${v.campaign_type?`<div class="db-pill"><div class="db-pill-label">Type</div><div class="db-pill-val" style="color:var(--ink)">${v.campaign_type}</div></div>`:""}
+        ${roiStr!=="—"?`<div class="db-pill"><div class="db-pill-label">Expected ROI</div><div class="db-pill-val" style="color:var(--green)">${roiStr}</div></div>`:""}
+      </div>`;
+  } else { dBar.style.display="none"; }
+
   // Avatar
   const av=document.getElementById("p-av");
   const initials=(inf.name||inf.handle.replace("@","")).slice(0,2).toUpperCase();
@@ -424,58 +502,49 @@ function render(inf){
   badge.textContent=l.txt;badge.style.background=l.bg;badge.style.color=l.col;badge.style.borderColor=l.brd;
   document.getElementById("s-tier").textContent=inf.bench||"";
 
-  // Verdict summary (left column)
+  // Verdict summary (left column) — only warning flags remain, decision bar handles the rest
   const vsWrap=document.getElementById("verdict-sum-wrap");
-  if(v){
-    const vc=verdictColors(v.verdict);
-    const flags=v.warning_flags||[];
-    const warnPills=flags.length
-      ?`<div class="warn-pills">${flags.map(f=>`<span class="warn-pill">${f}</span>`).join('')}</div>`
-      :'';
-    vsWrap.innerHTML=`<div class="verdict-sum" style="border-color:${vc.brd}">
-      <div class="vs-header">
-        <div class="vs-dot" style="background:${vc.col}"></div>
-        <span class="vs-label" style="color:${vc.col}">${v.verdict_label||v.verdict}</span>
-      </div>
-      <div class="vs-rows">
-        <div class="vs-row"><span class="vs-key">Campaign type</span><span class="vs-val" style="color:var(--ink)">${v.campaign_type||"—"}</span></div>
-        <div class="vs-row"><span class="vs-key">Budget</span><span class="vs-val" style="color:${vc.col}">${v.budget_range||"—"}</span></div>
-        <div class="vs-row"><span class="vs-key">Risk</span><span class="vs-val" style="color:${riskColor(v.risk)}">${v.risk||"—"}</span></div>
-      </div>
-      ${warnPills}
-    </div>`;
-  } else {
-    vsWrap.innerHTML="";
-  }
+  const flags=v?.warning_flags||[];
+  vsWrap.innerHTML=flags.length
+    ?`<div class="verdict-sum"><div class="warn-pills">${flags.map(f=>`<span class="warn-pill">${f}</span>`).join('')}</div></div>`
+    :"";
 
   // Not-rec banner
   document.getElementById("not-rec-wrap").innerHTML=(label==="avoid"||label==="risky")
     ?`<div class="not-rec">Risk signals detected — bot activity, engagement drops, or over-sponsorship. Review carefully before proceeding.</div>`:"";
 
-  // Action card (right column hero)
+  // Campaign checklist
   const acWrap=document.getElementById("action-card-wrap");
   if(v){
     const dc=verdictColors(v.verdict);
-    const hasReason=!!(v.reason&&v.reason.trim());
-    acWrap.innerHTML=`<div class="action-card" style="background:${dc.bg};border-color:${dc.brd}">
-      <div class="ac-eyebrow" style="color:${dc.col}">Campaign recommendation</div>
-      <div class="ac-action" style="color:${dc.col}">${v.action||"No action specified."}</div>
-      <div class="ac-rows">
-        ${v.campaign_type?`<div class="ac-row"><span class="ac-row-key">Campaign type</span><span class="ac-row-val" style="color:${dc.col}">${v.campaign_type}</span></div>`:""}
-        ${v.budget_range?`<div class="ac-row"><span class="ac-row-key">Estimated budget</span><span class="ac-row-val" style="color:var(--ink)">${v.budget_range}</span></div>`:""}
-        ${v.risk?`<div class="ac-row"><span class="ac-row-key">Risk level</span><span class="ac-row-val" style="color:${riskColor(v.risk)}">${v.risk}</span></div>`:""}
+    acWrap.innerHTML=`<div class="card" style="border-color:${dc.brd}">
+      <div class="card-title">Campaign Plan</div>
+      <div class="camp-checklist">
+        <div class="camp-item"><span class="camp-key">Action</span><span class="camp-val">${v.action||"—"}</span></div>
+        ${v.campaign_type?`<div class="camp-item"><span class="camp-key">Type</span><span class="camp-val">${v.campaign_type}</span></div>`:""}
+        ${v.budget_range?`<div class="camp-item"><span class="camp-key">Budget</span><span class="camp-val" style="color:${dc.col};font-weight:600">${v.budget_range}</span></div>`:""}
+        ${v.risk?`<div class="camp-item"><span class="camp-key">Risk</span><span class="camp-val" style="color:${riskColor(v.risk)};font-weight:600">${v.risk}</span></div>`:""}
+        ${v.reason?`<div class="camp-item"><span class="camp-key">Why</span><span class="camp-val" style="color:var(--ink2);font-size:12px">${v.reason}</span></div>`:""}
       </div>
-      ${hasReason?`<div class="ac-reason">${v.reason}</div>`:""}
     </div>`;
   } else {acWrap.innerHTML="";}
 
-  // ROI card
+  // ROI card — frictionless (pre-calculated at $45 AOV, adjustable)
   const rcWrap=document.getElementById("roi-card-wrap");
   if(roi){
     _roiData=roi;
     const confColor=confDotColor(roi.confidence);
-    const hasExplanations=!!(roi.confidence_explanation||roi.reach_explanation||roi.conversion_explanation);
-    const explanationHtml=hasExplanations?`
+    const defRev=calcRevenue(DEFAULT_AOV);
+    const spendStr=v?.budget_range||"—";
+    const returnStr=defRev?`$${defRev.lo.toLocaleString()}–$${defRev.hi.toLocaleString()}`:"—";
+    let initRoi="—";
+    if(defRev&&_budgetLow>0){
+      const pLo=Math.round((defRev.lo-_budgetLow)/_budgetLow*100);
+      const pHi=_budgetHigh>0?Math.round((defRev.hi-_budgetHigh)/_budgetHigh*100):pLo;
+      initRoi=pLo>=0?`+${pLo}% to +${pHi}%`:`${pLo}%`;
+    }
+    const hasExp=!!(roi.confidence_explanation||roi.reach_explanation||roi.conversion_explanation);
+    const expHtml=hasExp?`
       <button class="expander-toggle" id="roi-exp-btn" onclick="toggleExpander('roi-exp-btn','roi-exp-body')">
         <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 4L5.5 7.5L9 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         How we calculated this
@@ -486,37 +555,63 @@ function render(inf){
         ${roi.conversion_explanation?`<p>${roi.conversion_explanation}</p>`:""}
       </div>`:"";
     rcWrap.innerHTML=`<div class="card">
-      <div class="card-title">ROI Forecast</div>
-      <span class="roi-conf"><span class="conf-dot" style="background:${confColor}"></span>${roi.confidence||"medium"} confidence</span>
-      <div class="roi-nums">
-        <div class="roi-cell">
-          <div class="roi-cell-lbl">Est. reach</div>
-          <div class="roi-cell-val">${fmtNum(roi.estimated_reach_low)}–${fmtNum(roi.estimated_reach_high)}</div>
-          <div class="roi-cell-sub">views per post</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="card-title" style="margin-bottom:0">ROI Forecast</div>
+        <span class="roi-conf"><span class="conf-dot" style="background:${confColor}"></span>${roi.confidence||"medium"} confidence</span>
+      </div>
+      <div class="roi-flows">
+        <div class="roi-flow-cell roi-flow-spend">
+          <div class="roi-flow-label">You spend</div>
+          <div class="roi-flow-val" style="color:var(--ink)">${spendStr}</div>
+          <div class="roi-flow-sub">${fmtNum(roi.estimated_reach_low)}–${fmtNum(roi.estimated_reach_high)} views</div>
         </div>
-        <div class="roi-cell">
-          <div class="roi-cell-lbl">Est. conversions</div>
-          <div class="roi-cell-val">${roi.estimated_conversions_low}–${roi.estimated_conversions_high}</div>
-          <div class="roi-cell-sub">orders</div>
+        <div class="roi-flow-cell roi-flow-return">
+          <div class="roi-flow-label">You get back</div>
+          <div class="roi-flow-val" style="color:var(--green)" id="roi-return-val">${returnStr}</div>
+          <div class="roi-flow-sub">${roi.estimated_conversions_low}–${roi.estimated_conversions_high} orders</div>
         </div>
       </div>
-      <div class="roi-aov-row">
-        <span class="roi-aov-lbl">Your avg. order value ($)</span>
-        <input class="roi-aov-input" id="aov-input" type="number" min="0" placeholder="e.g. 45" oninput="updateRevenue()">
+      <div class="roi-multiplier">
+        <span class="roi-mult-label">ROI</span>
+        <span class="roi-mult-val" id="roi-mult-val" style="color:var(--green)">${initRoi}</span>
       </div>
-      <div class="roi-revenue">
-        <span class="roi-rev-lbl">Estimated revenue</span>
-        <span class="roi-rev-val" id="revenue-val">Enter AOV above</span>
+      <div style="font-size:10px;color:var(--ink3);margin-bottom:10px">Based on $${DEFAULT_AOV} avg order value (beauty) · <button onclick="toggleAovInput()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:10px;font-family:var(--sans);padding:0">Adjust</button></div>
+      <div id="aov-adjust-row" class="roi-aov-row" style="display:none">
+        <span class="roi-aov-lbl">Your AOV ($)</span>
+        <input class="roi-aov-input" id="aov-input" type="number" min="0" value="${DEFAULT_AOV}" oninput="updateRevenue()">
       </div>
       ${roi.note?`<div class="roi-note">${roi.note}</div>`:""}
-      ${explanationHtml}
+      ${expHtml}
     </div>`;
   } else {rcWrap.innerHTML="";}
 
-  // Insight
-  const ib=document.getElementById("insight-box");
-  ib.textContent=inf.insight||"";
-  ib.style.borderColor=scHex(inf.score)+"66";
+  // Key signals (replaces generic insight text)
+  const sigWrap=document.getElementById("signals-wrap");
+  if(sigWrap){
+    const breakdown=inf.breakdown||[];
+    if(breakdown.length>=2){
+      const sorted=[...breakdown].sort((a,b)=>(b.val??b.value??0)-(a.val??a.value??0));
+      const best=sorted[0], worst=sorted[sorted.length-1];
+      sigWrap.innerHTML=`<div class="card">
+        <div class="card-title">Key Signals</div>
+        <div class="signals-grid">
+          <div class="signal-box" style="background:var(--green-lo);border-color:var(--green-mid)">
+            <div class="signal-eyebrow" style="color:var(--green)">Biggest Strength</div>
+            <div class="signal-text">${best.name||best.label||"—"}</div>
+            <div class="signal-sub" style="color:var(--ink2)">${best.desc||best.description||""}</div>
+          </div>
+          <div class="signal-box" style="background:var(--red-lo);border-color:var(--red-mid)">
+            <div class="signal-eyebrow" style="color:var(--red)">Biggest Risk</div>
+            <div class="signal-text">${worst.name||worst.label||"—"}</div>
+            <div class="signal-sub" style="color:var(--ink2)">${worst.desc||worst.description||""}</div>
+          </div>
+        </div>
+        ${inf.insight?`<div style="font-size:12px;color:var(--ink2);line-height:1.65;margin-top:14px;padding-top:14px;border-top:1px solid var(--b1)">${inf.insight}</div>`:""}
+      </div>`;
+    } else if(inf.insight){
+      sigWrap.innerHTML=`<div class="card"><div class="card-title">Key Signals</div><div style="font-size:13px;color:var(--ink2);line-height:1.65">${inf.insight}</div></div>`;
+    } else { sigWrap.innerHTML=""; }
+  }
 
   // Breakdown
   const breakdown=inf.breakdown||[];
