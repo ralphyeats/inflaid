@@ -4,42 +4,44 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vettly — Sign in</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#07090D;--s1:#0B0F16;--s2:#0F1520;--s3:#131A26;
-  --b1:#1C2638;--b2:#24304A;
-  --accent:#4F8CF5;--accent-lo:rgba(79,140,245,.08);--accent-mid:rgba(79,140,245,.22);
-  --green:#34C77A;--red:#D95050;
-  --ink:#DDE4F0;--ink2:#8896B0;--ink3:#3D4E68;
-  --syne:"Syne",sans-serif;--sans:"Geist",-apple-system,sans-serif;
+  --bg:#F8F7F4;--s1:#FFFFFF;--s2:#F3F1EE;--s3:#EDEAE5;
+  --b1:#E4E0D9;--b2:#D8D3CB;
+  --accent:#3B6EF5;--accent-lo:rgba(59,110,245,.08);--accent-mid:rgba(59,110,245,.18);
+  --green:#16A34A;--red:#DC2626;
+  --ink:#1A1714;--ink2:#6B6360;--ink3:#A09C97;
+  --syne:'Bricolage Grotesque',sans-serif;--sans:'DM Sans',-apple-system,sans-serif;
+  --shadow:0 1px 3px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.06);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;-webkit-font-smoothing:antialiased}
 .logo{display:flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:40px}
 .logo-mark{width:24px;height:24px;background:var(--accent);border-radius:6px;position:relative}
 .logo-mark::after{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;background:#fff;border-radius:50%}
-.logo-text{font-family:var(--syne);font-size:16px;font-weight:700;color:var(--ink)}
-.card{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:36px;width:100%;max-width:400px}
+.logo-text{font-family:var(--syne);font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-.02em}
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:36px;width:100%;max-width:400px;box-shadow:var(--shadow)}
 .card-title{font-family:var(--syne);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px;letter-spacing:-.02em}
 .card-sub{font-size:13px;color:var(--ink3);margin-bottom:28px}
 .tabs{display:flex;gap:0;margin-bottom:28px;background:var(--s2);border-radius:8px;padding:3px}
 .tab{flex:1;padding:7px;border:none;background:transparent;color:var(--ink3);font-size:13px;font-weight:500;cursor:pointer;border-radius:6px;font-family:var(--sans);transition:all .15s}
 .tab.active{background:var(--accent);color:#fff}
 .field{margin-bottom:16px}
-.field label{display:block;font-size:12px;color:var(--ink3);margin-bottom:6px;font-weight:500}
+.field label{display:block;font-size:12px;color:var(--ink2);margin-bottom:6px;font-weight:500}
 .field input{width:100%;background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:10px 14px;color:var(--ink);font-size:14px;font-family:var(--sans);outline:none;transition:border-color .15s}
 .field input:focus{border-color:var(--accent)}
 .field input::placeholder{color:var(--ink3)}
-.btn-primary{width:100%;padding:12px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--sans);margin-top:8px;transition:background .15s}
-.btn-primary:hover{background:#5F9AF7}
+.btn-primary{width:100%;padding:12px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--syne);margin-top:8px;transition:background .15s;letter-spacing:-.01em}
+.btn-primary:hover{opacity:.9}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed}
 .msg{font-size:13px;padding:10px 14px;border-radius:8px;margin-top:12px;display:none}
-.msg.error{background:rgba(217,80,80,.1);border:1px solid rgba(217,80,80,.2);color:var(--red)}
-.msg.success{background:rgba(52,199,122,.1);border:1px solid rgba(52,199,122,.2);color:var(--green)}
+.msg.error{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.18);color:var(--red)}
+.msg.success{background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.18);color:var(--green)}
 .fine{font-size:11px;color:var(--ink3);text-align:center;margin-top:20px;line-height:1.6}
 </style>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27><rect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%234F8CF5%27/><text x=%2716%27 y=%2723%27 text-anchor=%27middle%27 font-size=%2720%27 font-family=%27system-ui%27 font-weight=%27bold%27 fill=%27white%27>V</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27><rect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%233B6EF5%27/><text x=%2716%27 y=%2723%27 text-anchor=%27middle%27 font-size=%2720%27 font-family=%27system-ui%27 font-weight=%27bold%27 fill=%27white%27>V</text></svg>">
 </head>
 <body>
 <a class="logo" href="/">
