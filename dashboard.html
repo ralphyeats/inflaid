@@ -251,6 +251,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
       <div class="usage-bar"><div class="usage-fill" id="usage-fill" style="width:0%"></div></div>
       <div style="font-size:10px;color:var(--ink3)" id="usage-remaining">Loading...</div>
       <button class="upgrade-btn" id="upgrade-btn" onclick="upgradePlan(nextPlan())">Upgrade plan →</button>
+      <button class="upgrade-btn" id="manage-btn" onclick="manageSubscription()" style="display:none;margin-top:4px;background:transparent;color:var(--ink3);border-color:var(--b1)">Manage subscription</button>
     </div>
     <div class="referral-box" id="referral-box" style="display:none">
       <div class="referral-title">Invite friends · +5 analyses each</div>
@@ -405,10 +406,12 @@ function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.v
   input.disabled = true;
 
   try {
+    const { data: sessionData } = await sb.auth.getSession();
+    const token = sessionData?.session?.access_token;
     const res = await fetch(`${API}/score`, {
       method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({handle, user_email: currentUserEmail, category: "beauty"})
+      headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+      body: JSON.stringify({handle, category: "beauty"})
     });
     if(!res.ok) {
       const err = await res.json().catch(()=>({}));
@@ -794,12 +797,16 @@ sb.auth.getSession().then(({ data }) => {
       document.getElementById("usage-remaining").textContent = u.analyses_limit > 0 ? remaining + " analyses remaining" : "Unlimited analyses";
       document.getElementById("user-plan").textContent = planName;
       const upgradeBtn = document.getElementById("upgrade-btn");
+      const manageBtn = document.getElementById("manage-btn");
       if (u.plan === "pro" || u.plan === "growth") {
         upgradeBtn.style.display = "none";
       } else {
         const NEXT = { free:"Starter", trial:"Starter", starter:"Growth" };
         upgradeBtn.textContent = `Upgrade to ${NEXT[u.plan] || "Growth"} →`;
         upgradeBtn.style.display = "block";
+      }
+      if (u.plan !== "free" && u.plan !== "trial") {
+        manageBtn.style.display = "block";
       }
     }
   });
@@ -816,16 +823,31 @@ sb.auth.getSession().then(({ data }) => {
 async function upgradePlan(plan) {
   const { data } = await sb.auth.getSession();
   if (!data.session) { window.location.href = "/auth.html"; return; }
-  const email = data.session.user.email;
+  const token = data.session.access_token;
   try {
     const res = await fetch("https://vettly-production-63d5.up.railway.app/create-checkout", {
       method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({plan, user_email: email})
+      headers: {"Content-Type": "application/json", "Authorization": `Bearer ${token}`},
+      body: JSON.stringify({plan})
     });
     const d = await res.json();
     if (d.url) window.location.href = d.url;
   } catch(e) { showToast("Payment error: " + e.message, "error"); }
+}
+
+async function manageSubscription() {
+  const { data } = await sb.auth.getSession();
+  if (!data.session) { window.location.href = "/auth.html"; return; }
+  const token = data.session.access_token;
+  try {
+    const res = await fetch("https://vettly-production-63d5.up.railway.app/customer-portal", {
+      method: "POST",
+      headers: {"Authorization": `Bearer ${token}`}
+    });
+    if (res.status === 404) { showToast("No active subscription found.", "error"); return; }
+    const d = await res.json();
+    if (d.url) window.location.href = d.url;
+  } catch(e) { showToast("Error opening portal: " + e.message, "error"); }
 }
 
 let _currentPlan = "free";

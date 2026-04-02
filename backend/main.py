@@ -1,7 +1,7 @@
 import os
 import stripe
 from typing import Optional
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
 
@@ -22,6 +22,24 @@ app.add_middleware(
 )
 
 PLAN_LIMITS = {"free": 2, "trial": 2, "starter": 20, "growth": 75, "pro": 200}
+
+
+def verify_token(authorization: str) -> str:
+    """Verify Supabase JWT, return confirmed email. Raises 401 if invalid."""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="auth_required")
+    token = authorization.split(" ", 1)[1]
+    try:
+        from auth import get_supabase
+        sb = get_supabase()
+        resp = sb.auth.get_user(token)
+        if not resp.user or not resp.user.email:
+            raise HTTPException(status_code=401, detail="auth_required")
+        return resp.user.email
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=401, detail="auth_required")
 PLAN_PRICE_IDS = {
     "starter": os.getenv("STRIPE_STARTER_PRICE"),
     "growth":  os.getenv("STRIPE_GROWTH_PRICE"),
@@ -203,7 +221,8 @@ def public_profile(handle: str):
 
 
 @app.post("/create-checkout")
-def create_checkout(req: CheckoutRequest):
+def create_checkout(req: CheckoutRequest, authorization: str = Header(default=None)):
+    email = verify_token(authorization)
     price_id = PLAN_PRICE_IDS.get(req.plan)
     if not price_id:
         raise HTTPException(status_code=400, detail=f"Invalid plan: {req.plan}")
@@ -211,7 +230,7 @@ def create_checkout(req: CheckoutRequest):
         payment_method_types=["card"],
         mode="subscription",
         line_items=[{"price": price_id, "quantity": 1}],
-        customer_email=req.user_email,
+        customer_email=email,
         metadata={"plan": req.plan},
         success_url=f"{FRONTEND_URL}/dashboard.html?upgraded=1",
         cancel_url=f"{FRONTEND_URL}/dashboard.html",
@@ -219,21 +238,32 @@ def create_checkout(req: CheckoutRequest):
     return {"url": session.url}
 
 
+@app.post("/customer-portal")
+def customer_portal(authorization: str = Header(default=None)):
+    email = verify_token(authorization)
+    customers = stripe.Customer.list(email=email, limit=1)
+    if not customers.data:
+        raise HTTPException(status_code=404, detail="no_subscription")
+    portal = stripe.billing_portal.Session.create(
+        customer=customers.data[0].id,
+        return_url=f"{FRONTEND_URL}/dashboard.html",
+    )
+    return {"url": portal.url}
+
+
 @app.post("/score", response_model=ScoreResponse)
-def score(req: ScoreRequest):
+def score(req: ScoreRequest, authorization: str = Header(default=None)):
     from auth import get_cached, save_analysis, get_supabase
 
-    # Require a logged-in user — no anonymous analyses allowed
-    if not req.user_email:
-        raise HTTPException(status_code=401, detail="auth_required")
+    email = verify_token(authorization)
 
     sb = get_supabase()
 
     # Get user record; create on first use (post-signup)
-    u = get_user_usage(sb, req.user_email)
+    u = get_user_usage(sb, email)
     if not u:
         sb.table("users").insert({
-            "email": req.user_email,
+            "email": email,
             "plan": "free",
             "analyses_used": 0,
             "analyses_limit": PLAN_LIMITS["free"]
@@ -248,7 +278,7 @@ def score(req: ScoreRequest):
     cached = get_cached(req.handle)
     if cached:
         try:
-            increment_usage(sb, req.user_email)
+            increment_usage(sb, email)
         except Exception as e:
             print(f"Usage increment error: {e}")
         return ScoreResponse(**cached)
@@ -295,7 +325,7 @@ def score(req: ScoreRequest):
         print(f"Cache save error: {e}")
 
     try:
-        increment_usage(sb, req.user_email)
+        increment_usage(sb, email)
     except Exception as e:
         print(f"Usage increment error: {e}")
 

@@ -788,10 +788,10 @@ async function init(){
   }
 
   // Fresh API call
+  const token=sessionData?.session?.access_token;
+  if(!token){window.location.href="/auth.html";return;}
   try{
-    const body={handle};
-    if(email)body.user_email=email;
-    const res=await fetch(`${API}/score`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    const res=await fetch(`${API}/score`,{method:"POST",headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},body:JSON.stringify({handle,category:"beauty"})});
     if(!res.ok){
       const err=await res.json().catch(()=>({}));
       const detail=err.detail||"";
