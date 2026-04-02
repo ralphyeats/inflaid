@@ -304,6 +304,59 @@ nav {
   padding: 2px 7px; border-radius: 4px; margin-top: 5px;
 }
 
+/* ── HERO MOCKUP DETAIL SPLIT ── */
+.b-list-panel {
+  width: 180px; flex-shrink: 0;
+  border-right: 1px solid var(--border2);
+  padding: 12px 10px;
+  display: flex; flex-direction: column; gap: 6px; overflow: hidden;
+}
+.b-list-card {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 9px 10px;
+}
+.b-list-card.sel {
+  background: rgba(22,163,74,.05);
+  border-color: rgba(22,163,74,.3);
+  box-shadow: 0 0 0 1px rgba(22,163,74,.15);
+}
+.b-list-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.b-list-name { font-size: 11px; font-weight: 600; color: var(--text); }
+.b-list-handle { font-size: 9px; color: var(--text3); }
+
+.b-detail-panel {
+  flex: 1; padding: 13px 14px;
+  display: flex; flex-direction: column; gap: 9px; overflow: hidden;
+}
+.b-det-header {
+  display: flex; align-items: center; gap: 9px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border2);
+}
+.b-decision-bar {
+  background: rgba(22,163,74,.07); border: 1px solid rgba(22,163,74,.22);
+  border-radius: 8px; padding: 10px 12px;
+}
+.b-db-eyebrow { font-size: 8px; text-transform: uppercase; letter-spacing: .09em; font-weight: 700; color: #16A34A; margin-bottom: 3px; }
+.b-db-verdict { font-size: 13px; font-weight: 800; color: #16A34A; letter-spacing: -.02em; margin-bottom: 4px; }
+.b-db-directive { font-size: 9px; font-weight: 600; color: #16A34A; background: rgba(22,163,74,.13); display: inline-block; padding: 2px 7px; border-radius: 3px; margin-bottom: 7px; }
+.b-db-pills { display: flex; gap: 5px; flex-wrap: wrap; }
+.b-db-pill { background: rgba(255,255,255,.65); border: 1px solid rgba(0,0,0,.07); border-radius: 5px; padding: 3px 7px; }
+.b-dp-lbl { font-size: 7px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); font-weight: 600; }
+.b-dp-val { font-size: 10px; font-weight: 700; color: var(--text); line-height: 1.2; }
+
+.b-roi-split { display: grid; grid-template-columns: 1fr 16px 1fr; gap: 5px; align-items: center; }
+.b-roi-cell { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 7px 9px; }
+.b-roi-cell.ret { background: rgba(22,163,74,.07); border-color: rgba(22,163,74,.2); }
+.b-rc-lbl { font-size: 8px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); font-weight: 600; margin-bottom: 2px; }
+.b-rc-val { font-size: 12px; font-weight: 800; color: var(--text); letter-spacing: -.01em; }
+.b-rc-sub { font-size: 8px; color: var(--text3); margin-top: 1px; }
+
+.b-sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.b-sig { border-radius: 6px; padding: 7px 9px; border: 1px solid; }
+.b-sig-ey { font-size: 7px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; margin-bottom: 3px; }
+.b-sig-name { font-size: 10px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.b-sig-tier { font-size: 8px; font-weight: 600; }
+
 /* floating chips around mockup */
 .hero-chip {
   position: absolute;
@@ -808,10 +861,12 @@ footer {
       <div class="b-dot" style="background:#FF5F57"></div>
       <div class="b-dot" style="background:#FFBD2E"></div>
       <div class="b-dot" style="background:#28C840"></div>
-      <div class="browser-url">app.vettly.io/dashboard</div>
+      <div class="browser-url">app.vettly.io/influencer?handle=sophiareeves</div>
     </div>
     <div class="browser-body">
       <div class="browser-scan"></div>
+
+      <!-- sidebar nav -->
       <div class="b-sidebar">
         <div style="padding:8px 10px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Workspace</div>
         <div class="b-nav active"><span class="b-nav-ic"></span>Discovery</div>
@@ -824,43 +879,94 @@ footer {
           <div style="color:var(--text3);margin-top:4px">57 analyses remaining</div>
         </div>
       </div>
-      <div class="b-main">
-        <div class="b-search">
-          <div class="b-input">@handle — analyze any account</div>
-          <div class="b-analyze">Analyze →</div>
+
+      <!-- card list (left panel) -->
+      <div class="b-list-panel">
+        <div style="font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:2px 2px 5px">3 Results</div>
+
+        <div class="b-list-card sel">
+          <div class="b-list-card-top">
+            <div class="b-av" style="background:linear-gradient(135deg,#FBBF24,#F59E0B);width:20px;height:20px;font-size:7px">SR</div>
+            <div style="font-size:8px;font-weight:700;color:#16A34A;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);border-radius:3px;padding:1px 5px">SCALE</div>
+          </div>
+          <div class="b-list-name">Sophia Reeves</div>
+          <div class="b-list-handle">@sophiareeves · 15.1K</div>
         </div>
-        <div class="b-cards">
-          <div class="b-card">
-            <div class="b-card-top">
-              <div class="b-av" style="background:linear-gradient(135deg,#FBBF24,#F59E0B)">SR</div>
-              <div style="font-size:10px;font-weight:700;color:#16A34A;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);border-radius:5px;padding:2px 7px">SCALE</div>
-            </div>
-            <div class="b-name">Sophia Reeves</div>
-            <div class="b-handle">@sophiareeves · 15.1K</div>
-            <div class="b-track"><div class="b-fill" style="width:89%;background:#16A34A"></div></div>
-            <div class="b-badge" style="background:rgba(22,163,74,.08);color:#16A34A;border:1px solid rgba(22,163,74,.2)">Elite ROI potential</div>
+
+        <div class="b-list-card">
+          <div class="b-list-card-top">
+            <div class="b-av" style="background:linear-gradient(135deg,#60A5FA,#3B82F6);width:20px;height:20px;font-size:7px">CP</div>
+            <div style="font-size:8px;font-weight:700;color:#3B6EF5;background:rgba(59,110,245,.08);border:1px solid rgba(59,110,245,.18);border-radius:3px;padding:1px 5px">TEST</div>
           </div>
-          <div class="b-card">
-            <div class="b-card-top">
-              <div class="b-av" style="background:linear-gradient(135deg,#60A5FA,#3B82F6)">CP</div>
-              <div style="font-size:10px;font-weight:700;color:#3B6EF5;background:rgba(59,110,245,.08);border:1px solid rgba(59,110,245,.18);border-radius:5px;padding:2px 7px">TEST</div>
-            </div>
-            <div class="b-name">Chloe Park</div>
-            <div class="b-handle">@chloepark · 44.8K</div>
-            <div class="b-track"><div class="b-fill" style="width:74%;background:#16A34A"></div></div>
-            <div class="b-badge" style="background:rgba(22,163,74,.08);color:#16A34A;border:1px solid rgba(22,163,74,.2)">High conversion potential</div>
+          <div class="b-list-name">Chloe Park</div>
+          <div class="b-list-handle">@chloepark · 44.8K</div>
+        </div>
+
+        <div class="b-list-card">
+          <div class="b-list-card-top">
+            <div class="b-av" style="background:linear-gradient(135deg,#FCA5A5,#DC2626);width:20px;height:20px;font-size:7px">JT</div>
+            <div style="font-size:8px;font-weight:700;color:#DC2626;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.18);border-radius:3px;padding:1px 5px">AVOID</div>
           </div>
-          <div class="b-card">
-            <div class="b-card-top">
-              <div class="b-av" style="background:linear-gradient(135deg,#FCA5A5,#DC2626)">JT</div>
-              <div style="font-size:10px;font-weight:700;color:#DC2626;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.18);border-radius:5px;padding:2px 7px">AVOID</div>
-            </div>
-            <div class="b-name">Jamie Torres</div>
-            <div class="b-handle">@jamietorres · 82K</div>
-            <div class="b-track"><div class="b-fill" style="width:28%;background:#DC2626"></div></div>
-            <div class="b-badge" style="background:rgba(220,38,38,.08);color:#DC2626;border:1px solid rgba(220,38,38,.18)">Not recommended</div>
+          <div class="b-list-name">Jamie Torres</div>
+          <div class="b-list-handle">@jamietorres · 82K</div>
+        </div>
+      </div>
+
+      <!-- detail panel (right — Sophia opened) -->
+      <div class="b-detail-panel">
+
+        <!-- profile header -->
+        <div class="b-det-header">
+          <div class="b-av" style="background:linear-gradient(135deg,#FBBF24,#F59E0B);width:30px;height:30px;font-size:10px">SR</div>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--text)">Sophia Reeves</div>
+            <div style="font-size:9px;color:var(--text3)">@sophiareeves · 15.1K · Skincare</div>
+          </div>
+          <div style="margin-left:auto;font-size:9px;color:#16A34A;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);border-radius:4px;padding:2px 8px;font-weight:600">Elite ROI potential</div>
+        </div>
+
+        <!-- decision bar -->
+        <div class="b-decision-bar">
+          <div class="b-db-eyebrow">Vettly Decision</div>
+          <div class="b-db-verdict">SCALE — Paid Campaign</div>
+          <div class="b-db-directive">Prioritize this collab. Budget for paid content.</div>
+          <div class="b-db-pills">
+            <div class="b-db-pill"><div class="b-dp-lbl">Budget</div><div class="b-dp-val">$150–$300</div></div>
+            <div class="b-db-pill"><div class="b-dp-lbl">Risk</div><div class="b-dp-val" style="color:#16A34A">Low</div></div>
+            <div class="b-db-pill"><div class="b-dp-lbl">Expected ROI</div><div class="b-dp-val" style="color:#16A34A">+180%</div></div>
+            <div class="b-db-pill"><div class="b-dp-lbl">Est. Sales</div><div class="b-dp-val">9–14 orders</div></div>
           </div>
         </div>
+
+        <!-- ROI -->
+        <div class="b-roi-split">
+          <div class="b-roi-cell">
+            <div class="b-rc-lbl">You spend</div>
+            <div class="b-rc-val">$150–$300</div>
+            <div class="b-rc-sub">1.2K–2.1K views</div>
+          </div>
+          <div style="text-align:center;color:var(--text3);font-size:14px">→</div>
+          <div class="b-roi-cell ret">
+            <div class="b-rc-lbl">You get back</div>
+            <div class="b-rc-val" style="color:#16A34A">$420–$630</div>
+            <div class="b-rc-sub">9–14 orders</div>
+          </div>
+        </div>
+
+        <!-- key signals -->
+        <div class="b-sig-grid">
+          <div class="b-sig" style="background:rgba(22,163,74,.06);border-color:rgba(22,163,74,.2)">
+            <div class="b-sig-ey" style="color:#16A34A">Biggest Strength</div>
+            <div class="b-sig-name">Engagement Rate</div>
+            <div class="b-sig-tier" style="color:#16A34A">Top 10% of beauty creators</div>
+          </div>
+          <div class="b-sig" style="background:rgba(217,119,6,.06);border-color:rgba(217,119,6,.2)">
+            <div class="b-sig-ey" style="color:#D97706">Watch Out</div>
+            <div class="b-sig-name">Posting Consistency</div>
+            <div class="b-sig-tier" style="color:#D97706">Average — not a differentiator</div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
