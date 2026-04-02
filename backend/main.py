@@ -1,5 +1,6 @@
 import os
 import stripe
+import anthropic
 from typing import Optional
 from fastapi import FastAPI, HTTPException, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
@@ -139,6 +140,54 @@ def increment_usage(sb, email):
     u = sb.table("users").select("analyses_used").eq("email", email).execute()
     if u.data:
         sb.table("users").update({"analyses_used": u.data[0]["analyses_used"] + 1}).eq("email", email).execute()
+
+
+class OutreachRequest(BaseModel):
+    handle: str
+    name: Optional[str] = None
+    followers: Optional[int] = None
+    score: int
+    niche: str = "beauty"
+    collab_type: str = "gifted"  # "gifted" or "paid"
+    brand_name: str = "[Brand name]"
+
+
+@app.post("/outreach")
+def generate_outreach(req: OutreachRequest, authorization: str = Header(default=None)):
+    verify_token(authorization)
+    claude = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    name = req.name or req.handle.lstrip("@").replace(".", " ").title()
+    followers_str = f"{req.followers:,}" if req.followers else "unknown"
+    collab_desc = "a paid sponsorship" if req.collab_type == "paid" else "a gifted product collaboration (no obligation to post)"
+    tone = "professional and confident" if req.score >= 70 else "friendly and low-pressure"
+    prompt = f"""Write a short Instagram DM outreach message from a beauty brand to an influencer.
+
+Influencer details:
+- Name: {name}
+- Handle: {req.handle}
+- Niche: {req.niche}
+- Followers: {followers_str}
+- Vettly score: {req.score}/100
+- Collaboration type: {collab_desc}
+- Brand: {req.brand_name}
+
+Requirements:
+- Tone: {tone}
+- Max 4 short paragraphs
+- Start with "Hi {name},"
+- Mention their specific niche naturally
+- End with a clear, low-friction call to action
+- Do NOT use generic phrases like "I came across your profile"
+- Sound like a real human brand owner, not a template
+- Return ONLY the message text, no subject line, no explanation"""
+
+    msg = claude.messages.create(
+        model="claude-haiku-4-5-20251001",
+        max_tokens=400,
+        messages=[{"role": "user", "content": prompt}]
+    )
+    text = msg.content[0].text.strip()
+    return {"message": text, "collab_type": req.collab_type}
 
 
 @app.get("/health")
