@@ -10,7 +10,9 @@ from scorer import compute_score
 
 app = FastAPI(title="Vettly API", version="0.1.0")
 
-ALLOWED_ORIGINS = ["*", "https://vettly-eight.vercel.app"]
+FRONTEND_URL = os.getenv("FRONTEND_URL", "https://vettly-eight.vercel.app")
+
+ALLOWED_ORIGINS = ["*", FRONTEND_URL]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
@@ -18,6 +20,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+PLAN_LIMITS = {"starter": 20, "growth": 75, "pro": 200}
+PLAN_PRICE_IDS = {
+    "starter": os.getenv("STRIPE_STARTER_PRICE"),
+    "growth":  os.getenv("STRIPE_GROWTH_PRICE"),
+    "pro":     os.getenv("STRIPE_PRO_PRICE"),
+}
 
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
@@ -195,11 +204,7 @@ def public_profile(handle: str):
 
 @app.post("/create-checkout")
 def create_checkout(req: CheckoutRequest):
-    PRICE_IDS = {
-        "pro": os.getenv("STRIPE_PRO_PRICE"),
-        "growth": os.getenv("STRIPE_GROWTH_PRICE"),
-    }
-    price_id = PRICE_IDS.get(req.plan)
+    price_id = PLAN_PRICE_IDS.get(req.plan)
     if not price_id:
         raise HTTPException(status_code=400, detail=f"Invalid plan: {req.plan}")
     session = stripe.checkout.Session.create(
@@ -207,8 +212,9 @@ def create_checkout(req: CheckoutRequest):
         mode="subscription",
         line_items=[{"price": price_id, "quantity": 1}],
         customer_email=req.user_email,
-        success_url="https://vettly-eight.vercel.app/dashboard.html?upgraded=1",
-        cancel_url="https://vettly-eight.vercel.app/dashboard.html",
+        metadata={"plan": req.plan},
+        success_url=f"{FRONTEND_URL}/dashboard.html?upgraded=1",
+        cancel_url=f"{FRONTEND_URL}/dashboard.html",
     )
     return {"url": session.url}
 
@@ -226,7 +232,7 @@ def score(req: ScoreRequest):
             if u["analyses_limit"] > 0 and u["analyses_used"] >= u["analyses_limit"]:
                 raise HTTPException(status_code=429, detail=f"limit_reached:{u['plan']}")
         else:
-            sb.table("users").insert({"email": req.user_email, "plan": "free", "analyses_used": 0, "analyses_limit": 2}).execute()
+            sb.table("users").insert({"email": req.user_email, "plan": "trial", "analyses_used": 0, "analyses_limit": 5}).execute()
 
     # Cache check
     cached = get_cached(req.handle)
@@ -302,10 +308,8 @@ async def webhook(request: Request):
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
         email = session.get("customer_email")
-
-        pro_price = os.getenv("STRIPE_PRO_PRICE")
-        plan = "growth" if session.get("amount_total") == 4900 else "pro"
-        limit = 999999 if plan == "growth" else 50
+        plan = session.get("metadata", {}).get("plan", "starter")
+        limit = PLAN_LIMITS.get(plan, 20)
 
         from auth import get_supabase
         sb = get_supabase()
