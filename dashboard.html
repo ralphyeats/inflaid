@@ -372,6 +372,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
       <div class="filter-row fadeup">
         <button class="fpill" id="saved-pill" onclick="toggleSavedFilter(this)">⭐ Saved</button>
         <button class="sort-pill">ROI Score ↓</button>
+        <button class="fpill" onclick="clearHistory()" style="margin-left:auto;color:var(--red);border-color:var(--red-mid)" id="clear-hist-btn">Clear history</button>
       </div>
 
       <div class="stats-row fadeup d1">
@@ -545,6 +546,18 @@ function loadHistory(email){
 function saveHistory(email){
   try { localStorage.setItem(historyKey(email), JSON.stringify(apiResults)); }
   catch(e){}
+}
+
+function getHistory(){
+  return apiResults || [];
+}
+
+function clearHistory(){
+  if(!confirm("Clear all analysis history? This only removes local data.")) return;
+  apiResults = [];
+  const email = window.currentUserEmail;
+  if(email) localStorage.removeItem(historyKey(email));
+  renderGrid();
 }
 
 // Supabase sync — load user's analyses from DB, merge with localStorage
