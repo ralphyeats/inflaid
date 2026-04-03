@@ -745,8 +745,15 @@ function renderCard(inf, i){
     <div class="card-btns">
       <button class="card-btn pri" onclick="event.stopPropagation();goOutreachInf(${JSON.stringify(inf).replace(/"/g,'&quot;')})">Outreach</button>
       <button class="card-btn" onclick="event.stopPropagation();window.location.href='${detailHref}'">View details →</button>
+      <button class="card-btn" onclick="event.stopPropagation();deleteCard('${inf.handle}')" style="color:var(--red);border-color:var(--red-mid);margin-left:auto">Delete</button>
     </div>
   </div>`;
+}
+
+function deleteCard(handle){
+  apiResults = apiResults.filter(r => r.handle !== handle);
+  saveHistory(window.currentUserEmail);
+  renderGrid();
 }
 
 function toggleSave(handle){
