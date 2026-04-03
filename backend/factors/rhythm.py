@@ -27,14 +27,25 @@ def score_rhythm(raw: dict) -> int:
     avg_interval = sum(intervals) / len(intervals)
     std_interval = (sum((x - avg_interval) ** 2 for x in intervals) / len(intervals)) ** 0.5
 
-    if avg_interval <= 3:
+    # Realistic posting benchmarks for beauty creators:
+    # Daily (≤2d): exceptional, 90
+    # 3-5x/week (≤3d): very active, 80
+    # Weekly (≤7d): solid, 70
+    # Bi-weekly (≤14d): normal for quality creators, 55
+    # Monthly-ish (≤30d): low but not disqualifying, 35
+    # Rarely (>30d): inactive, 15
+    if avg_interval <= 2:
         base = 90
+    elif avg_interval <= 3:
+        base = 80
     elif avg_interval <= 7:
         base = 70
     elif avg_interval <= 14:
-        base = 45
+        base = 55
+    elif avg_interval <= 30:
+        base = 35
     else:
-        base = 20
+        base = 15
 
-    consistency_bonus = max(0, 15 - int(std_interval * 2))
+    consistency_bonus = max(0, 12 - int(std_interval * 1.2))
     return min(100, max(0, base + consistency_bonus))
