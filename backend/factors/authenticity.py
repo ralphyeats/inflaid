@@ -1,9 +1,10 @@
 SPONSORED_SIGNALS = [
-    "#ad", "#sponsored", "#paid", "#partnership", "#collab",
+    "#ad", "#sponsored", "#paid", "#partnership",
     "#reklam", "#işbirliği", "#tanıtım",
     "gifted", "in partnership with", "use my code",
-    "discount code", "link in bio",
+    "discount code",
 ]
+# "link in bio" and "#collab" removed — universal phrases, not sponsorship indicators
 
 
 def _is_sponsored(post: dict) -> bool:

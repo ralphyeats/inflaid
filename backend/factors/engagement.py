@@ -22,11 +22,13 @@ def score_engagement(raw: dict) -> int:
     if followers >= 5_000_000:
         multiplier = 80
     elif followers >= 1_000_000:
-        multiplier = 50
+        multiplier = 58
+    elif followers >= 500_000:
+        multiplier = 52
     elif followers >= 100_000:
-        multiplier = 28
+        multiplier = 42
     elif followers >= 10_000:
-        multiplier = 17
+        multiplier = 22
     else:
         multiplier = 12
 

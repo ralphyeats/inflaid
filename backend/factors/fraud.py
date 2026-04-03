@@ -5,12 +5,23 @@ def compute_fraud_multiplier(raw: dict, scores: dict, sentiment_result) -> float
     fraud_score = 100
 
     # Signal 1: Ghost followers
+    # Skip if likes are hidden (likesCount consistently 0) — Instagram hides likes
+    # for large accounts; use comments-only check with lenient threshold instead
     if posts:
         n = len(posts)
-        avg_eng = sum(p.get("likesCount", 0) + p.get("commentsCount", 0) for p in posts) / n
-        expected_min = followers * 0.005
-        if avg_eng < expected_min * 0.3:
-            fraud_score -= 30
+        avg_likes = sum(p.get("likesCount", 0) for p in posts) / n
+        avg_comments = sum(p.get("commentsCount", 0) for p in posts) / n
+        avg_eng = avg_likes + avg_comments
+        likes_hidden = avg_likes < 1
+        if likes_hidden:
+            # Comment-only fraud check: expect at least 0.02% comment rate
+            expected_comments_min = followers * 0.0002
+            if avg_comments < expected_comments_min * 0.3:
+                fraud_score -= 30
+        else:
+            expected_min = followers * 0.005
+            if avg_eng < expected_min * 0.3:
+                fraud_score -= 30
 
     # Signal 2: Suspicious growth (old posts much higher engagement)
     # Large accounts (1M+) have higher natural variance — raise threshold
