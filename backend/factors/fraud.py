@@ -13,10 +13,12 @@ def compute_fraud_multiplier(raw: dict, scores: dict, sentiment_result) -> float
             fraud_score -= 30
 
     # Signal 2: Suspicious growth (old posts much higher engagement)
+    # Large accounts (1M+) have higher natural variance — raise threshold
     if len(posts) >= 24:
         early = sum(p.get("likesCount", 0) + p.get("commentsCount", 0) for p in posts[18:24]) / 6
         recent = sum(p.get("likesCount", 0) + p.get("commentsCount", 0) for p in posts[:6]) / 6
-        if early / max(recent, 1) > 3:
+        drop_threshold = 5 if followers >= 1_000_000 else 3
+        if early / max(recent, 1) > drop_threshold:
             fraud_score -= 25
 
     # Signal 3: Follow/unfollow tactic

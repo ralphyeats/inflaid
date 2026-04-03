@@ -12,13 +12,31 @@ def score_engagement(raw: dict) -> int:
     avg_likes = sum(p.get("likesCount") or 0 for p in posts) / n
     avg_comments = sum(p.get("commentsCount") or 0 for p in posts) / n
 
+    # Tier-based multiplier — large accounts naturally have lower ER.
+    # Calibrated so "industry average ER for that tier" maps to ~60.
+    # Mega (5M+): avg ER ~0.7%  → multiplier 80
+    # Macro (1M-5M): avg ER ~1.2% → multiplier 50
+    # Mid (100k-1M): avg ER ~2%  → multiplier 28
+    # Micro (10k-100k): avg ER ~3.5% → multiplier 17
+    # Nano (<10k): avg ER ~5%    → multiplier 12
+    if followers >= 5_000_000:
+        multiplier = 80
+    elif followers >= 1_000_000:
+        multiplier = 50
+    elif followers >= 100_000:
+        multiplier = 28
+    elif followers >= 10_000:
+        multiplier = 17
+    else:
+        multiplier = 12
+
     if avg_likes == 0 and avg_comments > 0:
         # Likes hidden — use comment-only rate with higher multiplier
         engagement_rate = avg_comments / max(followers, 1) * 100
-        raw_score = min(100.0, engagement_rate * 60)
+        raw_score = min(100.0, engagement_rate * multiplier * 5)
     else:
         engagement_rate = (avg_likes + avg_comments) / max(followers, 1) * 100
-        raw_score = min(100.0, engagement_rate * 12)
+        raw_score = min(100.0, engagement_rate * multiplier)
 
     comment_ratio = avg_comments / (avg_likes + 1)
     if comment_ratio >= 0.05:
