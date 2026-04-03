@@ -192,9 +192,9 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 @media(max-width:768px){
   /* Core layout — hide sidebar, full-width main */
   .sidebar{display:none}
-  html,body{overflow:auto}
+  html,body{height:auto!important;overflow:auto!important}
   body{display:flex;flex-direction:column}
-  .main{width:100%;height:auto;overflow:visible}
+  .main{width:100%;height:auto!important;overflow:visible!important}
 
   /* Topbar: stack title + analyze on two rows on very small screens */
   .topbar{
@@ -220,7 +220,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
   .topbar > div:last-child{flex:1 1 100%;min-width:0}
 
   /* Content */
-  .content{flex:1;overflow-y:auto;padding:12px!important;padding-bottom:72px!important}
+  .content{flex:1;overflow-y:auto!important;padding:12px!important;padding-bottom:72px!important}
 
   /* Influencer grid: single column */
   .inf-grid{grid-template-columns:1fr!important}
@@ -247,6 +247,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
     height:auto!important;
     gap:12px;
   }
+  /* ensure outreach-layout never locks height */
+  .outreach-layout{height:auto!important}
   .outreach-list{max-height:320px;overflow-y:auto}
   .tpl-panel{overflow:visible}
   .tpl-textarea{min-height:140px}
@@ -280,6 +282,16 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
   .mobile-nav-item svg{width:18px;height:18px;opacity:.5}
   .mobile-nav-item.active svg{opacity:1}
 }
+
+/* CAMPAIGN TRACKER */
+.spend-opt,.outcome-opt{background:var(--s2);border:1px solid var(--b1);border-radius:7px;padding:7px 12px;font-size:12px;font-weight:500;color:var(--ink2);cursor:pointer;font-family:var(--sans);transition:all .15s}
+.spend-opt:hover,.outcome-opt:hover{border-color:var(--accent);color:var(--accent)}
+.spend-opt.sel,.outcome-opt.sel{background:var(--accent-lo);border-color:var(--accent-mid);color:var(--accent)}
+.camp-card{background:var(--s1);border:1px solid var(--b1);border-radius:10px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.camp-card-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.camp-card-handle{font-size:13px;font-weight:600;color:var(--ink)}
+.camp-card-meta{font-size:11px;color:var(--ink3);margin-top:2px}
+.camp-card-outcome{margin-left:auto;font-size:13px;padding:4px 10px;border-radius:6px;font-weight:600;border:1px solid;flex-shrink:0}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27><rect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%234F8CF5%27/><text x=%2716%27 y=%2723%27 text-anchor=%27middle%27 font-size=%2720%27 font-family=%27system-ui%27 font-weight=%27bold%27 fill=%27white%27>V</text></svg>">
@@ -306,6 +318,11 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
     <div class="nav-item" onclick="switchTab('analytics',this)">
       <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 12L5 8L8 10L11 5L14 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Analytics
+    </div>
+    <div class="nav-item" onclick="switchTab('campaigns',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><path d="M9 11.5h5M11.5 9v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Campaigns
+      <span class="nav-badge" id="campaigns-badge" style="display:none"></span>
     </div>
   </nav>
   <div class="sb-footer">
@@ -421,6 +438,76 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
           <div class="anl-card-title">Recent analyses</div>
           <div id="recent-list"></div>
         </div>
+      </div>
+    </div>
+
+    <!-- CAMPAIGNS -->
+    <div id="tab-campaigns" class="tab-page">
+      <div style="max-width:720px;margin:0 auto">
+
+        <!-- Header row -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px" class="fadeup">
+          <div>
+            <div style="font-family:var(--syne);font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-.02em">Campaign Tracker</div>
+            <div style="font-size:12px;color:var(--ink3);margin-top:2px">Log outcomes. Know what actually works.</div>
+          </div>
+          <button onclick="openCampaignLog()" style="display:flex;align-items:center;gap:6px;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans)">
+            + Log campaign
+          </button>
+        </div>
+
+        <!-- Log form (hidden by default) -->
+        <div id="campaign-log-form" style="display:none;background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px;margin-bottom:20px" class="fadeup">
+          <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:14px">New campaign result</div>
+
+          <!-- Field 1: Handle -->
+          <div style="margin-bottom:10px">
+            <label style="font-size:11px;color:var(--ink3);font-weight:500;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Influencer handle</label>
+            <select id="camp-handle" style="width:100%;background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--ink);font-family:var(--sans)">
+              <option value="">Select from recent analyses...</option>
+            </select>
+          </div>
+
+          <!-- Field 2: Spend tier -->
+          <div style="margin-bottom:10px">
+            <label style="font-size:11px;color:var(--ink3);font-weight:500;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">How much did you spend?</label>
+            <div style="display:flex;gap:6px;flex-wrap:wrap" id="spend-btns">
+              <button class="spend-opt" data-val="gifted" onclick="selectSpend(this)">Gifted</button>
+              <button class="spend-opt" data-val="under100" onclick="selectSpend(this)">&lt;$100</button>
+              <button class="spend-opt" data-val="100-500" onclick="selectSpend(this)">$100–500</button>
+              <button class="spend-opt" data-val="500-2k" onclick="selectSpend(this)">$500–2K</button>
+              <button class="spend-opt" data-val="2k+" onclick="selectSpend(this)">$2K+</button>
+            </div>
+          </div>
+
+          <!-- Field 3: Outcome -->
+          <div style="margin-bottom:16px">
+            <label style="font-size:11px;color:var(--ink3);font-weight:500;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">How did it go?</label>
+            <div style="display:flex;gap:8px">
+              <button class="outcome-opt" data-val="worth_it" onclick="selectOutcome(this)" style="flex:1">🔥 Worth it</button>
+              <button class="outcome-opt" data-val="meh" onclick="selectOutcome(this)" style="flex:1">😐 Meh</button>
+              <button class="outcome-opt" data-val="waste" onclick="selectOutcome(this)" style="flex:1">💀 Waste</button>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px">
+            <button onclick="saveCampaign()" style="flex:1;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans)">Save campaign</button>
+            <button onclick="closeCampaignLog()" style="background:transparent;border:1px solid var(--b2);border-radius:8px;padding:10px 16px;font-size:13px;color:var(--ink3);cursor:pointer;font-family:var(--sans)">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div id="campaigns-summary" style="font-size:12px;color:var(--ink3);margin-bottom:12px"></div>
+
+        <!-- Campaigns list -->
+        <div id="campaigns-list">
+          <div style="text-align:center;padding:60px 20px;color:var(--ink3)" id="campaigns-empty">
+            <div style="font-size:32px;margin-bottom:12px">📋</div>
+            <div style="font-size:14px;font-weight:500;margin-bottom:6px">No campaigns logged yet</div>
+            <div style="font-size:12px">Log your first campaign to start tracking what works.</div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -707,10 +794,11 @@ function switchTab(name,el){
   document.getElementById("tab-"+name).classList.add("active");
   document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
   el.classList.add("active");
-  const titles={discovery:"Influencer Discovery",outreach:"Outreach",analytics:"Analytics"};
+  const titles={discovery:"Influencer Discovery",outreach:"Outreach",analytics:"Analytics",campaigns:"Campaign Tracker"};
   document.getElementById("topbar-title").textContent=titles[name];
   if(name==="outreach")renderOutreach();
   if(name==="analytics")renderAnalytics();
+  if(name==="campaigns")renderCampaigns();
 }
 
 function buildTpl(inf){
@@ -1016,6 +1104,122 @@ function nextPlan() {
 
 function logout() {
   sb.auth.signOut().then(() => window.location.href = "/auth.html");
+}
+
+// ── CAMPAIGN TRACKER ─────────────────────────────────────────────────────────
+const CAMPS_KEY = "inflaid_campaigns";
+let _selSpend = null, _selOutcome = null;
+
+function getCampaigns() {
+  try { return JSON.parse(localStorage.getItem(CAMPS_KEY) || "[]"); } catch { return []; }
+}
+function saveCampaignsLocal(camps) {
+  localStorage.setItem(CAMPS_KEY, JSON.stringify(camps));
+}
+
+function openCampaignLog() {
+  // Populate handle dropdown from history
+  const history = getHistory();
+  const sel = document.getElementById("camp-handle");
+  sel.innerHTML = '<option value="">Select from recent analyses...</option>';
+  history.slice(0,20).forEach(inf => {
+    const opt = document.createElement("option");
+    opt.value = inf.handle;
+    opt.textContent = `${inf.handle} — Score: ${inf.score}`;
+    sel.appendChild(opt);
+  });
+  _selSpend = null; _selOutcome = null;
+  document.querySelectorAll(".spend-opt,.outcome-opt").forEach(b => b.classList.remove("sel"));
+  document.getElementById("campaign-log-form").style.display = "block";
+  document.getElementById("campaign-log-form").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function closeCampaignLog() {
+  document.getElementById("campaign-log-form").style.display = "none";
+}
+
+function selectSpend(btn) {
+  document.querySelectorAll(".spend-opt").forEach(b => b.classList.remove("sel"));
+  btn.classList.add("sel");
+  _selSpend = btn.dataset.val;
+}
+
+function selectOutcome(btn) {
+  document.querySelectorAll(".outcome-opt").forEach(b => b.classList.remove("sel"));
+  btn.classList.add("sel");
+  _selOutcome = btn.dataset.val;
+}
+
+function saveCampaign() {
+  const handle = document.getElementById("camp-handle").value;
+  if (!handle) { alert("Select an influencer."); return; }
+  if (!_selSpend) { alert("Select how much you spent."); return; }
+  if (!_selOutcome) { alert("Select how it went."); return; }
+
+  const camps = getCampaigns();
+  camps.unshift({
+    id: Date.now(),
+    handle,
+    spend_tier: _selSpend,
+    outcome: _selOutcome,
+    date: new Date().toISOString().split("T")[0]
+  });
+  saveCampaignsLocal(camps);
+  updateCampaignsBadge(camps.length);
+  closeCampaignLog();
+  renderCampaigns();
+}
+
+function renderCampaigns() {
+  const camps = getCampaigns();
+  const list = document.getElementById("campaigns-list");
+  const empty = document.getElementById("campaigns-empty");
+
+  if (!camps.length) {
+    if (empty) empty.style.display = "block";
+    return;
+  }
+  if (empty) empty.style.display = "none";
+
+  const SPEND_LABELS = {gifted:"Gifted","under100":"<$100","100-500":"$100–500","500-2k":"$500–2K","2k+":"$2K+"};
+  const OUTCOME_LABELS = {worth_it:{txt:"🔥 Worth it",col:"var(--green)",bg:"var(--green-lo)",brd:"var(--green-mid)"},meh:{txt:"😐 Meh",col:"var(--amber)",bg:"var(--amber-lo)",brd:"var(--amber-mid)"},waste:{txt:"💀 Waste",col:"var(--red)",bg:"var(--red-lo)",brd:"var(--red-mid)"}};
+
+  list.innerHTML = camps.map(c => {
+    const o = OUTCOME_LABELS[c.outcome] || OUTCOME_LABELS.meh;
+    const initials = c.handle.replace("@","").slice(0,2).toUpperCase();
+    return `<div class="camp-card">
+      <div class="camp-card-av" style="background:var(--accent-lo);color:var(--accent)">${initials}</div>
+      <div>
+        <div class="camp-card-handle">${c.handle}</div>
+        <div class="camp-card-meta">${SPEND_LABELS[c.spend_tier]||c.spend_tier} · ${c.date}</div>
+      </div>
+      <div class="camp-card-outcome" style="color:${o.col};background:${o.bg};border-color:${o.brd}">${o.txt}</div>
+      <button onclick="deleteCampaign(${c.id})" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0" title="Delete">×</button>
+    </div>`;
+  }).join("");
+
+  // Summary stats
+  const total = camps.length;
+  const worthIt = camps.filter(c => c.outcome === "worth_it").length;
+  const pct = total ? Math.round(worthIt/total*100) : 0;
+  const summaryEl = document.getElementById("campaigns-summary");
+  if (summaryEl) {
+    summaryEl.innerHTML = `${total} campaign${total!==1?"s":""} logged · <span style="color:var(--green);font-weight:600">${pct}% worth it</span>`;
+  }
+}
+
+function deleteCampaign(id) {
+  const camps = getCampaigns().filter(c => c.id !== id);
+  saveCampaignsLocal(camps);
+  updateCampaignsBadge(camps.length);
+  renderCampaigns();
+}
+
+function updateCampaignsBadge(count) {
+  const badge = document.getElementById("campaigns-badge");
+  if (!badge) return;
+  if (count > 0) { badge.textContent = count; badge.style.display = ""; }
+  else { badge.style.display = "none"; }
 }
 </script>
 

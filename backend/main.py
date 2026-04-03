@@ -408,3 +408,85 @@ async def webhook(request: Request):
             }, on_conflict="email").execute()
 
     return {"status": "ok"}
+
+
+# ── CAMPAIGN TRACKER ──────────────────────────────────────────────────────────
+
+SPEND_MIDPOINTS = {
+    "gifted": 0, "under100": 50,
+    "100-500": 300, "500-2k": 1250, "2k+": 3000
+}
+
+
+class CampaignCreate(BaseModel):
+    handle: str
+    spend_tier: str   # gifted | under100 | 100-500 | 500-2k | 2k+
+    outcome: str      # worth_it | meh | waste
+    campaign_date: Optional[str] = None  # YYYY-MM-DD, defaults to today
+
+
+class CampaignResult(BaseModel):
+    campaign_id: str
+    orders_range: Optional[str] = None   # 0 | 1-5 | 5-20 | 20+
+    notes: Optional[str] = None
+
+
+@app.post("/campaign/create")
+def campaign_create(req: CampaignCreate, authorization: str = Header(default=None)):
+    email = verify_token(authorization)
+    from auth import get_supabase
+    import datetime
+
+    sb = get_supabase()
+    if not sb:
+        raise HTTPException(status_code=503, detail="DB unavailable")
+
+    record = {
+        "user_email": email,
+        "handle": req.handle if req.handle.startswith("@") else f"@{req.handle}",
+        "spend_tier": req.spend_tier,
+        "outcome": req.outcome,
+        "campaign_date": req.campaign_date or datetime.date.today().isoformat(),
+        "status": "logged",
+    }
+    result = sb.table("campaigns").insert(record).execute()
+    if not result.data:
+        raise HTTPException(status_code=500, detail="Failed to save campaign")
+    return {"status": "created", "id": result.data[0]["id"]}
+
+
+@app.get("/campaigns")
+def list_campaigns(authorization: str = Header(default=None)):
+    email = verify_token(authorization)
+    from auth import get_supabase
+
+    sb = get_supabase()
+    if not sb:
+        raise HTTPException(status_code=503, detail="DB unavailable")
+
+    result = sb.table("campaigns").select("*").eq("user_email", email).order("campaign_date", desc=True).limit(50).execute()
+    return {"campaigns": result.data or []}
+
+
+@app.post("/campaign/{campaign_id}/result")
+def campaign_result(campaign_id: str, req: CampaignResult, authorization: str = Header(default=None)):
+    email = verify_token(authorization)
+    from auth import get_supabase
+
+    sb = get_supabase()
+    if not sb:
+        raise HTTPException(status_code=503, detail="DB unavailable")
+
+    # Verify ownership
+    existing = sb.table("campaigns").select("id,user_email").eq("id", campaign_id).execute()
+    if not existing.data or existing.data[0]["user_email"] != email:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+
+    update = {"status": "completed"}
+    if req.orders_range:
+        update["orders_range"] = req.orders_range
+    if req.notes:
+        update["notes"] = req.notes
+
+    sb.table("campaigns").update(update).eq("id", campaign_id).execute()
+    return {"status": "updated"}
