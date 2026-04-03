@@ -945,9 +945,9 @@ footer {
   <p class="hero-fine">No credit card required · 2 free analyses included</p>
 </section>
 
-<!-- HERO MOCKUP — animated demo -->
+<!-- HERO MOCKUP — full dashboard replica with animated cursor -->
 <style>
-/* ── ANIMATED DEMO MOCKUP ── */
+/* ── DASHBOARD REPLICA MOCKUP ── */
 @keyframes adTyping {
   0%,8%   { width: 0; }
   35%,100%{ width: 100%; }
@@ -972,7 +972,47 @@ footer {
   70%  { transform: scale(1.05); }
   100% { transform: scale(1); opacity: 1; }
 }
+@keyframes barFill91  { from { width: 0; } to { width: 91%; } }
+@keyframes barFill88  { from { width: 0; } to { width: 88%; } }
+@keyframes barFill85  { from { width: 0; } to { width: 85%; } }
+@keyframes barFill82  { from { width: 0; } to { width: 82%; } }
+@keyframes barFill79  { from { width: 0; } to { width: 79%; } }
+@keyframes mockScroll {
+  0%,18%   { transform: translateY(0); }
+  28%,82%  { transform: translateY(-320px); }
+  92%,100% { transform: translateY(0); }
+}
+/* cursor moves */
+@keyframes cursorMove {
+  /* start: center-right area */
+  0%        { left: 74%; top: 38%; transform: scale(1); }
+  /* move toward analyze input */
+  12%       { left: 52%; top: 28%; transform: scale(1); }
+  /* pause over input */
+  20%       { left: 52%; top: 28%; transform: scale(1); }
+  /* move to Analyze button */
+  28%       { left: 68%; top: 28%; transform: scale(1); }
+  /* click — shrink */
+  30%       { left: 68%; top: 28%; transform: scale(0.72); }
+  32%       { left: 68%; top: 28%; transform: scale(1); }
+  /* move to card */
+  42%       { left: 55%; top: 43%; transform: scale(1); }
+  /* pause */
+  50%       { left: 55%; top: 43%; transform: scale(1); }
+  /* move to View details */
+  58%       { left: 44%; top: 52%; transform: scale(1); }
+  /* click */
+  60%       { left: 44%; top: 52%; transform: scale(0.72); }
+  62%       { left: 44%; top: 52%; transform: scale(1); }
+  /* move to score number after scroll */
+  72%       { left: 62%; top: 68%; transform: scale(1); }
+  /* hover score */
+  84%       { left: 62%; top: 68%; transform: scale(1); }
+  /* return to start */
+  96%,100%  { left: 74%; top: 38%; transform: scale(1); }
+}
 
+/* ── DASHBOARD REPLICA WRAPPER ── */
 .ad-wrap {
   position: relative;
 }
@@ -983,181 +1023,264 @@ footer {
   overflow: hidden;
   box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.7) inset;
   position: relative;
+  max-width: 860px;
+  margin: 0 auto;
 }
+/* browser chrome bar */
 .ad-bar {
   display: flex; align-items: center; gap: 6px;
-  padding: 12px 16px;
-  background: var(--surface2);
-  border-bottom: 1px solid var(--border2);
+  padding: 11px 16px;
+  background: #F0EFEC;
+  border-bottom: 1px solid var(--border);
 }
-.ad-dot { width: 10px; height: 10px; border-radius: 50%; }
+.ad-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 .ad-url {
   flex: 1; margin: 0 10px;
   background: var(--surface); border: 1px solid var(--border);
   border-radius: 5px; padding: 4px 12px;
   font-size: 11px; color: var(--text3);
-  transition: color .4s;
+  display: flex; align-items: center; gap: 5px;
 }
+.ad-url-lock { font-size: 9px; opacity: .55; }
+/* browser body */
 .ad-body {
-  display: flex; height: 400px; overflow: hidden; position: relative;
+  display: flex; height: 488px; overflow: hidden; position: relative;
 }
-
-/* sidebar */
+/* ── SIDEBAR ── */
 .ad-sidebar {
-  width: 190px; flex-shrink: 0;
-  border-right: 1px solid var(--border2);
+  width: 178px; flex-shrink: 0;
+  border-right: 1px solid var(--border);
   padding: 14px 10px;
-  display: flex; flex-direction: column; gap: 3px;
+  display: flex; flex-direction: column; gap: 2px;
+  background: var(--surface);
+}
+.ad-logo {
+  display: flex; align-items: center; gap: 7px;
+  padding: 6px 10px 14px;
+  font-size: 13px; font-weight: 700; color: var(--text);
+  font-family: var(--display);
+  border-bottom: 1px solid var(--border2);
+  margin-bottom: 8px;
+}
+.ad-logo-dot {
+  width: 20px; height: 20px; border-radius: 5px;
+  background: var(--accent);
+  flex-shrink: 0;
 }
 .ad-nav {
   display: flex; align-items: center; gap: 8px;
   padding: 8px 10px; border-radius: 7px;
-  font-size: 12px; color: var(--text3);
+  font-size: 12px; color: var(--text3); font-weight: 500;
 }
-.ad-nav.active { background: var(--accent-lo); color: var(--accent); font-weight: 600; }
-.ad-nav-ic { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.ad-nav.active {
+  background: var(--accent-lo); color: var(--accent); font-weight: 600;
+}
+.ad-nav-ic {
+  width: 14px; height: 14px; border-radius: 3px;
+  background: currentColor; opacity: .25; flex-shrink: 0;
+}
+.ad-nav.active .ad-nav-ic { opacity: 1; }
+.ad-sidebar-spacer { flex: 1; }
+.ad-sidebar-user {
+  border-top: 1px solid var(--border2);
+  padding: 10px 10px 6px;
+  display: flex; align-items: center; gap: 8px;
+}
+.ad-user-av {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: linear-gradient(135deg,#FBBF24,#F59E0B);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.ad-user-name { font-size: 11px; font-weight: 600; color: var(--text); line-height: 1.2; }
+.ad-user-plan { font-size: 9.5px; color: var(--text3); }
+.ad-usage {
+  margin: 6px 10px 0;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 7px; padding: 8px 9px;
+}
+.ad-usage-label { font-size: 9.5px; color: var(--text2); margin-bottom: 5px; display: flex; justify-content: space-between; }
+.ad-usage-bar { height: 3px; background: var(--border); border-radius: 2px; }
+.ad-usage-fill { height: 100%; background: var(--accent); border-radius: 2px; width: 40%; }
 
-/* main content area */
+/* ── MAIN AREA ── */
 .ad-main {
-  flex: 1; display: flex; flex-direction: column;
-  overflow: hidden; position: relative;
+  flex: 1; overflow: hidden; position: relative;
+  background: var(--bg);
+}
+/* scrollable inner content */
+.ad-scroll-inner {
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  animation: mockScroll 10s cubic-bezier(.4,0,.2,1) infinite;
 }
 
-/* ── STEP 1: search ── */
-.ad-step-search {
-  padding: 20px 18px 18px;
-  display: flex; flex-direction: column; gap: 14px;
-}
-.ad-search-row { display: flex; gap: 8px; align-items: center; }
-.ad-input-wrap {
-  flex: 1; position: relative;
-  background: var(--surface2); border: 1.5px solid var(--accent);
-  border-radius: 8px; padding: 10px 14px;
-  font-size: 12.5px; color: var(--text); font-family: var(--sans);
-  overflow: hidden;
-}
-.ad-typed {
-  display: inline-block; overflow: hidden; white-space: nowrap;
-  vertical-align: bottom;
-  border-right: 2px solid var(--accent);
-  animation: adTyping 1.8s steps(12,end) both, adBlink .7s step-end infinite;
-  /* animation driven by JS via class toggle */
-}
-.ad-analyze-btn {
-  padding: 10px 18px; background: var(--text); color: #fff;
-  border: none; border-radius: 8px;
-  font-size: 12px; font-weight: 600; font-family: var(--sans); cursor: default;
-  white-space: nowrap; letter-spacing: .01em;
-}
-.ad-empty-hint {
-  color: var(--text3); font-size: 12px; text-align: center; padding: 20px 0;
-}
-
-/* ── STEP 2: results card ── */
-.ad-step-results {
-  padding: 18px;
-  display: flex; flex-direction: column; gap: 10px;
-  opacity: 0; pointer-events: none;
-  position: absolute; inset: 0;
+/* topbar */
+.ad-topbar {
   background: var(--surface);
-  transition: opacity .5s ease;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex; align-items: center; gap: 10px;
 }
-.ad-step-results.visible {
-  opacity: 1; pointer-events: auto;
+.ad-topbar-search {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 7px; padding: 7px 11px;
+  font-size: 11.5px; color: var(--text3); font-family: var(--sans);
+  flex: 1;
 }
-.ad-results-label {
-  font-size: 10px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: .08em; color: var(--text3);
+.ad-topbar-input {
+  background: var(--surface2); border: 1.5px solid var(--accent);
+  border-radius: 7px; padding: 7px 11px;
+  font-size: 11.5px; color: var(--text); font-family: var(--sans);
+  min-width: 130px;
 }
-.ad-result-card {
-  background: var(--surface2); border: 1.5px solid rgba(22,163,74,.3);
-  border-radius: 12px; padding: 14px 16px;
+.ad-topbar-btn {
+  padding: 7px 14px; background: var(--text); color: #fff;
+  border: none; border-radius: 7px;
+  font-size: 11.5px; font-weight: 600; font-family: var(--sans); cursor: default;
+  white-space: nowrap;
+}
+
+/* content area padding */
+.ad-content { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.ad-section-label {
+  font-size: 9.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .09em; color: var(--text3); margin-bottom: 2px;
+}
+
+/* influencer card */
+.ad-inf-card {
+  background: var(--surface); border: 1.5px solid rgba(22,163,74,.3);
+  border-radius: 12px; padding: 13px 15px;
   display: flex; align-items: center; gap: 12px;
-  box-shadow: 0 0 0 3px rgba(22,163,74,.07);
-  animation: adPulseGreen 2s ease-in-out infinite 1s;
+  box-shadow: 0 0 0 3px rgba(22,163,74,.06);
 }
-.ad-av {
-  width: 34px; height: 34px; border-radius: 50%;
+.ad-inf-av {
+  width: 40px; height: 40px; border-radius: 50%;
   background: linear-gradient(135deg,#60A5FA,#2563EB);
   display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 800; color: #fff; flex-shrink: 0;
+  font-size: 13px; font-weight: 800; color: #fff; flex-shrink: 0;
 }
-.ad-card-info { flex: 1; min-width: 0; }
-.ad-card-name { font-size: 13px; font-weight: 700; color: var(--text); }
-.ad-card-handle { font-size: 10.5px; color: var(--text3); margin-top: 1px; }
-.ad-card-followers { font-size: 11px; color: var(--text2); margin-top: 4px; }
-.ad-score-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.ad-score {
-  font-family: var(--display); font-size: 30px; font-weight: 800;
+.ad-inf-info { flex: 1; min-width: 0; }
+.ad-inf-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.ad-inf-handle { font-size: 10.5px; color: var(--text3); }
+.ad-inf-followers { font-size: 11px; color: var(--text2); margin-top: 3px; }
+.ad-inf-insight { font-size: 10px; color: var(--text3); margin-top: 4px; font-style: italic; }
+.ad-inf-score-col { text-align: center; flex-shrink: 0; margin-left: 6px; }
+.ad-inf-score-num {
+  font-family: var(--display); font-size: 34px; font-weight: 800;
   color: #16A34A; letter-spacing: -.03em; line-height: 1;
-  animation: adScorePop .6s cubic-bezier(.22,1,.36,1) both;
 }
-.ad-score-badge {
-  font-size: 9px; font-weight: 700; text-transform: uppercase;
+.ad-inf-badge {
+  display: block; font-size: 9px; font-weight: 700; text-transform: uppercase;
   letter-spacing: .07em; color: #16A34A;
   background: rgba(22,163,74,.12); border: 1px solid rgba(22,163,74,.25);
-  padding: 2px 8px; border-radius: 4px;
+  padding: 2px 8px; border-radius: 4px; margin: 3px auto 0; width: fit-content;
 }
+.ad-inf-verdict {
+  display: block; font-size: 10px; font-weight: 600; color: var(--text2);
+  margin-top: 3px;
+}
+.ad-inf-actions {
+  display: flex; gap: 6px; margin-top: 8px;
+}
+.ad-inf-btn {
+  padding: 5px 11px; border-radius: 6px;
+  font-size: 10.5px; font-weight: 600; font-family: var(--sans); cursor: default; border: none;
+}
+.ad-inf-btn-pri { background: var(--text); color: #fff; }
+.ad-inf-btn-sec { background: var(--surface2); border: 1px solid var(--border); color: var(--text2); }
 
-/* ── STEP 3: detail view ── */
-.ad-step-detail {
-  opacity: 0; pointer-events: none;
-  position: absolute; inset: 0;
-  background: var(--surface);
-  transition: opacity .5s ease;
-  display: flex; flex-direction: column;
-  padding: 14px 16px; gap: 10px; overflow: hidden;
+/* ── DETAIL VIEW (shown after scroll) ── */
+.ad-detail-section {
+  padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
+  background: var(--bg);
 }
-.ad-step-detail.visible {
-  opacity: 1; pointer-events: auto;
+.ad-detail-divider {
+  height: 1px; background: var(--border2); margin: 6px 0;
 }
-.ad-det-header {
-  display: flex; align-items: center; gap: 10px;
-  padding-bottom: 10px; border-bottom: 1px solid var(--border2);
-}
-.ad-det-name { font-size: 12.5px; font-weight: 700; color: var(--text); }
-.ad-det-sub { font-size: 10px; color: var(--text3); margin-top: 1px; }
-.ad-verdict-badge {
-  margin-left: auto; font-size: 9px; font-weight: 700;
-  color: #16A34A; background: rgba(22,163,74,.1);
-  border: 1px solid rgba(22,163,74,.25); border-radius: 5px;
-  padding: 3px 10px;
-}
+/* decision bar */
 .ad-decision {
   background: rgba(22,163,74,.07); border: 1px solid rgba(22,163,74,.22);
   border-radius: 10px; padding: 12px 14px;
-  animation: adSlideRight .55s cubic-bezier(.22,1,.36,1) both .1s;
+  display: flex; flex-direction: column; gap: 4px;
 }
 .ad-dec-eyebrow {
-  font-size: 8px; text-transform: uppercase; letter-spacing: .1em;
-  font-weight: 700; color: #16A34A; margin-bottom: 3px;
+  font-size: 8.5px; text-transform: uppercase; letter-spacing: .1em;
+  font-weight: 700; color: #16A34A;
 }
 .ad-dec-verdict {
   font-size: 14px; font-weight: 800; color: #16A34A;
-  letter-spacing: -.02em; margin-bottom: 8px;
+  letter-spacing: -.02em;
 }
-.ad-dec-bullets { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.ad-dec-bullets { display: flex; flex-direction: column; gap: 3px; margin-top: 2px; }
 .ad-dec-bullet { font-size: 10.5px; color: #15803D; font-weight: 500; }
-.ad-dec-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.ad-dec-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
 .ad-dec-pill {
-  background: rgba(255,255,255,.7); border: 1px solid rgba(0,0,0,.07);
+  background: rgba(255,255,255,.75); border: 1px solid rgba(0,0,0,.07);
   border-radius: 5px; padding: 4px 9px;
 }
 .ad-dp-lbl { font-size: 7.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); font-weight: 600; }
 .ad-dp-val { font-size: 11px; font-weight: 700; color: var(--text); line-height: 1.3; }
 
-/* step indicator dots */
-.ad-dots {
-  display: flex; gap: 6px; justify-content: center; margin-top: 14px;
+/* score + breakdown row */
+.ad-score-row {
+  display: flex; gap: 12px; align-items: flex-start;
 }
-.ad-dot-ind {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--border); transition: background .3s, transform .3s;
+.ad-score-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  flex-shrink: 0; width: 100px;
+  box-shadow: var(--shadow);
 }
-.ad-dot-ind.active { background: var(--accent); transform: scale(1.3); }
+.ad-score-big {
+  font-family: var(--display); font-size: 44px; font-weight: 800;
+  color: #16A34A; letter-spacing: -.04em; line-height: 1;
+}
+.ad-score-lbl {
+  font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+  color: #16A34A; background: rgba(22,163,74,.12); border: 1px solid rgba(22,163,74,.25);
+  padding: 2px 8px; border-radius: 4px;
+}
+/* breakdown bars */
+.ad-breakdown {
+  flex: 1; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 8px;
+  box-shadow: var(--shadow);
+}
+.ad-bk-row { }
+.ad-bk-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.ad-bk-name { font-size: 10.5px; color: var(--text2); font-weight: 500; }
+.ad-bk-val { font-size: 10.5px; font-weight: 700; color: var(--text); }
+.ad-bk-track { height: 4px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.ad-bk-fill { height: 100%; border-radius: 3px; background: #16A34A; }
+.ad-bk-fill-91 { animation: barFill91 1.1s cubic-bezier(.22,1,.36,1) 6s both; }
+.ad-bk-fill-88 { animation: barFill88 1.1s cubic-bezier(.22,1,.36,1) 6.1s both; }
+.ad-bk-fill-85 { animation: barFill85 1.1s cubic-bezier(.22,1,.36,1) 6.2s both; }
+.ad-bk-fill-82 { animation: barFill82 1.1s cubic-bezier(.22,1,.36,1) 6.3s both; }
+.ad-bk-fill-79 { animation: barFill79 1.1s cubic-bezier(.22,1,.36,1) 6.4s both; }
+
+/* ── MOUSE CURSOR ── */
+.ad-cursor {
+  position: absolute;
+  width: 20px; height: 24px;
+  pointer-events: none;
+  z-index: 100;
+  animation: cursorMove 10s cubic-bezier(.4,0,.2,1) infinite;
+  transform-origin: top left;
+}
+.ad-cursor svg { filter: drop-shadow(0 1px 3px rgba(0,0,0,.35)); }
+
+/* responsive */
+@media (max-width: 700px) {
+  .ad-sidebar { display: none; }
+  .ad-browser { border-radius: 12px; }
+}
 </style>
 
-<div style="padding: 0 48px; max-width: 1060px; margin: 0 auto 0; position: relative;" class="reveal hero-mockup-wrap">
+<div style="padding: 0 48px; max-width: 920px; margin: 0 auto; position: relative;" class="reveal hero-mockup-wrap">
   <div class="hero-glow"></div>
 
   <div class="ad-browser">
@@ -1166,143 +1289,164 @@ footer {
       <div class="ad-dot" style="background:#FF5F57"></div>
       <div class="ad-dot" style="background:#FFBD2E"></div>
       <div class="ad-dot" style="background:#28C840"></div>
-      <div class="ad-url" id="adUrl">app.inflaid.io/dashboard</div>
+      <div class="ad-url">
+        <span class="ad-url-lock">🔒</span>
+        app.inflaid.io/dashboard
+      </div>
     </div>
 
     <div class="ad-body">
-      <!-- sidebar (always visible) -->
+      <!-- ── SIDEBAR ── -->
       <div class="ad-sidebar">
-        <div style="padding:8px 10px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Workspace</div>
-        <div class="ad-nav active"><span class="ad-nav-ic"></span>Discovery</div>
-        <div class="ad-nav"><span class="ad-nav-ic"></span>Outreach</div>
-        <div class="ad-nav"><span class="ad-nav-ic"></span>Analytics</div>
-        <div style="flex:1"></div>
-        <div style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:11px;">
-          <div style="display:flex;justify-content:space-between;margin-bottom:2px"><span style="color:var(--text);font-weight:600">Growth plan</span><span style="color:var(--text3)">18/75</span></div>
-          <div style="height:3px;background:var(--border);border-radius:2px;margin-top:6px"><div style="width:24%;height:100%;background:var(--accent);border-radius:2px"></div></div>
-          <div style="color:var(--text3);margin-top:4px">57 analyses remaining</div>
+        <div class="ad-logo">
+          <div class="ad-logo-dot"></div>
+          Inflaid
+        </div>
+        <div class="ad-nav active">
+          <span class="ad-nav-ic" style="border-radius:3px;width:12px;height:12px;"></span>
+          Discovery
+        </div>
+        <div class="ad-nav">
+          <span class="ad-nav-ic" style="border-radius:3px;width:12px;height:12px;"></span>
+          Outreach
+        </div>
+        <div class="ad-nav">
+          <span class="ad-nav-ic" style="border-radius:50%;width:12px;height:12px;"></span>
+          Analytics
+        </div>
+        <div class="ad-sidebar-spacer"></div>
+        <div class="ad-usage">
+          <div class="ad-usage-label">
+            <span>8 / 20 analyses used</span>
+          </div>
+          <div class="ad-usage-bar"><div class="ad-usage-fill"></div></div>
+        </div>
+        <div class="ad-sidebar-user">
+          <div class="ad-user-av">RY</div>
+          <div>
+            <div class="ad-user-name">Ralphyeats</div>
+            <div class="ad-user-plan">Free plan</div>
+          </div>
         </div>
       </div>
 
-      <!-- main area — steps layered -->
+      <!-- ── MAIN AREA ── -->
       <div class="ad-main">
+        <!-- scrollable inner: first section = card view, second = detail view -->
+        <div class="ad-scroll-inner">
 
-        <!-- STEP 1: search -->
-        <div class="ad-step-search" id="adStep1">
-          <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px">Analyze an influencer</div>
-          <div class="ad-search-row">
-            <div class="ad-input-wrap">
-              <span class="ad-typed" id="adTyped">@cristiano</span>
+          <!-- SECTION 1: Topbar + card -->
+          <div>
+            <!-- topbar -->
+            <div class="ad-topbar">
+              <div class="ad-topbar-search">Search influencers…</div>
+              <div class="ad-topbar-input">@cristiano</div>
+              <button class="ad-topbar-btn">Analyze →</button>
             </div>
-            <button class="ad-analyze-btn">Analyze →</button>
-          </div>
-          <div class="ad-empty-hint" style="margin-top:24px;opacity:.5">
-            <div style="font-size:28px;margin-bottom:8px">🔍</div>
-            <div>Enter any public Instagram handle to score them</div>
-          </div>
-        </div>
 
-        <!-- STEP 2: results -->
-        <div class="ad-step-results" id="adStep2">
-          <div class="ad-results-label">1 result for @cristiano</div>
-          <div class="ad-result-card">
-            <div class="ad-av">CR</div>
-            <div class="ad-card-info">
-              <div class="ad-card-name">Cristiano Ronaldo</div>
-              <div class="ad-card-handle">@cristiano</div>
-              <div class="ad-card-followers">635M followers · Sports / Lifestyle</div>
-            </div>
-            <div class="ad-score-wrap">
-              <div class="ad-score" id="adScore">71</div>
-              <div class="ad-score-badge">High ROI</div>
-            </div>
-          </div>
-          <div style="font-size:11px;color:var(--text3);margin-top:4px;">Click to view full report →</div>
-        </div>
-
-        <!-- STEP 3: detail view -->
-        <div class="ad-step-detail" id="adStep3">
-          <!-- profile header -->
-          <div class="ad-det-header">
-            <div class="ad-av">CR</div>
-            <div>
-              <div class="ad-det-name">Cristiano Ronaldo</div>
-              <div class="ad-det-sub">@cristiano · 635M followers · Sports / Lifestyle</div>
-            </div>
-            <div class="ad-verdict-badge">High ROI</div>
-          </div>
-
-          <!-- decision bar -->
-          <div class="ad-decision">
-            <div class="ad-dec-eyebrow">Inflaid Decision</div>
-            <div class="ad-dec-verdict">Paid Campaign — Reels</div>
-            <div class="ad-dec-bullets">
-              <div class="ad-dec-bullet">→ Negotiate fixed fee + performance bonus</div>
-              <div class="ad-dec-bullet">→ Brief: 2 Reels (product showcase)</div>
-            </div>
-            <div class="ad-dec-pills">
-              <div class="ad-dec-pill">
-                <div class="ad-dp-lbl">Budget</div>
-                <div class="ad-dp-val">$5K–$15K cash</div>
-              </div>
-              <div class="ad-dec-pill">
-                <div class="ad-dp-lbl">Risk</div>
-                <div class="ad-dp-val" style="color:#D97706">Medium</div>
-              </div>
-              <div class="ad-dec-pill">
-                <div class="ad-dp-lbl">Est. Sales</div>
-                <div class="ad-dp-val" style="color:#16A34A">8–18 orders</div>
+            <!-- card list -->
+            <div class="ad-content">
+              <div class="ad-section-label">1 result for @cristiano</div>
+              <div class="ad-inf-card">
+                <div class="ad-inf-av">CR</div>
+                <div class="ad-inf-info">
+                  <div class="ad-inf-name">Cristiano Ronaldo</div>
+                  <div class="ad-inf-handle">@cristiano · 635M followers</div>
+                  <div class="ad-inf-insight">Elite engagement for scale. Paid collab recommended.</div>
+                  <div class="ad-inf-actions">
+                    <button class="ad-inf-btn ad-inf-btn-pri">View details</button>
+                    <button class="ad-inf-btn ad-inf-btn-sec">Outreach</button>
+                  </div>
+                </div>
+                <div class="ad-inf-score-col">
+                  <div class="ad-inf-score-num">84</div>
+                  <span class="ad-inf-badge">High ROI</span>
+                  <span class="ad-inf-verdict">Paid Campaign</span>
+                </div>
               </div>
             </div>
           </div>
+
+          <!-- SECTION 2: Detail view (revealed after scroll) -->
+          <div class="ad-detail-section">
+            <!-- profile mini header -->
+            <div style="display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--border2);">
+              <div class="ad-inf-av" style="width:34px;height:34px;font-size:11px;">CR</div>
+              <div>
+                <div style="font-size:12.5px;font-weight:700;color:var(--text);">Cristiano Ronaldo</div>
+                <div style="font-size:10px;color:var(--text3);">@cristiano · 635M followers · Sports / Lifestyle</div>
+              </div>
+              <div style="margin-left:auto;font-size:9px;font-weight:700;color:#16A34A;background:rgba(22,163,74,.1);border:1px solid rgba(22,163,74,.25);border-radius:5px;padding:3px 10px;">High ROI</div>
+            </div>
+
+            <!-- decision bar -->
+            <div class="ad-decision">
+              <div class="ad-dec-eyebrow">Inflaid Decision</div>
+              <div class="ad-dec-verdict">Paid Campaign — Reels</div>
+              <div class="ad-dec-bullets">
+                <div class="ad-dec-bullet">→ Negotiate fixed fee + performance bonus</div>
+                <div class="ad-dec-bullet">→ Brief: 2 Reels (product showcase)</div>
+              </div>
+              <div class="ad-dec-pills">
+                <div class="ad-dec-pill">
+                  <div class="ad-dp-lbl">Budget</div>
+                  <div class="ad-dp-val">$5K–$15K</div>
+                </div>
+                <div class="ad-dec-pill">
+                  <div class="ad-dp-lbl">Risk</div>
+                  <div class="ad-dp-val" style="color:#D97706">Medium</div>
+                </div>
+                <div class="ad-dec-pill">
+                  <div class="ad-dp-lbl">Est. Sales</div>
+                  <div class="ad-dp-val" style="color:#16A34A">8–18 orders</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- score + breakdown -->
+            <div class="ad-score-row">
+              <div class="ad-score-card">
+                <div class="ad-score-big">84</div>
+                <div class="ad-score-lbl">High ROI</div>
+              </div>
+              <div class="ad-breakdown">
+                <div class="ad-bk-row">
+                  <div class="ad-bk-top"><span class="ad-bk-name">Engagement Rate</span><span class="ad-bk-val">91</span></div>
+                  <div class="ad-bk-track"><div class="ad-bk-fill ad-bk-fill-91" style="width:0%"></div></div>
+                </div>
+                <div class="ad-bk-row">
+                  <div class="ad-bk-top"><span class="ad-bk-name">Audience Quality</span><span class="ad-bk-val">88</span></div>
+                  <div class="ad-bk-track"><div class="ad-bk-fill ad-bk-fill-88" style="width:0%"></div></div>
+                </div>
+                <div class="ad-bk-row">
+                  <div class="ad-bk-top"><span class="ad-bk-name">Niche Alignment</span><span class="ad-bk-val">85</span></div>
+                  <div class="ad-bk-track"><div class="ad-bk-fill ad-bk-fill-85" style="width:0%"></div></div>
+                </div>
+                <div class="ad-bk-row">
+                  <div class="ad-bk-top"><span class="ad-bk-name">Content Quality</span><span class="ad-bk-val">82</span></div>
+                  <div class="ad-bk-track"><div class="ad-bk-fill ad-bk-fill-82" style="width:0%"></div></div>
+                </div>
+                <div class="ad-bk-row">
+                  <div class="ad-bk-top"><span class="ad-bk-name">Authenticity</span><span class="ad-bk-val">79</span></div>
+                  <div class="ad-bk-track"><div class="ad-bk-fill ad-bk-fill-79" style="width:0%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div><!-- end detail section -->
+
+        </div><!-- end scroll inner -->
+
+        <!-- ── ANIMATED MOUSE CURSOR ── -->
+        <div class="ad-cursor" aria-hidden="true">
+          <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 1L4 19L8 15L11.5 23L13.5 22L10 14L16 14L4 1Z" fill="white" stroke="#1A1714" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
         </div>
 
       </div><!-- end ad-main -->
     </div><!-- end ad-body -->
   </div><!-- end ad-browser -->
-
-  <!-- step dots -->
-  <div class="ad-dots">
-    <div class="ad-dot-ind active" id="adDot0"></div>
-    <div class="ad-dot-ind" id="adDot1"></div>
-    <div class="ad-dot-ind" id="adDot2"></div>
-  </div>
 </div>
-
-<script>
-(function(){
-  var step = 0;
-  var urls = ['app.inflaid.io/dashboard','app.inflaid.io/dashboard?q=cristiano','app.inflaid.io/influencer?handle=cristiano'];
-  var dots = [document.getElementById('adDot0'),document.getElementById('adDot1'),document.getElementById('adDot2')];
-  var s1 = document.getElementById('adStep1');
-  var s2 = document.getElementById('adStep2');
-  var s3 = document.getElementById('adStep3');
-  var urlEl = document.getElementById('adUrl');
-  var typed = document.getElementById('adTyped');
-
-  function setStep(n){
-    step = n;
-    // url bar
-    urlEl.textContent = urls[n];
-    // dots
-    dots.forEach(function(d,i){ d.classList.toggle('active', i===n); });
-    // panels
-    s2.classList.toggle('visible', n>=1);
-    s3.classList.toggle('visible', n>=2);
-    // typing cursor only on step 0
-    typed.style.animationPlayState = n===0 ? 'running' : 'paused';
-  }
-
-  function loop(){
-    setStep(0);
-    setTimeout(function(){ setStep(1); }, 2000);
-    setTimeout(function(){ setStep(2); }, 4500);
-    setTimeout(loop, 8000);
-  }
-
-  loop();
-})();
-</script>
 
 <!-- STATS BAR -->
 <div class="stats-bar" style="margin-top:72px">
