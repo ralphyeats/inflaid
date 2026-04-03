@@ -978,9 +978,10 @@ footer {
 @keyframes barFill82  { from { width: 0; } to { width: 82%; } }
 @keyframes barFill79  { from { width: 0; } to { width: 79%; } }
 @keyframes mockScroll {
-  0%,18%   { transform: translateY(0); }
-  28%,82%  { transform: translateY(-320px); }
-  92%,100% { transform: translateY(0); }
+  0%,15%   { transform: translateY(0); }
+  25%,55%  { transform: translateY(-310px); }
+  65%,85%  { transform: translateY(-560px); }
+  95%,100% { transform: translateY(0); }
 }
 /* cursor moves */
 @keyframes cursorMove {
@@ -1112,7 +1113,7 @@ footer {
 .ad-scroll-inner {
   position: absolute;
   left: 0; right: 0; top: 0;
-  animation: mockScroll 10s cubic-bezier(.4,0,.2,1) infinite;
+  animation: mockScroll 14s cubic-bezier(.4,0,.2,1) infinite;
 }
 
 /* topbar */
@@ -1322,10 +1323,10 @@ footer {
           <div class="ad-usage-bar"><div class="ad-usage-fill"></div></div>
         </div>
         <div class="ad-sidebar-user">
-          <div class="ad-user-av">RY</div>
+          <div class="ad-user-av">SC</div>
           <div>
-            <div class="ad-user-name">Ralphyeats</div>
-            <div class="ad-user-plan">Free plan</div>
+            <div class="ad-user-name">Sarah Chen</div>
+            <div class="ad-user-plan">Growth plan</div>
           </div>
         </div>
       </div>
@@ -1432,6 +1433,24 @@ footer {
                 </div>
               </div>
             </div>
+            <!-- outreach section -->
+            <div style="background:var(--surface,#fff);border:1px solid var(--border,#E4E0D9);border-radius:10px;padding:14px;margin-top:10px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                <div style="font-size:11px;font-weight:600;color:var(--text,#1A1714)">Outreach template</div>
+                <div style="font-size:9.5px;padding:3px 8px;border:1px solid var(--border,#E4E0D9);border-radius:5px;color:var(--text3,#A09C97);display:flex;align-items:center;gap:3px">✦ Generate with AI</div>
+              </div>
+              <div style="background:#F3F1EE;border:1px solid #E4E0D9;border-radius:7px;padding:10px;font-size:10px;color:#6B6360;line-height:1.7">
+                <div>Hi Cristiano,</div>
+                <div style="margin-top:4px">Your sports and lifestyle content genuinely stands out — the authenticity resonates.</div>
+                <div style="margin-top:4px">We'd love to explore a paid collab. Would you be open to a quick call this week?</div>
+                <div style="margin-top:4px;color:#A09C97">[Your name]</div>
+              </div>
+              <div style="display:flex;gap:6px;margin-top:8px">
+                <div style="flex:1;padding:6px;background:#3B6EF5;border-radius:6px;font-size:10px;font-weight:600;color:#fff;text-align:center">Copy to clipboard</div>
+                <div style="flex:1;padding:6px;background:transparent;border:1px solid #E4E0D9;border-radius:6px;font-size:10px;font-weight:500;color:#6B6360;text-align:center">Mark as sent</div>
+              </div>
+            </div>
+
           </div><!-- end detail section -->
 
         </div><!-- end scroll inner -->
