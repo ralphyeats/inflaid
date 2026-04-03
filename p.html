@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vettly — Influencer Score</title>
+<title>Inflaid — Influencer Score</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27><rect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%234F8CF5%27/><text x=%2716%27 y=%2723%27 text-anchor=%27middle%27 font-size=%2720%27 font-family=%27system-ui%27 font-weight=%27bold%27 fill=%27white%27>V</text></svg>">
 <style>
@@ -90,7 +90,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 <nav class="nav">
   <a class="nav-logo" href="/">
     <div class="logo-mark"></div>
-    <span class="logo-text">Vettly</span>
+    <span class="logo-text">Inflaid</span>
   </a>
   <a class="nav-cta" href="/auth.html">Analyze influencers free →</a>
 </nav>
@@ -154,11 +154,11 @@ function render(d){
   const followersStr=fmtFollowers(d.followers);
   const breakdown=d.breakdown||[];
 
-  document.title=`${d.name||d.handle} — Vettly Score`;
+  document.title=`${d.name||d.handle} — Inflaid Score`;
 
   // Open Graph meta (dynamic)
   document.querySelector('meta[name="description"]')?.setAttribute("content",
-    `${d.name||d.handle} scored ${d.score}/100 on Vettly — ${l.txt}`);
+    `${d.name||d.handle} scored ${d.score}/100 on Inflaid — ${l.txt}`);
 
   let html=`
   <div class="profile-header fadeup">
@@ -212,7 +212,7 @@ function render(d){
 
   html+=`<div class="cta-banner fadeup d3">
     <div class="cta-title">Analyze your own influencers</div>
-    <div class="cta-sub">Vettly scores any Instagram profile in seconds — engagement, niche alignment, authenticity, and ROI forecast. Free to start.</div>
+    <div class="cta-sub">Inflaid scores any Instagram profile in seconds — engagement, niche alignment, authenticity, and ROI forecast. Free to start.</div>
     <a class="cta-btn" href="/auth.html">Start for free →</a>
   </div>`;
 

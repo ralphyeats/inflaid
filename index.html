@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vettly — Know before you spend</title>
-<meta name="description" content="Vettly helps Shopify beauty brands vet Instagram influencers with AI-powered scoring, ROI estimates, and campaign recommendations. Stop wasting budget on the wrong creators.">
-<meta property="og:title" content="Vettly — Know before you spend">
+<title>Inflaid — Know before you spend</title>
+<meta name="description" content="Inflaid helps Shopify beauty brands vet Instagram influencers with AI-powered scoring, ROI estimates, and campaign recommendations. Stop wasting budget on the wrong creators.">
+<meta property="og:title" content="Inflaid — Know before you spend">
 <meta property="og:description" content="AI-powered influencer vetting for beauty brands. Score any Instagram account in seconds.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://vettly-eight.vercel.app/">
 <meta property="og:image" content="https://vettly-eight.vercel.app/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Vettly — Know before you spend">
+<meta name="twitter:title" content="Inflaid — Know before you spend">
 <meta name="twitter:description" content="AI-powered influencer vetting for beauty brands. Score any Instagram account in seconds.">
 <link rel="canonical" href="https://vettly-eight.vercel.app/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -917,7 +917,7 @@ footer {
         <circle cx="7" cy="7" r="6" stroke="white" stroke-width="1.5" fill="none"/>
       </svg>
     </div>
-    <span class="nav-brand">Vettly</span>
+    <span class="nav-brand">Inflaid</span>
   </a>
   <div class="nav-links">
     <a href="#features" class="nav-link">Features</a>
@@ -937,7 +937,7 @@ footer {
     AI-powered influencer scoring
   </div>
   <h1>Find influencers who<br><span class="grad-text">actually convert.</span></h1>
-  <p class="hero-sub">Vettly scores Instagram accounts on 7 ROI factors — engagement quality, niche depth, fraud signals, and more. Stop guessing. Know before you spend.</p>
+  <p class="hero-sub">Inflaid scores Instagram accounts on 7 ROI factors — engagement quality, niche depth, fraud signals, and more. Stop guessing. Know before you spend.</p>
   <div class="hero-actions">
     <a href="/auth.html" class="btn btn-dark btn-lg">Start for free <span class="arrow-icon">→</span></a>
     <a href="#how" class="btn btn-ghost btn-lg">See how it works</a>
@@ -945,26 +945,237 @@ footer {
   <p class="hero-fine">No credit card required · 2 free analyses included</p>
 </section>
 
-<!-- HERO MOCKUP -->
+<!-- HERO MOCKUP — animated demo -->
+<style>
+/* ── ANIMATED DEMO MOCKUP ── */
+@keyframes adTyping {
+  0%,8%   { width: 0; }
+  35%,100%{ width: 100%; }
+}
+@keyframes adBlink {
+  50% { border-color: transparent; }
+}
+@keyframes adFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes adSlideRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes adPulseGreen {
+  0%,100% { box-shadow: 0 0 0 0 rgba(22,163,74,.3); }
+  50%     { box-shadow: 0 0 0 6px rgba(22,163,74,0); }
+}
+@keyframes adScorePop {
+  0%   { transform: scale(.7); opacity: 0; }
+  70%  { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.ad-wrap {
+  position: relative;
+}
+.ad-browser {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.7) inset;
+  position: relative;
+}
+.ad-bar {
+  display: flex; align-items: center; gap: 6px;
+  padding: 12px 16px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border2);
+}
+.ad-dot { width: 10px; height: 10px; border-radius: 50%; }
+.ad-url {
+  flex: 1; margin: 0 10px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 5px; padding: 4px 12px;
+  font-size: 11px; color: var(--text3);
+  transition: color .4s;
+}
+.ad-body {
+  display: flex; height: 400px; overflow: hidden; position: relative;
+}
+
+/* sidebar */
+.ad-sidebar {
+  width: 190px; flex-shrink: 0;
+  border-right: 1px solid var(--border2);
+  padding: 14px 10px;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.ad-nav {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; border-radius: 7px;
+  font-size: 12px; color: var(--text3);
+}
+.ad-nav.active { background: var(--accent-lo); color: var(--accent); font-weight: 600; }
+.ad-nav-ic { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+/* main content area */
+.ad-main {
+  flex: 1; display: flex; flex-direction: column;
+  overflow: hidden; position: relative;
+}
+
+/* ── STEP 1: search ── */
+.ad-step-search {
+  padding: 20px 18px 18px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.ad-search-row { display: flex; gap: 8px; align-items: center; }
+.ad-input-wrap {
+  flex: 1; position: relative;
+  background: var(--surface2); border: 1.5px solid var(--accent);
+  border-radius: 8px; padding: 10px 14px;
+  font-size: 12.5px; color: var(--text); font-family: var(--sans);
+  overflow: hidden;
+}
+.ad-typed {
+  display: inline-block; overflow: hidden; white-space: nowrap;
+  vertical-align: bottom;
+  border-right: 2px solid var(--accent);
+  animation: adTyping 1.8s steps(12,end) both, adBlink .7s step-end infinite;
+  /* animation driven by JS via class toggle */
+}
+.ad-analyze-btn {
+  padding: 10px 18px; background: var(--text); color: #fff;
+  border: none; border-radius: 8px;
+  font-size: 12px; font-weight: 600; font-family: var(--sans); cursor: default;
+  white-space: nowrap; letter-spacing: .01em;
+}
+.ad-empty-hint {
+  color: var(--text3); font-size: 12px; text-align: center; padding: 20px 0;
+}
+
+/* ── STEP 2: results card ── */
+.ad-step-results {
+  padding: 18px;
+  display: flex; flex-direction: column; gap: 10px;
+  opacity: 0; pointer-events: none;
+  position: absolute; inset: 0;
+  background: var(--surface);
+  transition: opacity .5s ease;
+}
+.ad-step-results.visible {
+  opacity: 1; pointer-events: auto;
+}
+.ad-results-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--text3);
+}
+.ad-result-card {
+  background: var(--surface2); border: 1.5px solid rgba(22,163,74,.3);
+  border-radius: 12px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 0 0 3px rgba(22,163,74,.07);
+  animation: adPulseGreen 2s ease-in-out infinite 1s;
+}
+.ad-av {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg,#60A5FA,#2563EB);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.ad-card-info { flex: 1; min-width: 0; }
+.ad-card-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.ad-card-handle { font-size: 10.5px; color: var(--text3); margin-top: 1px; }
+.ad-card-followers { font-size: 11px; color: var(--text2); margin-top: 4px; }
+.ad-score-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.ad-score {
+  font-family: var(--display); font-size: 30px; font-weight: 800;
+  color: #16A34A; letter-spacing: -.03em; line-height: 1;
+  animation: adScorePop .6s cubic-bezier(.22,1,.36,1) both;
+}
+.ad-score-badge {
+  font-size: 9px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .07em; color: #16A34A;
+  background: rgba(22,163,74,.12); border: 1px solid rgba(22,163,74,.25);
+  padding: 2px 8px; border-radius: 4px;
+}
+
+/* ── STEP 3: detail view ── */
+.ad-step-detail {
+  opacity: 0; pointer-events: none;
+  position: absolute; inset: 0;
+  background: var(--surface);
+  transition: opacity .5s ease;
+  display: flex; flex-direction: column;
+  padding: 14px 16px; gap: 10px; overflow: hidden;
+}
+.ad-step-detail.visible {
+  opacity: 1; pointer-events: auto;
+}
+.ad-det-header {
+  display: flex; align-items: center; gap: 10px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border2);
+}
+.ad-det-name { font-size: 12.5px; font-weight: 700; color: var(--text); }
+.ad-det-sub { font-size: 10px; color: var(--text3); margin-top: 1px; }
+.ad-verdict-badge {
+  margin-left: auto; font-size: 9px; font-weight: 700;
+  color: #16A34A; background: rgba(22,163,74,.1);
+  border: 1px solid rgba(22,163,74,.25); border-radius: 5px;
+  padding: 3px 10px;
+}
+.ad-decision {
+  background: rgba(22,163,74,.07); border: 1px solid rgba(22,163,74,.22);
+  border-radius: 10px; padding: 12px 14px;
+  animation: adSlideRight .55s cubic-bezier(.22,1,.36,1) both .1s;
+}
+.ad-dec-eyebrow {
+  font-size: 8px; text-transform: uppercase; letter-spacing: .1em;
+  font-weight: 700; color: #16A34A; margin-bottom: 3px;
+}
+.ad-dec-verdict {
+  font-size: 14px; font-weight: 800; color: #16A34A;
+  letter-spacing: -.02em; margin-bottom: 8px;
+}
+.ad-dec-bullets { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.ad-dec-bullet { font-size: 10.5px; color: #15803D; font-weight: 500; }
+.ad-dec-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.ad-dec-pill {
+  background: rgba(255,255,255,.7); border: 1px solid rgba(0,0,0,.07);
+  border-radius: 5px; padding: 4px 9px;
+}
+.ad-dp-lbl { font-size: 7.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); font-weight: 600; }
+.ad-dp-val { font-size: 11px; font-weight: 700; color: var(--text); line-height: 1.3; }
+
+/* step indicator dots */
+.ad-dots {
+  display: flex; gap: 6px; justify-content: center; margin-top: 14px;
+}
+.ad-dot-ind {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border); transition: background .3s, transform .3s;
+}
+.ad-dot-ind.active { background: var(--accent); transform: scale(1.3); }
+</style>
+
 <div style="padding: 0 48px; max-width: 1060px; margin: 0 auto 0; position: relative;" class="reveal hero-mockup-wrap">
   <div class="hero-glow"></div>
 
-  <div class="browser-frame">
-    <div class="browser-bar">
-      <div class="b-dot" style="background:#FF5F57"></div>
-      <div class="b-dot" style="background:#FFBD2E"></div>
-      <div class="b-dot" style="background:#28C840"></div>
-      <div class="browser-url">app.vettly.io/influencer?handle=sophiareeves</div>
+  <div class="ad-browser">
+    <!-- browser chrome -->
+    <div class="ad-bar">
+      <div class="ad-dot" style="background:#FF5F57"></div>
+      <div class="ad-dot" style="background:#FFBD2E"></div>
+      <div class="ad-dot" style="background:#28C840"></div>
+      <div class="ad-url" id="adUrl">app.inflaid.io/dashboard</div>
     </div>
-    <div class="browser-body">
-      <div class="browser-scan"></div>
 
-      <!-- sidebar nav -->
-      <div class="b-sidebar">
+    <div class="ad-body">
+      <!-- sidebar (always visible) -->
+      <div class="ad-sidebar">
         <div style="padding:8px 10px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Workspace</div>
-        <div class="b-nav active"><span class="b-nav-ic"></span>Discovery</div>
-        <div class="b-nav"><span class="b-nav-ic"></span>Outreach</div>
-        <div class="b-nav"><span class="b-nav-ic"></span>Analytics</div>
+        <div class="ad-nav active"><span class="ad-nav-ic"></span>Discovery</div>
+        <div class="ad-nav"><span class="ad-nav-ic"></span>Outreach</div>
+        <div class="ad-nav"><span class="ad-nav-ic"></span>Analytics</div>
         <div style="flex:1"></div>
         <div style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:11px;">
           <div style="display:flex;justify-content:space-between;margin-bottom:2px"><span style="color:var(--text);font-weight:600">Growth plan</span><span style="color:var(--text3)">18/75</span></div>
@@ -973,97 +1184,125 @@ footer {
         </div>
       </div>
 
-      <!-- card list (left panel) -->
-      <div class="b-list-panel">
-        <div style="font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:2px 2px 5px">3 Results</div>
+      <!-- main area — steps layered -->
+      <div class="ad-main">
 
-        <div class="b-list-card sel">
-          <div class="b-list-card-top">
-            <div class="b-av" style="background:linear-gradient(135deg,#FBBF24,#F59E0B);width:20px;height:20px;font-size:7px">SR</div>
-            <div style="font-size:8px;font-weight:700;color:#16A34A;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);border-radius:3px;padding:1px 5px">SCALE</div>
+        <!-- STEP 1: search -->
+        <div class="ad-step-search" id="adStep1">
+          <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px">Analyze an influencer</div>
+          <div class="ad-search-row">
+            <div class="ad-input-wrap">
+              <span class="ad-typed" id="adTyped">@cristiano</span>
+            </div>
+            <button class="ad-analyze-btn">Analyze →</button>
           </div>
-          <div class="b-list-name">Sophia Reeves</div>
-          <div class="b-list-handle">@sophiareeves · 15.1K</div>
-        </div>
-
-        <div class="b-list-card">
-          <div class="b-list-card-top">
-            <div class="b-av" style="background:linear-gradient(135deg,#60A5FA,#3B82F6);width:20px;height:20px;font-size:7px">CP</div>
-            <div style="font-size:8px;font-weight:700;color:#3B6EF5;background:rgba(59,110,245,.08);border:1px solid rgba(59,110,245,.18);border-radius:3px;padding:1px 5px">TEST</div>
-          </div>
-          <div class="b-list-name">Chloe Park</div>
-          <div class="b-list-handle">@chloepark · 44.8K</div>
-        </div>
-
-        <div class="b-list-card">
-          <div class="b-list-card-top">
-            <div class="b-av" style="background:linear-gradient(135deg,#FCA5A5,#DC2626);width:20px;height:20px;font-size:7px">JT</div>
-            <div style="font-size:8px;font-weight:700;color:#DC2626;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.18);border-radius:3px;padding:1px 5px">AVOID</div>
-          </div>
-          <div class="b-list-name">Jamie Torres</div>
-          <div class="b-list-handle">@jamietorres · 82K</div>
-        </div>
-      </div>
-
-      <!-- detail panel (right — Sophia opened) -->
-      <div class="b-detail-panel">
-
-        <!-- profile header -->
-        <div class="b-det-header">
-          <div class="b-av" style="background:linear-gradient(135deg,#FBBF24,#F59E0B);width:30px;height:30px;font-size:10px">SR</div>
-          <div>
-            <div style="font-size:12px;font-weight:700;color:var(--text)">Sophia Reeves</div>
-            <div style="font-size:9px;color:var(--text3)">@sophiareeves · 15.1K · Skincare</div>
-          </div>
-          <div style="margin-left:auto;font-size:9px;color:#16A34A;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.2);border-radius:4px;padding:2px 8px;font-weight:600">Elite ROI potential</div>
-        </div>
-
-        <!-- decision bar -->
-        <div class="b-decision-bar">
-          <div class="b-db-eyebrow">Vettly Decision</div>
-          <div class="b-db-verdict">SCALE — Paid Campaign</div>
-          <div class="b-db-directive">Prioritize this collab. Budget for paid content.</div>
-          <div class="b-db-pills">
-            <div class="b-db-pill"><div class="b-dp-lbl">Budget</div><div class="b-dp-val">$150–$300</div></div>
-            <div class="b-db-pill"><div class="b-dp-lbl">Risk</div><div class="b-dp-val" style="color:#16A34A">Low</div></div>
-            <div class="b-db-pill"><div class="b-dp-lbl">Expected ROI</div><div class="b-dp-val" style="color:#16A34A">+180%</div></div>
-            <div class="b-db-pill"><div class="b-dp-lbl">Est. Sales</div><div class="b-dp-val">9–14 orders</div></div>
+          <div class="ad-empty-hint" style="margin-top:24px;opacity:.5">
+            <div style="font-size:28px;margin-bottom:8px">🔍</div>
+            <div>Enter any public Instagram handle to score them</div>
           </div>
         </div>
 
-        <!-- ROI -->
-        <div class="b-roi-split">
-          <div class="b-roi-cell">
-            <div class="b-rc-lbl">You spend</div>
-            <div class="b-rc-val">$150–$300</div>
-            <div class="b-rc-sub">1.2K–2.1K views</div>
+        <!-- STEP 2: results -->
+        <div class="ad-step-results" id="adStep2">
+          <div class="ad-results-label">1 result for @cristiano</div>
+          <div class="ad-result-card">
+            <div class="ad-av">CR</div>
+            <div class="ad-card-info">
+              <div class="ad-card-name">Cristiano Ronaldo</div>
+              <div class="ad-card-handle">@cristiano</div>
+              <div class="ad-card-followers">635M followers · Sports / Lifestyle</div>
+            </div>
+            <div class="ad-score-wrap">
+              <div class="ad-score" id="adScore">71</div>
+              <div class="ad-score-badge">High ROI</div>
+            </div>
           </div>
-          <div style="text-align:center;color:var(--text3);font-size:14px">→</div>
-          <div class="b-roi-cell ret">
-            <div class="b-rc-lbl">You get back</div>
-            <div class="b-rc-val" style="color:#16A34A">$420–$630</div>
-            <div class="b-rc-sub">9–14 orders</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px;">Click to view full report →</div>
+        </div>
+
+        <!-- STEP 3: detail view -->
+        <div class="ad-step-detail" id="adStep3">
+          <!-- profile header -->
+          <div class="ad-det-header">
+            <div class="ad-av">CR</div>
+            <div>
+              <div class="ad-det-name">Cristiano Ronaldo</div>
+              <div class="ad-det-sub">@cristiano · 635M followers · Sports / Lifestyle</div>
+            </div>
+            <div class="ad-verdict-badge">High ROI</div>
+          </div>
+
+          <!-- decision bar -->
+          <div class="ad-decision">
+            <div class="ad-dec-eyebrow">Inflaid Decision</div>
+            <div class="ad-dec-verdict">Paid Campaign — Reels</div>
+            <div class="ad-dec-bullets">
+              <div class="ad-dec-bullet">→ Negotiate fixed fee + performance bonus</div>
+              <div class="ad-dec-bullet">→ Brief: 2 Reels (product showcase)</div>
+            </div>
+            <div class="ad-dec-pills">
+              <div class="ad-dec-pill">
+                <div class="ad-dp-lbl">Budget</div>
+                <div class="ad-dp-val">$5K–$15K cash</div>
+              </div>
+              <div class="ad-dec-pill">
+                <div class="ad-dp-lbl">Risk</div>
+                <div class="ad-dp-val" style="color:#D97706">Medium</div>
+              </div>
+              <div class="ad-dec-pill">
+                <div class="ad-dp-lbl">Est. Sales</div>
+                <div class="ad-dp-val" style="color:#16A34A">8–18 orders</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- key signals -->
-        <div class="b-sig-grid">
-          <div class="b-sig" style="background:rgba(22,163,74,.06);border-color:rgba(22,163,74,.2)">
-            <div class="b-sig-ey" style="color:#16A34A">Biggest Strength</div>
-            <div class="b-sig-name">Engagement Rate</div>
-            <div class="b-sig-tier" style="color:#16A34A">Top 10% of beauty creators</div>
-          </div>
-          <div class="b-sig" style="background:rgba(217,119,6,.06);border-color:rgba(217,119,6,.2)">
-            <div class="b-sig-ey" style="color:#D97706">Watch Out</div>
-            <div class="b-sig-name">Posting Consistency</div>
-            <div class="b-sig-tier" style="color:#D97706">Average — not a differentiator</div>
-          </div>
-        </div>
+      </div><!-- end ad-main -->
+    </div><!-- end ad-body -->
+  </div><!-- end ad-browser -->
 
-      </div>
-    </div>
+  <!-- step dots -->
+  <div class="ad-dots">
+    <div class="ad-dot-ind active" id="adDot0"></div>
+    <div class="ad-dot-ind" id="adDot1"></div>
+    <div class="ad-dot-ind" id="adDot2"></div>
   </div>
 </div>
+
+<script>
+(function(){
+  var step = 0;
+  var urls = ['app.inflaid.io/dashboard','app.inflaid.io/dashboard?q=cristiano','app.inflaid.io/influencer?handle=cristiano'];
+  var dots = [document.getElementById('adDot0'),document.getElementById('adDot1'),document.getElementById('adDot2')];
+  var s1 = document.getElementById('adStep1');
+  var s2 = document.getElementById('adStep2');
+  var s3 = document.getElementById('adStep3');
+  var urlEl = document.getElementById('adUrl');
+  var typed = document.getElementById('adTyped');
+
+  function setStep(n){
+    step = n;
+    // url bar
+    urlEl.textContent = urls[n];
+    // dots
+    dots.forEach(function(d,i){ d.classList.toggle('active', i===n); });
+    // panels
+    s2.classList.toggle('visible', n>=1);
+    s3.classList.toggle('visible', n>=2);
+    // typing cursor only on step 0
+    typed.style.animationPlayState = n===0 ? 'running' : 'paused';
+  }
+
+  function loop(){
+    setStep(0);
+    setTimeout(function(){ setStep(1); }, 2000);
+    setTimeout(function(){ setStep(2); }, 4500);
+    setTimeout(loop, 8000);
+  }
+
+  loop();
+})();
+</script>
 
 <!-- STATS BAR -->
 <div class="stats-bar" style="margin-top:72px">
@@ -1110,7 +1349,7 @@ footer {
     <div class="feat-text reveal">
       <div class="feat-label"><span class="feat-label-dot"></span>ROI Scoring</div>
       <h2>A score built for conversion,<br>not vanity.</h2>
-      <p class="feat-sub">Follower count tells you nothing. Vettly measures what actually drives sales — comment intent, content consistency, niche depth, and fraud signals.</p>
+      <p class="feat-sub">Follower count tells you nothing. Inflaid measures what actually drives sales — comment intent, content consistency, niche depth, and fraud signals.</p>
       <ul class="feat-points">
         <li><span class="feat-check">✓</span>Engagement quality, not just rate</li>
         <li><span class="feat-check">✓</span>Beauty keyword depth and recency</li>
@@ -1219,7 +1458,7 @@ footer {
     <div class="feat-text reveal">
       <div class="feat-label"><span class="feat-label-dot"></span>Outreach Templates</div>
       <h2>From score to DM<br>in one click.</h2>
-      <p class="feat-sub">After scoring, Vettly generates a personalized outreach template based on the influencer's niche and content style. Copy, send, done.</p>
+      <p class="feat-sub">After scoring, Inflaid generates a personalized outreach template based on the influencer's niche and content style. Copy, send, done.</p>
       <ul class="feat-points">
         <li><span class="feat-check">✓</span>Auto-generated based on their actual content</li>
         <li><span class="feat-check">✓</span>Track sent / replied status</li>
@@ -1266,7 +1505,7 @@ footer {
       <div class="how-step reveal reveal-d1">
         <div class="how-num">1</div>
         <div class="how-step-title">Enter an Instagram handle</div>
-        <div class="how-step-desc">Type any public Instagram account. Vettly pulls their recent posts, engagement, and comment data in real time.</div>
+        <div class="how-step-desc">Type any public Instagram account. Inflaid pulls their recent posts, engagement, and comment data in real time.</div>
       </div>
       <div class="how-step reveal reveal-d2">
         <div class="how-num">2</div>
@@ -1290,7 +1529,7 @@ footer {
 
     <div class="testi-card reveal reveal-d1">
       <div class="testi-stars">★★★★★</div>
-      <p class="testi-quote">"We used to send free product to 10 influencers and hope for the best. After Vettly flagged 3 of them for ghost followers, we redirected that $600 budget to 2 creators that actually converted. First week ROI was 4×."</p>
+      <p class="testi-quote">"We used to send free product to 10 influencers and hope for the best. After Inflaid flagged 3 of them for ghost followers, we redirected that $600 budget to 2 creators that actually converted. First week ROI was 4×."</p>
       <div class="testi-author">
         <div class="testi-av" style="background:#E8D5F5">MK</div>
         <div>
@@ -1302,7 +1541,7 @@ footer {
 
     <div class="testi-card reveal reveal-d2">
       <div class="testi-stars">★★★★★</div>
-      <p class="testi-quote">"The verdict system is exactly what I needed. I don't have time to dig into analytics — I just need a clear yes or no. Vettly gave me that. Scored 40 accounts in one afternoon, shortlisted 8, ran 3 campaigns."</p>
+      <p class="testi-quote">"The verdict system is exactly what I needed. I don't have time to dig into analytics — I just need a clear yes or no. Inflaid gave me that. Scored 40 accounts in one afternoon, shortlisted 8, ran 3 campaigns."</p>
       <div class="testi-author">
         <div class="testi-av" style="background:#D5E8F5">JL</div>
         <div>
@@ -1314,7 +1553,7 @@ footer {
 
     <div class="testi-card reveal reveal-d3">
       <div class="testi-stars">★★★★★</div>
-      <p class="testi-quote">"I was about to pay $800 for a sponsored post. Vettly's fraud score flagged a 62% fake follower rate. That single analysis paid for 3 years of the Pro plan. Wish I had this sooner."</p>
+      <p class="testi-quote">"I was about to pay $800 for a sponsored post. Inflaid's fraud score flagged a 62% fake follower rate. That single analysis paid for 3 years of the Pro plan. Wish I had this sooner."</p>
       <div class="testi-author">
         <div class="testi-av" style="background:#F5E8D5">SR</div>
         <div>
@@ -1331,7 +1570,7 @@ footer {
 <section id="pricing">
   <div class="reveal">
     <h2>Stop wasting money on influencers.</h2>
-    <p class="pricing-sub">One bad collab costs more than a year of Vettly.<br>Know before you spend.</p>
+    <p class="pricing-sub">One bad collab costs more than a year of Inflaid.<br>Know before you spend.</p>
   </div>
   <div class="pricing-strip reveal reveal-d1">
     <span>✓ 2 free analyses included</span>
@@ -1418,14 +1657,14 @@ footer {
         <circle cx="7" cy="7" r="6" stroke="white" stroke-width="1.5" fill="none"/>
       </svg>
     </div>
-    <span class="footer-brand">Vettly</span>
+    <span class="footer-brand">Inflaid</span>
   </a>
   <div class="footer-links">
     <a href="#features" class="footer-link">Features</a>
     <a href="#pricing" class="footer-link">Pricing</a>
     <a href="/auth.html" class="footer-link">Sign in</a>
   </div>
-  <span class="footer-copy">© 2026 Vettly. All rights reserved.</span>
+  <span class="footer-copy">© 2026 Inflaid. All rights reserved.</span>
 </footer>
 
 <script>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vettly — Influencer Detail</title>
+<title>Inflaid — Influencer Detail</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
@@ -297,7 +297,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 <div class="sidebar">
   <div class="sb-logo">
     <div class="logo-mark"></div>
-    <span class="logo-text">Vettly</span>
+    <span class="logo-text">Inflaid</span>
   </div>
   <nav class="sb-nav">
     <div style="font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.09em;padding:10px 10px 5px;font-weight:500">Workspace</div>
@@ -568,7 +568,7 @@ function render(inf){
   const v=inf.verdict||null;
   const roi=inf.roi_estimate||null;
 
-  document.title=`Vettly — ${inf.name||inf.handle}`;
+  document.title=`Inflaid — ${inf.name||inf.handle}`;
   document.getElementById("tb-crumb").textContent=inf.name||inf.handle;
   document.getElementById("layout").style.display="grid";
 
@@ -597,7 +597,7 @@ function render(inf){
     dBar.style.cssText=`display:flex;background:${dc.bg};border-color:${dc.brd}`;
     dBar.innerHTML=`
       <div class="db-left">
-        <div class="db-eyebrow" style="color:${dc.col}">Vettly Decision</div>
+        <div class="db-eyebrow" style="color:${dc.col}">Inflaid Decision</div>
         <div class="db-verdict-label" style="color:${dc.col}">${v.verdict_label||v.verdict}${v.campaign_type?` — ${v.campaign_type}`:""}</div>
         ${directive?`<div class="db-directive" style="color:${dc.col}">${directive}</div>`:""}
         ${actionHTML}

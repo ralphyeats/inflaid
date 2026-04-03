@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vettly — Sign in</title>
+<title>Inflaid — Sign in</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
@@ -57,7 +57,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);min-height:10
 <body>
 <a class="logo" href="/">
   <div class="logo-mark"></div>
-  <span class="logo-text">Vettly</span>
+  <span class="logo-text">Inflaid</span>
 </a>
 
 <div class="card">
@@ -128,7 +128,7 @@ function switchTab(tab) {
   document.getElementById("form-signin").style.display = tab === "signin" ? "block" : "none";
   document.getElementById("form-signup").style.display = tab === "signup" ? "block" : "none";
   document.getElementById("form-reset").style.display = tab === "reset" ? "block" : "none";
-  const subs = { signin: "Sign in to your account to continue.", signup: "Create your free Vettly account.", reset: "Enter your email to receive a password reset link." };
+  const subs = { signin: "Sign in to your account to continue.", signup: "Create your free Inflaid account.", reset: "Enter your email to receive a password reset link." };
   document.getElementById("card-sub").textContent = subs[tab] || "";
   hideMsg();
 }

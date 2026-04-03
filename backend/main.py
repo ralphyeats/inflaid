@@ -9,7 +9,7 @@ from pydantic import BaseModel, field_validator
 from scraper import fetch_profile, PrivateAccountError
 from scorer import compute_score
 
-app = FastAPI(title="Vettly API", version="0.1.0")
+app = FastAPI(title="Inflaid API", version="0.1.0")
 
 FRONTEND_URL = os.getenv("FRONTEND_URL", "https://vettly-eight.vercel.app")
 
@@ -167,7 +167,7 @@ Influencer details:
 - Handle: {req.handle}
 - Niche: {req.niche}
 - Followers: {followers_str}
-- Vettly score: {req.score}/100
+- Inflaid score: {req.score}/100
 - Collaboration type: {collab_desc}
 - Brand: {req.brand_name}
 
