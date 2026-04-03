@@ -643,14 +643,19 @@ function render(inf){
     :"";
 
   // Not-rec banner — dynamic based on actual warning flags
+  const nicheScore = (inf.breakdown||[]).find(b=>b.key==="niche")?.value ?? 50;
+  const nicheWarn = nicheScore < 30
+    ? `<div class="not-rec" style="background:rgba(59,110,245,.07);border-color:rgba(59,110,245,.2);color:var(--accent)">⚠ Inflaid is optimized for beauty & skincare brands. This account's content has low beauty niche alignment — scores may not accurately reflect ROI for a beauty brand.</div>`
+    : "";
+
   if(label==="avoid"||label==="risky"){
     const riskFlags=v?.warning_flags||[];
     const riskMsg=riskFlags.length>0
       ?`Risk signals: ${riskFlags.join(" · ")}. Do not proceed without reviewing these.`
       :"Risk signals detected. Review this profile carefully before proceeding.";
-    document.getElementById("not-rec-wrap").innerHTML=`<div class="not-rec">${riskMsg}</div>`;
+    document.getElementById("not-rec-wrap").innerHTML=`<div class="not-rec">${riskMsg}</div>${nicheWarn}`;
   } else {
-    document.getElementById("not-rec-wrap").innerHTML="";
+    document.getElementById("not-rec-wrap").innerHTML=nicheWarn;
   }
 
   // Campaign checklist — execution steps by campaign type

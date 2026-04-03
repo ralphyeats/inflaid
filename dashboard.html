@@ -617,6 +617,8 @@ function renderCard(inf, i){
     ? `<span style="font-size:9px;padding:2px 6px;border-radius:3px;background:var(--accent-lo);border:1px solid var(--accent-mid);color:var(--accent);letter-spacing:.04em">LIVE API</span>`
     : '';
   const detailHref = `/influencer.html?handle=${encodeURIComponent(inf.handle)}`;
+  const nicheScore = (inf.breakdown||[]).find(b=>b.key==="niche")?.value ?? 50;
+  const nicheNote = nicheScore < 30 ? `<div style="font-size:10px;color:var(--accent);background:var(--accent-lo);border:1px solid var(--accent-mid);border-radius:5px;padding:4px 8px;margin-top:6px">⚠ Low beauty niche alignment — results may not reflect beauty brand ROI</div>` : '';
   const isSaved = !!inf.saved;
   const saveIcon = `<svg width="12" height="12" viewBox="0 0 12 12" fill="${isSaved?'currentColor':'none'}" stroke="currentColor" stroke-width="1.5"><path d="M6 1L7.5 4.5H11L8.25 6.75L9.25 10.25L6 8.25L2.75 10.25L3.75 6.75L1 4.5H4.5L6 1Z" stroke-linejoin="round"/></svg>`;
 
@@ -639,6 +641,7 @@ function renderCard(inf, i){
       <div style="display:flex;gap:4px">${apiTag}</div>
     </div>
     <div class="inf-insight">${inf.insight}</div>
+    ${nicheNote}
     <div class="card-btns">
       <button class="card-btn pri" onclick="event.stopPropagation();goOutreachInf(${JSON.stringify(inf).replace(/"/g,'&quot;')})">Outreach</button>
       <button class="card-btn" onclick="event.stopPropagation();window.location.href='${detailHref}'">View details →</button>
