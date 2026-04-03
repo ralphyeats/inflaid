@@ -449,13 +449,60 @@ let apiResults = [];  // loaded from localStorage after auth
 let curSavedOnly=false, selOutreach=null;
 
 function historyKey(email){ return "vettly_history_" + email; }
+
 function loadHistory(email){
   try { apiResults = JSON.parse(localStorage.getItem(historyKey(email)) || "[]"); }
   catch(e){ apiResults = []; }
 }
+
 function saveHistory(email){
   try { localStorage.setItem(historyKey(email), JSON.stringify(apiResults)); }
   catch(e){}
+}
+
+// Supabase sync — load user's analyses from DB, merge with localStorage
+async function syncHistoryFromSupabase(email){
+  try{
+    const {data,error}=await sb.from("analyses")
+      .select("result,created_at")
+      .not("handle","like","_ref:%")
+      .order("created_at",{ascending:false})
+      .limit(50);
+    if(error||!data||!data.length) return;
+    const remoteInfs=data.map(row=>{
+      const r=row.result||{};
+      return {
+        handle:r.handle,
+        name:r.name||r.handle,
+        platforms:["instagram"],
+        followers:r.followers||"—",
+        rawFollowers:r.followers||null,
+        cat:"beauty",
+        av:r.handle?(r.handle.replace("@","").slice(0,2).toUpperCase()):"??",
+        color:randomColor(r.handle||"x"),
+        score:r.score,
+        label:r.label,
+        insight:r.insight,
+        breakdown:r.breakdown,
+        verdict:r.verdict||null,
+        roi_estimate:r.roi_estimate||null,
+        fromApi:true,
+        synced:true,
+      };
+    }).filter(r=>r.handle&&r.score!=null);
+    // Merge: local results take priority (more recent), remote fills gaps
+    const localHandles=new Set(apiResults.map(r=>r.handle));
+    const merged=[...apiResults];
+    for(const r of remoteInfs){
+      if(!localHandles.has(r.handle)) merged.push(r);
+    }
+    apiResults=merged;
+    saveHistory(email);
+    renderGrid();
+    updateOutreachBadge();
+  }catch(e){
+    console.warn("Supabase sync failed, using localStorage",e);
+  }
 }
 
 function sc(s){return s>=70?"var(--green)":s>=40?"var(--amber)":"var(--red)";}
@@ -875,11 +922,12 @@ sb.auth.getSession().then(({ data }) => {
   document.getElementById("user-name").textContent = rawName;
   window.currentUserEmail = email;
 
-  // Load this user's analysis history from localStorage and render
+  // Load from localStorage first (instant), then sync from Supabase
   loadHistory(email);
   renderGrid();
   updateOutreachBadge();
   maybeShowOnboarding();
+  syncHistoryFromSupabase(email);
 
   // Referral link
   const refCode = btoa(email);
