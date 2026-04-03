@@ -22,10 +22,18 @@ def score_rhythm(raw: dict) -> int:
     if len(timestamps) < 2:
         return 50
 
+    followers = raw.get("followers", 0)
+
     intervals = [max(0, (timestamps[i] - timestamps[i + 1]).days) for i in range(len(timestamps) - 1)]
 
     avg_interval = sum(intervals) / len(intervals)
     std_interval = (sum((x - avg_interval) ** 2 for x in intervals) / len(intervals)) ** 0.5
+
+    # Large accounts (100K+) primarily post to Reels/Stories — scraper
+    # only sees feed posts which may be infrequent by design, not laziness.
+    # Don't penalise them for low feed frequency; return neutral instead.
+    if followers >= 100_000 and avg_interval > 21:
+        return 50
 
     # Realistic posting benchmarks for beauty creators:
     # Daily (≤2d): exceptional, 90
