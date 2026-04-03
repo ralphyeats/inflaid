@@ -26,6 +26,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 .fadeup{animation:fadeUp .35s cubic-bezier(.22,1,.36,1) both}
 .d1{animation-delay:.05s}.d2{animation-delay:.10s}.d3{animation-delay:.15s}.d4{animation-delay:.20s}
 
@@ -374,11 +375,17 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
         </div>
 
         <div class="card fadeup d4">
-          <div class="card-title">Outreach template</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div class="card-title" style="margin-bottom:0">Outreach template</div>
+            <button class="obtn obtn-ghost" id="ai-gen-btn" onclick="generateAIOutreach()" style="flex:none;padding:5px 10px;font-size:11px;display:flex;align-items:center;gap:5px">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1l.8 2.4L9.2 4l-2.4.8L6 7.2l-.8-2.4L2.8 4l2.4-.8z" fill="currentColor"/><path d="M10 7.5l.4 1.2 1.2.4-1.2.4L10 10.7l-.4-1.2-1.2-.4 1.2-.4z" fill="currentColor"/></svg>
+              Generate with AI
+            </button>
+          </div>
           <textarea class="outreach-ta" id="outreach-ta" readonly></textarea>
           <div class="outreach-btns">
             <button class="obtn obtn-solid" onclick="copyTemplate()">Copy to clipboard</button>
-            <button class="obtn obtn-ghost">Mark as sent</button>
+            <button class="obtn obtn-ghost" onclick="regenerateOutreach()" id="regen-btn" style="display:none">Regenerate</button>
           </div>
         </div>
       </div>
@@ -497,6 +504,44 @@ function buildTpl(inf){
   return`Hi ${first},\n\nI've been following your content and it genuinely stood out to me.\n\n[Brand name] creates beauty products, and based on your profile I think your audience would connect with what we make.\n\nWe'd love to send you a complimentary product for a ${campType} collaboration.\n\n${action}\n\nWould you be open to chatting?\n\n[Your name]`;
 }
 
+async function generateAIOutreach(){
+  const inf=window._currentInf;
+  if(!inf)return;
+  const btn=document.getElementById("ai-gen-btn");
+  const ta=document.getElementById("outreach-ta");
+  btn.disabled=true;
+  btn.innerHTML=`<svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="animation:spin .8s linear infinite"><path d="M6 1v2M6 9v2M1 6h2M9 6h2M2.5 2.5l1.4 1.4M8.1 8.1l1.4 1.4M2.5 9.5l1.4-1.4M8.1 3.9l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Generating…`;
+  try{
+    const {data:sd}=await sb.auth.getSession();
+    const token=sd?.session?.access_token;
+    const collab=inf.score>=70?"paid":"gifted";
+    const res=await fetch(`${API}/outreach`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":`Bearer ${token}`},
+      body:JSON.stringify({
+        handle:inf.handle,
+        name:inf.name||null,
+        followers:inf.followers||null,
+        score:inf.score,
+        niche:inf.category||"beauty",
+        collab_type:collab,
+        brand_name:"[Your brand]"
+      })
+    });
+    if(!res.ok)throw new Error("API error");
+    const d=await res.json();
+    ta.value=d.message;
+    document.getElementById("regen-btn").style.display="";
+  }catch(e){
+    ta.value=buildTpl(inf); // fallback to static
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML=`<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1l.8 2.4L9.2 4l-2.4.8L6 7.2l-.8-2.4L2.8 4l2.4-.8z" fill="currentColor"/><path d="M10 7.5l.4 1.2 1.2.4-1.2.4L10 10.7l-.4-1.2-1.2-.4 1.2-.4z" fill="currentColor"/></svg> Generate with AI`;
+  }
+}
+
+function regenerateOutreach(){ generateAIOutreach(); }
+
 function copyTemplate(){
   const ta=document.getElementById("outreach-ta");
   if(!ta)return;
@@ -515,6 +560,7 @@ function randomColor(handle){
 }
 
 function render(inf){
+  window._currentInf=inf;
   const label=inf.label||"mid";
   const l=LBL[label]||LBL.mid;
   const color=inf.color||randomColor(inf.handle);
