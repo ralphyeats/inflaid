@@ -413,7 +413,7 @@ nav {
 .stat-icon {
   width: 36px; height: 36px; border-radius: 9px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 17px; flex-shrink: 0;
+  font-size: 17px; flex-shrink: 0; overflow: hidden;
 }
 .stat-num {
   font-family: var(--display);
@@ -422,6 +422,88 @@ nav {
 }
 .stat-lbl { font-size: 12px; color: var(--text3); }
 .stat-sep { width: 1px; background: var(--border2); align-self: stretch; }
+
+/* ── STAT ICON ANIMATIONS ── */
+
+/* 1. Bar chart — 4 bars grow up sequentially */
+@keyframes sbarGrow1 { 0%,100%{height:4px} 20%,70%{height:14px} }
+@keyframes sbarGrow2 { 0%,100%{height:4px} 30%,75%{height:20px} }
+@keyframes sbarGrow3 { 0%,100%{height:4px} 40%,80%{height:10px} }
+@keyframes sbarGrow4 { 0%,100%{height:4px} 50%,85%{height:18px} }
+.si-bars {
+  display: flex; align-items: flex-end; gap: 2px; height: 22px;
+}
+.si-bar {
+  width: 5px; border-radius: 2px 2px 0 0;
+  background: var(--accent); height: 4px;
+}
+.si-bar:nth-child(1){ animation: sbarGrow1 1.6s ease-in-out infinite; }
+.si-bar:nth-child(2){ animation: sbarGrow2 1.6s ease-in-out infinite .1s; }
+.si-bar:nth-child(3){ animation: sbarGrow3 1.6s ease-in-out infinite .2s; }
+.si-bar:nth-child(4){ animation: sbarGrow4 1.6s ease-in-out infinite .3s; }
+
+/* 2. Pulsing signal dot with rings */
+@keyframes sRipple1 {
+  0%   { transform: scale(.55); opacity: .7; }
+  100% { transform: scale(1.5);  opacity: 0; }
+}
+@keyframes sRipple2 {
+  0%   { transform: scale(.55); opacity: .5; }
+  100% { transform: scale(2.1);  opacity: 0; }
+}
+.si-signal {
+  position: relative; width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+}
+.si-signal-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green, #16A34A); position: relative; z-index: 1;
+}
+.si-signal-ring {
+  position: absolute; border-radius: 50%;
+  border: 2px solid var(--green, #16A34A); opacity: 0;
+  width: 100%; height: 100%;
+}
+.si-signal-ring:nth-child(1){ animation: sRipple1 1.8s ease-out infinite; }
+.si-signal-ring:nth-child(2){ animation: sRipple2 1.8s ease-out infinite .5s; }
+
+/* 3. Scanning line inside a box */
+@keyframes sScan {
+  0%,100% { top: 3px; }
+  50%      { top: calc(100% - 5px); }
+}
+.si-scan {
+  position: relative; width: 22px; height: 18px;
+  border: 1.5px solid rgba(139,92,246,.6); border-radius: 3px; overflow: hidden;
+}
+.si-scan-line {
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: rgba(139,92,246,.9);
+  top: 3px; border-radius: 1px;
+  animation: sScan 1.4s ease-in-out infinite;
+  box-shadow: 0 0 4px rgba(139,92,246,.6);
+}
+
+/* 4. Animated checkmark drawing itself */
+@keyframes sCheck {
+  0%    { stroke-dashoffset: 30; opacity: 1; }
+  60%   { stroke-dashoffset: 0;  opacity: 1; }
+  80%   { stroke-dashoffset: 0;  opacity: 1; }
+  100%  { stroke-dashoffset: 30; opacity: 0; }
+}
+.si-check svg {
+  overflow: visible;
+}
+.si-check path {
+  stroke: rgba(236,72,153,1);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: sCheck 2s ease-in-out infinite;
+}
 
 /* ── FEATURE SPLIT ── */
 .features-wrap { background: var(--bg); }
@@ -978,10 +1060,11 @@ footer {
 @keyframes barFill82  { from { width: 0; } to { width: 82%; } }
 @keyframes barFill79  { from { width: 0; } to { width: 79%; } }
 @keyframes mockScroll {
-  0%,15%   { transform: translateY(0); }
-  25%,55%  { transform: translateY(-310px); }
-  65%,85%  { transform: translateY(-560px); }
-  95%,100% { transform: translateY(0); }
+  0%,10%   { transform: translateY(0); }
+  18%,38%  { transform: translateY(-280px); }
+  46%,62%  { transform: translateY(-600px); }
+  70%,85%  { transform: translateY(-950px); }
+  93%,100% { transform: translateY(0); }
 }
 /* cursor moves */
 @keyframes cursorMove {
@@ -1113,7 +1196,7 @@ footer {
 .ad-scroll-inner {
   position: absolute;
   left: 0; right: 0; top: 0;
-  animation: mockScroll 14s cubic-bezier(.4,0,.2,1) infinite;
+  animation: mockScroll 18s cubic-bezier(.4,0,.2,1) infinite;
 }
 
 /* topbar */
@@ -1262,6 +1345,93 @@ footer {
 .ad-bk-fill-85 { animation: barFill85 1.1s cubic-bezier(.22,1,.36,1) 6.2s both; }
 .ad-bk-fill-82 { animation: barFill82 1.1s cubic-bezier(.22,1,.36,1) 6.3s both; }
 .ad-bk-fill-79 { animation: barFill79 1.1s cubic-bezier(.22,1,.36,1) 6.4s both; }
+
+/* ── ROI FORECAST CARD ── */
+.ad-roi-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px;
+  box-shadow: var(--shadow);
+}
+.ad-roi-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.ad-roi-title { font-size: 11px; font-weight: 700; color: var(--text); }
+.ad-roi-conf {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 8.5px; font-weight: 700; color: #D97706;
+  background: rgba(217,119,6,.09); border: 1px solid rgba(217,119,6,.2);
+  border-radius: 5px; padding: 2px 7px;
+}
+.ad-roi-conf-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: #D97706;
+}
+.ad-roi-split {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.ad-roi-col {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 7px; padding: 8px 10px;
+}
+.ad-roi-col-lbl {
+  font-size: 7.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--text3); margin-bottom: 4px;
+}
+.ad-roi-col-main { font-size: 12px; font-weight: 800; color: var(--text); line-height: 1.2; }
+.ad-roi-col-sub { font-size: 10px; color: var(--text2); margin-top: 2px; }
+.ad-roi-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border2);
+}
+.ad-roi-pct { font-size: 11px; font-weight: 700; color: #16A34A; }
+.ad-roi-note { font-size: 9px; color: var(--text3); }
+
+/* ── KEY SIGNALS CARD ── */
+.ad-signals-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px;
+  box-shadow: var(--shadow);
+}
+.ad-signals-title { font-size: 11px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.ad-signals-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+}
+.ad-signal-box {
+  border-radius: 7px; padding: 8px 9px; border: 1px solid transparent;
+}
+.ad-signal-box.green  { background: rgba(22,163,74,.07);  border-color: rgba(22,163,74,.2); }
+.ad-signal-box.red    { background: rgba(234,179,8,.07);  border-color: rgba(234,179,8,.22); }
+.ad-signal-box.blue   { background: rgba(59,110,245,.07); border-color: rgba(59,110,245,.2); }
+.ad-signal-eyebrow {
+  font-size: 7.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; margin-bottom: 3px;
+}
+.ad-signal-box.green  .ad-signal-eyebrow { color: #16A34A; }
+.ad-signal-box.red    .ad-signal-eyebrow { color: #B45309; }
+.ad-signal-box.blue   .ad-signal-eyebrow { color: #3B6EF5; }
+.ad-signal-name { font-size: 10px; font-weight: 700; color: var(--text); line-height: 1.25; }
+.ad-signal-sub  { font-size: 9px; color: var(--text3); margin-top: 2px; line-height: 1.3; }
+
+/* ── CAMPAIGN PLAN CARD ── */
+.ad-plan-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px;
+  box-shadow: var(--shadow);
+}
+.ad-plan-title { font-size: 11px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.ad-plan-steps { display: flex; flex-direction: column; gap: 6px; }
+.ad-plan-step {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 7px 9px; border-radius: 7px;
+  background: var(--surface2); border: 1px solid var(--border);
+}
+.ad-plan-week {
+  font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--accent); background: var(--accent-lo);
+  border-radius: 4px; padding: 2px 6px; flex-shrink: 0; margin-top: 1px;
+}
+.ad-plan-arrow { font-size: 10px; color: var(--text3); flex-shrink: 0; margin-top: 1px; }
+.ad-plan-text  { font-size: 10px; color: var(--text2); line-height: 1.4; }
 
 /* ── MOUSE CURSOR ── */
 .ad-cursor {
@@ -1433,6 +1603,79 @@ footer {
                 </div>
               </div>
             </div>
+            <!-- ROI Forecast card -->
+            <div class="ad-roi-card">
+              <div class="ad-roi-head">
+                <div class="ad-roi-title">ROI Forecast</div>
+                <div class="ad-roi-conf"><div class="ad-roi-conf-dot"></div>MEDIUM CONFIDENCE</div>
+              </div>
+              <div class="ad-roi-split">
+                <div class="ad-roi-col">
+                  <div class="ad-roi-col-lbl">You Spend</div>
+                  <div class="ad-roi-col-main">$5K–$15K cash</div>
+                  <div class="ad-roi-col-sub">3.9K–7.2K views</div>
+                </div>
+                <div class="ad-roi-col">
+                  <div class="ad-roi-col-lbl">You Get Back</div>
+                  <div class="ad-roi-col-main" style="color:#16A34A">$8,100–$18,900</div>
+                  <div class="ad-roi-col-sub">8–18 orders</div>
+                </div>
+              </div>
+              <div class="ad-roi-footer">
+                <div class="ad-roi-pct">ROI: +62% to +126%</div>
+                <div class="ad-roi-note">Based on $45 avg order (beauty)</div>
+              </div>
+            </div>
+
+            <!-- Key Signals card -->
+            <div class="ad-signals-card">
+              <div class="ad-signals-title">Key Signals</div>
+              <div class="ad-signals-grid">
+                <div class="ad-signal-box green">
+                  <div class="ad-signal-eyebrow">Biggest Strength</div>
+                  <div class="ad-signal-name">Engagement Rate — 91/100</div>
+                  <div class="ad-signal-sub">Elite tier. Top 5% of beauty accounts.</div>
+                </div>
+                <div class="ad-signal-box red">
+                  <div class="ad-signal-eyebrow">Biggest Risk</div>
+                  <div class="ad-signal-name">Niche Alignment — 85/100</div>
+                  <div class="ad-signal-sub">Sports/Lifestyle audience. Not pure beauty.</div>
+                </div>
+                <div class="ad-signal-box blue">
+                  <div class="ad-signal-eyebrow">Posting Frequency</div>
+                  <div class="ad-signal-name">4.2 posts/week</div>
+                  <div class="ad-signal-sub">Consistent cadence detected.</div>
+                </div>
+                <div class="ad-signal-box green">
+                  <div class="ad-signal-eyebrow">Authenticity</div>
+                  <div class="ad-signal-name">Authenticity — 79/100</div>
+                  <div class="ad-signal-sub">Genuine audience trust signals detected.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Campaign Plan card -->
+            <div class="ad-plan-card">
+              <div class="ad-plan-title">Campaign Plan</div>
+              <div class="ad-plan-steps">
+                <div class="ad-plan-step">
+                  <div class="ad-plan-week">Week 1</div>
+                  <div class="ad-plan-arrow">→</div>
+                  <div class="ad-plan-text">Ship product — no strings attached</div>
+                </div>
+                <div class="ad-plan-step">
+                  <div class="ad-plan-week">Week 2</div>
+                  <div class="ad-plan-arrow">→</div>
+                  <div class="ad-plan-text">Follow up once. Ask if they'd share if they love it</div>
+                </div>
+                <div class="ad-plan-step">
+                  <div class="ad-plan-week">Week 3</div>
+                  <div class="ad-plan-arrow">→</div>
+                  <div class="ad-plan-text">Review: did they post? Track reach + engagement</div>
+                </div>
+              </div>
+            </div>
+
             <!-- outreach section -->
             <div style="background:var(--surface,#fff);border:1px solid var(--border,#E4E0D9);border-radius:10px;padding:14px;margin-top:10px">
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
@@ -1471,7 +1714,14 @@ footer {
 <div class="stats-bar" style="margin-top:72px">
   <div class="stats-inner">
     <div class="stat-item reveal">
-      <div class="stat-icon" style="background:var(--accent-lo)">📊</div>
+      <div class="stat-icon" style="background:var(--accent-lo)">
+        <div class="si-bars">
+          <div class="si-bar"></div>
+          <div class="si-bar"></div>
+          <div class="si-bar"></div>
+          <div class="si-bar"></div>
+        </div>
+      </div>
       <div>
         <div class="stat-num">7</div>
         <div class="stat-lbl">Scoring factors</div>
@@ -1479,7 +1729,13 @@ footer {
     </div>
     <div class="stat-sep"></div>
     <div class="stat-item reveal reveal-d1">
-      <div class="stat-icon" style="background:var(--green-lo)">📡</div>
+      <div class="stat-icon" style="background:var(--green-lo)">
+        <div class="si-signal">
+          <div class="si-signal-ring"></div>
+          <div class="si-signal-ring"></div>
+          <div class="si-signal-dot"></div>
+        </div>
+      </div>
       <div>
         <div class="stat-num">Real</div>
         <div class="stat-lbl">Instagram data</div>
@@ -1487,7 +1743,11 @@ footer {
     </div>
     <div class="stat-sep"></div>
     <div class="stat-item reveal reveal-d2">
-      <div class="stat-icon" style="background:rgba(139,92,246,.08)">🤖</div>
+      <div class="stat-icon" style="background:rgba(139,92,246,.08)">
+        <div class="si-scan">
+          <div class="si-scan-line"></div>
+        </div>
+      </div>
       <div>
         <div class="stat-num">AI</div>
         <div class="stat-lbl">Fraud detection</div>
@@ -1495,7 +1755,13 @@ footer {
     </div>
     <div class="stat-sep"></div>
     <div class="stat-item reveal reveal-d3">
-      <div class="stat-icon" style="background:rgba(236,72,153,.08)">⚡</div>
+      <div class="stat-icon" style="background:rgba(236,72,153,.08)">
+        <div class="si-check">
+          <svg width="20" height="18" viewBox="0 0 20 18">
+            <path d="M3 9 L8 14 L17 4" />
+          </svg>
+        </div>
+      </div>
       <div>
         <div class="stat-num">Free</div>
         <div class="stat-lbl">To get started</div>
