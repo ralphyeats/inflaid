@@ -533,6 +533,7 @@ async function generateAIOutreach(){
     ta.value=d.message;
     document.getElementById("regen-btn").style.display="";
   }catch(e){
+    console.error("Outreach API error:", e);
     ta.value=buildTpl(inf); // fallback to static
   }finally{
     btn.disabled=false;
@@ -586,20 +587,26 @@ function render(inf){
     }
     const DIRECTIVES={avoid:"Do NOT proceed. Skip this influencer.",risky:"Do NOT pay upfront. Gifted trial only.",mid:"Do not scale. Test with gifted campaign first.",high:"Proceed. Do not pay upfront on first collab.",elite:"Scale immediately. Prioritize this collab."};
     const directive=DIRECTIVES[inf.label]||"";
+    // Split action into bullet points by sentence
+    const actionBullets=(v.action||"").split(/\.\s+/).filter(s=>s.trim().length>2).map(s=>s.replace(/\.$/,"").trim());
+    const actionHTML=actionBullets.length>1
+      ?`<ul style="list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:5px">${actionBullets.map(b=>`<li style="font-size:12px;font-weight:500;color:${dc.col};display:flex;gap:6px;align-items:flex-start"><span style="margin-top:1px;opacity:.6">→</span><span>${b}</span></li>`).join("")}</ul>`
+      :`<div style="font-size:12px;font-weight:500;color:${dc.col};margin-top:8px">${v.action||""}</div>`;
+    // Truncate reason to first sentence only
+    const shortReason=v.reason?(v.reason.split(".")[0]+"."):""
     dBar.style.cssText=`display:flex;background:${dc.bg};border-color:${dc.brd}`;
     dBar.innerHTML=`
       <div class="db-left">
         <div class="db-eyebrow" style="color:${dc.col}">Vettly Decision</div>
         <div class="db-verdict-label" style="color:${dc.col}">${v.verdict_label||v.verdict}${v.campaign_type?` — ${v.campaign_type}`:""}</div>
         ${directive?`<div class="db-directive" style="color:${dc.col}">${directive}</div>`:""}
-        <div class="db-action" style="color:${dc.col};margin-top:6px">${v.action||""}</div>
-        ${v.reason?`<div style="font-size:11px;margin-top:8px;color:${dc.col};opacity:.8;line-height:1.45"><strong>Why →</strong> ${v.reason}</div>`:""}
+        ${actionHTML}
+        ${shortReason?`<div style="font-size:11px;margin-top:10px;color:${dc.col};opacity:.7;line-height:1.5;font-style:italic">${shortReason}</div>`:""}
       </div>
-      <div class="db-pills">
-        ${v.budget_range?`<div class="db-pill"><div class="db-pill-label">Budget</div><div class="db-pill-val" style="color:var(--ink)">${v.budget_range}</div></div>`:""}
-        ${v.risk?`<div class="db-pill"><div class="db-pill-label">Risk</div><div class="db-pill-val" style="color:${riskColor(v.risk)}">${v.risk}</div></div>`:""}
-        ${roiStr!=="—"?`<div class="db-pill"><div class="db-pill-label">Expected ROI</div><div class="db-pill-val" style="color:var(--green)">${roiStr}</div></div>`:""}
-        ${roi?.estimated_conversions_low!=null?`<div class="db-pill"><div class="db-pill-label">Est. Sales</div><div class="db-pill-val" style="color:var(--ink)">${roi.estimated_conversions_low}–${roi.estimated_conversions_high} orders</div></div>`:""}
+      <div class="db-pills" style="flex-direction:column;align-items:stretch;gap:6px;min-width:130px;flex:none">
+        ${v.budget_range?`<div class="db-pill"><div class="db-pill-label">Budget</div><div class="db-pill-val" style="color:var(--ink);font-size:12px">${v.budget_range}</div></div>`:""}
+        ${v.risk?`<div class="db-pill"><div class="db-pill-label">Risk</div><div class="db-pill-val" style="color:${riskColor(v.risk)};font-size:13px">${v.risk}</div></div>`:""}
+        ${roi?.estimated_conversions_low!=null?`<div class="db-pill"><div class="db-pill-label">Est. Sales</div><div class="db-pill-val" style="color:var(--ink);font-size:13px">${roi.estimated_conversions_low}–${roi.estimated_conversions_high} orders</div></div>`:""}
       </div>`;
   } else { dBar.style.display="none"; }
 
