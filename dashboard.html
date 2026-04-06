@@ -1051,6 +1051,9 @@ function renderAnalytics(){
 const SUPABASE_URL = "https://qpfjxbsvymlrbeoqwqmr.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwZmp4YnN2eW1scmJlb3F3cW1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NzY3MzgsImV4cCI6MjA4OTU1MjczOH0.d16JZphML2HPIYrXm9oEegQc8GpL-tZA36HpWJAFZNw";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const APP_ORIGIN = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+  ? window.location.origin
+  : "https://inflaid.com";
 
 sb.auth.getSession().then(({ data }) => {
   if (!data.session) {
@@ -1079,7 +1082,7 @@ sb.auth.getSession().then(({ data }) => {
 
   // Referral link
   const refCode = btoa(email);
-  const refLink = `${window.location.origin}/auth.html?ref=${refCode}`;
+  const refLink = `${APP_ORIGIN}/auth.html?ref=${refCode}`;
   const refInput = document.getElementById("referral-link-input");
   if(refInput){
     refInput.value = refLink;

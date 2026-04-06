@@ -123,6 +123,9 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const RAILWAY_URL = "https://vettly-production-63d5.up.railway.app";
 const API = RAILWAY_URL;
+const APP_ORIGIN = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+  ? window.location.origin
+  : "https://inflaid.com";
 
 function switchTab(tab) {
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
@@ -141,7 +144,7 @@ async function sendReset() {
   const btn = event.target;
   btn.disabled = true; btn.textContent = "Sending...";
   const { error } = await sb.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + "/auth.html?mode=update"
+    redirectTo: APP_ORIGIN + "/auth.html?mode=update"
   });
   btn.disabled = false; btn.textContent = "Send reset link →";
   if (error) showMsg(error.message, "error");
