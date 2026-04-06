@@ -295,6 +295,15 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 .camp-card-handle{font-size:13px;font-weight:600;color:var(--ink)}
 .camp-card-meta{font-size:11px;color:var(--ink3);margin-top:2px}
 .camp-card-outcome{margin-left:auto;font-size:13px;padding:4px 10px;border-radius:6px;font-weight:600;border:1px solid;flex-shrink:0}
+.camp-card-main{display:flex;align-items:center;gap:12px;width:100%}
+.camp-card-body{min-width:0;flex:1}
+.camp-subrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.camp-status-pill{font-size:10px;padding:3px 7px;border-radius:999px;border:1px solid var(--b1);background:var(--s2);color:var(--ink2)}
+.camp-status-pill.done{color:var(--green);border-color:var(--green-mid);background:var(--green-lo)}
+.camp-quick-btn{background:var(--s2);border:1px solid var(--b1);border-radius:999px;padding:4px 8px;font-size:10px;color:var(--ink2);cursor:pointer;font-family:var(--sans);transition:all .15s}
+.camp-quick-btn:hover{border-color:var(--accent-mid);color:var(--accent)}
+.camp-quick-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.camp-orders-chip{font-size:10px;padding:3px 7px;border-radius:999px;border:1px solid var(--accent-mid);background:var(--accent-lo);color:var(--accent)}
 
 /* ANALYSIS LOADING */
 .analysis-overlay{position:fixed;inset:0;background:rgba(248,247,244,.82);backdrop-filter:blur(8px);z-index:250;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -511,9 +520,9 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
           <div style="margin-bottom:16px">
             <label style="font-size:11px;color:var(--ink3);font-weight:500;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">How did it go?</label>
             <div style="display:flex;gap:8px">
-              <button class="outcome-opt" data-val="worth_it" onclick="selectOutcome(this)" style="flex:1">🔥 Worth it</button>
-              <button class="outcome-opt" data-val="meh" onclick="selectOutcome(this)" style="flex:1">😐 Meh</button>
-              <button class="outcome-opt" data-val="waste" onclick="selectOutcome(this)" style="flex:1">💀 Waste</button>
+              <button class="outcome-opt" data-val="worth_it" onclick="selectOutcome(this)" style="flex:1">Worth it</button>
+              <button class="outcome-opt" data-val="meh" onclick="selectOutcome(this)" style="flex:1">Mixed</button>
+              <button class="outcome-opt" data-val="waste" onclick="selectOutcome(this)" style="flex:1">Waste</button>
             </div>
           </div>
 
@@ -783,7 +792,7 @@ function renderCard(inf, i){
     : '';
   const detailHref = `/influencer.html?handle=${encodeURIComponent(inf.handle)}`;
   const nicheScore = (inf.breakdown||[]).find(b=>b.key==="niche")?.value ?? 50;
-  const nicheNote = nicheScore < 30 ? `<div style="font-size:10px;color:var(--accent);background:var(--accent-lo);border:1px solid var(--accent-mid);border-radius:5px;padding:4px 8px;margin-top:6px">⚠ Low beauty niche alignment — results may not reflect beauty brand ROI</div>` : '';
+  const nicheNote = nicheScore < 30 ? `<div style="font-size:10px;color:var(--accent);background:var(--accent-lo);border:1px solid var(--accent-mid);border-radius:5px;padding:4px 8px;margin-top:6px">Low beauty niche alignment — results may not reflect beauty brand ROI</div>` : '';
   const isSaved = !!inf.saved;
   const saveIcon = `<svg width="12" height="12" viewBox="0 0 12 12" fill="${isSaved?'currentColor':'none'}" stroke="currentColor" stroke-width="1.5"><path d="M6 1L7.5 4.5H11L8.25 6.75L9.25 10.25L6 8.25L2.75 10.25L3.75 6.75L1 4.5H4.5L6 1Z" stroke-linejoin="round"/></svg>`;
 
@@ -845,7 +854,7 @@ function renderGrid(){
 
   if(apiResults.length === 0){
     document.getElementById("inf-grid").innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--ink3)">
-      <div style="font-size:32px;margin-bottom:12px">🔍</div>
+      <div style="width:34px;height:34px;border-radius:50%;border:1px solid var(--b1);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;color:var(--ink3)">?</div>
       <div style="font-size:14px;font-weight:500;color:var(--ink2);margin-bottom:6px">No analyses yet</div>
       <div style="font-size:12px">Enter an Instagram handle above and click Analyze →</div>
     </div>`;
@@ -898,7 +907,7 @@ function copyReferralLink(){
   if(!input) return;
   navigator.clipboard?.writeText(input.value) || (input.select(), document.execCommand("copy"));
   const btn = document.getElementById("referral-copy-btn");
-  btn.textContent = "Copied ✓"; btn.style.background = "var(--green-lo)"; btn.style.borderColor = "var(--green-mid)"; btn.style.color = "var(--green)";
+  btn.textContent = "Copied"; btn.style.background = "var(--green-lo)"; btn.style.borderColor = "var(--green-mid)"; btn.style.color = "var(--green)";
   setTimeout(() => { btn.textContent = "Copy"; btn.style.background = ""; btn.style.borderColor = ""; btn.style.color = ""; }, 2000);
 }
 
@@ -1019,7 +1028,7 @@ function copyTpl(event){
   if(!ta.value||ta.value.startsWith("Select"))return;
   if(navigator.clipboard)navigator.clipboard.writeText(ta.value);
   else{ta.select();document.execCommand("copy");}
-  const btn=event.target;btn.textContent="Copied ✓";btn.style.background="#2D6A4F";
+  const btn=event.target;btn.textContent="Copied";btn.style.background="#2D6A4F";
   setTimeout(()=>{btn.textContent="Copy to clipboard";btn.style.background="var(--accent)";},2000);
 }
 
@@ -1032,7 +1041,7 @@ function markAsSent(event){
   renderOutreach();
   updateOutreachBadge();
   const btn=event.target;
-  btn.textContent = inf.outreachStatus==="sent" ? "Marked as sent ✓" : "Mark as sent";
+  btn.textContent = inf.outreachStatus==="sent" ? "Marked as sent" : "Mark as sent";
   setTimeout(()=>{ btn.textContent="Mark as sent"; },2000);
 }
 
@@ -1361,19 +1370,40 @@ function renderCampaignsUI(camps) {
   if (empty) empty.style.display = "none";
 
   const SPEND_LABELS = {gifted:"Gifted","under100":"<$100","100-500":"$100–500","500-2k":"$500–2K","2k+":"$2K+"};
-  const OUTCOME_LABELS = {worth_it:{txt:"🔥 Worth it",col:"var(--green)",bg:"var(--green-lo)",brd:"var(--green-mid)"},meh:{txt:"😐 Meh",col:"var(--amber)",bg:"var(--amber-lo)",brd:"var(--amber-mid)"},waste:{txt:"💀 Waste",col:"var(--red)",bg:"var(--red-lo)",brd:"var(--red-mid)"}};
+  const OUTCOME_LABELS = {worth_it:{txt:"Worth it",col:"var(--green)",bg:"var(--green-lo)",brd:"var(--green-mid)"},meh:{txt:"Mixed",col:"var(--amber)",bg:"var(--amber-lo)",brd:"var(--amber-mid)"},waste:{txt:"Waste",col:"var(--red)",bg:"var(--red-lo)",brd:"var(--red-mid)"}};
+  const ORDER_LABELS = {"0":"0 orders","1-5":"1–5 orders","5-20":"5–20 orders","20+":"20+ orders"};
 
   list.innerHTML = camps.map(c => {
     const o = OUTCOME_LABELS[c.outcome] || OUTCOME_LABELS.meh;
     const initials = c.handle.replace("@","").slice(0,2).toUpperCase();
-    return `<div class="camp-card">
-      <div class="camp-card-av" style="background:var(--accent-lo);color:var(--accent)">${initials}</div>
-      <div>
-        <div class="camp-card-handle">${c.handle}</div>
-        <div class="camp-card-meta">${SPEND_LABELS[c.spend_tier]||c.spend_tier} · ${c.date}${c.pendingSync ? " · Syncing..." : ""}</div>
+    const isCompleted = c.status === "completed";
+    const canUpdate = !String(c.id).startsWith("local-") && !c.pendingSync;
+    const quickRow = canUpdate && !isCompleted ? `
+      <div class="camp-quick-row">
+        <button class="camp-quick-btn" onclick="updateCampaignResult(event,'${c.id}','0')">0 orders</button>
+        <button class="camp-quick-btn" onclick="updateCampaignResult(event,'${c.id}','1-5')">1–5</button>
+        <button class="camp-quick-btn" onclick="updateCampaignResult(event,'${c.id}','5-20')">5–20</button>
+        <button class="camp-quick-btn" onclick="updateCampaignResult(event,'${c.id}','20+')">20+</button>
       </div>
-      <div class="camp-card-outcome" style="color:${o.col};background:${o.bg};border-color:${o.brd}">${o.txt}</div>
-      <button onclick="deleteCampaign('${c.id}')" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0" title="Delete">×</button>
+    ` : "";
+    const subRow = `
+      <div class="camp-subrow">
+        <span class="camp-status-pill ${isCompleted ? "done" : ""}">${isCompleted ? "Result saved" : "Add result"}</span>
+        ${c.orders_range ? `<span class="camp-orders-chip">${ORDER_LABELS[c.orders_range] || c.orders_range}</span>` : ""}
+      </div>
+    `;
+    return `<div class="camp-card">
+      <div class="camp-card-main">
+        <div class="camp-card-av" style="background:var(--accent-lo);color:var(--accent)">${initials}</div>
+        <div class="camp-card-body">
+          <div class="camp-card-handle">${c.handle}</div>
+          <div class="camp-card-meta">${SPEND_LABELS[c.spend_tier]||c.spend_tier} · ${c.date}${c.pendingSync ? " · Syncing..." : ""}</div>
+          ${subRow}
+          ${quickRow}
+        </div>
+        <div class="camp-card-outcome" style="color:${o.col};background:${o.bg};border-color:${o.brd}">${o.txt}</div>
+        <button onclick="deleteCampaign('${c.id}')" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0" title="Delete">×</button>
+      </div>
     </div>`;
   }).join("");
 
@@ -1384,6 +1414,41 @@ function renderCampaignsUI(camps) {
   const summaryEl = document.getElementById("campaigns-summary");
   if (summaryEl) {
     summaryEl.innerHTML = `${total} campaign${total!==1?"s":""} logged · <span style="color:var(--green);font-weight:600">${pct}% worth it</span>`;
+  }
+}
+
+async function updateCampaignResult(event, id, ordersRange) {
+  event.stopPropagation();
+  const existing = getCampaigns();
+  const updated = existing.map(c => String(c.id) === String(id)
+    ? { ...c, status: "completed", orders_range: ordersRange }
+    : c
+  );
+  saveCampaignsLocal(updated);
+  renderCampaignsUI(updated);
+
+  try {
+    const { data } = await sb.auth.getSession();
+    if (!data.session) return;
+    const res = await fetch(`${API}/campaign/${id}/result`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${data.session.access_token}`
+      },
+      body: JSON.stringify({ campaign_id: id, orders_range: ordersRange })
+    });
+    if (!res.ok) {
+      saveCampaignsLocal(existing);
+      renderCampaignsUI(existing);
+      showToast("Could not save campaign result.", "error");
+      return;
+    }
+    showToast("Campaign result saved.", "info");
+  } catch (e) {
+    saveCampaignsLocal(existing);
+    renderCampaignsUI(existing);
+    console.warn("Campaign result update failed", e);
   }
 }
 
