@@ -11,7 +11,7 @@ from scorer import compute_score
 
 app = FastAPI(title="Inflaid API", version="0.1.0")
 
-FRONTEND_URL = os.getenv("FRONTEND_URL", "https://vettly-eight.vercel.app")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "")
 
 ALLOWED_ORIGINS = ["*", FRONTEND_URL]
 app.add_middleware(
@@ -369,7 +369,7 @@ def score(req: ScoreRequest, authorization: str = Header(default=None)):
     )
 
     try:
-        save_analysis(result.handle, result.score, result.label, response.model_dump())
+        save_analysis(result.handle, result.score, result.label, response.model_dump(), email)
     except Exception as e:
         print(f"Cache save error: {e}")
 

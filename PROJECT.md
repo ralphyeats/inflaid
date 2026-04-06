@@ -165,7 +165,7 @@ FRONTEND_URL              # update after domain purchase
 - Features: Instant Decision · Real Data · Outreach · Campaign Tracker (coming soon)
 - "How it works": 3 steps ending with "track the result"
 - Testimonials section
-- Pricing grid ($29 / $79 / $199)
+- Pricing grid ($19 / $49 / $99)
 - Animated dashboard mockup (18s loop, mouse cursor, full product flow)
 - All copy is beauty & skincare specific
 

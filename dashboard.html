@@ -565,6 +565,7 @@ async function syncHistoryFromSupabase(email){
   try{
     const {data,error}=await sb.from("analyses")
       .select("result,created_at")
+      .eq("user_email", email)
       .not("handle","like","_ref:%")
       .order("created_at",{ascending:false})
       .limit(50);
@@ -1090,7 +1091,7 @@ async function upgradePlan(plan) {
   if (!data.session) { window.location.href = "/auth.html"; return; }
   const token = data.session.access_token;
   try {
-    const res = await fetch("https://vettly-production-63d5.up.railway.app/create-checkout", {
+    const res = await fetch(`${API}/create-checkout`, {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": `Bearer ${token}`},
       body: JSON.stringify({plan})
@@ -1105,7 +1106,7 @@ async function manageSubscription() {
   if (!data.session) { window.location.href = "/auth.html"; return; }
   const token = data.session.access_token;
   try {
-    const res = await fetch("https://vettly-production-63d5.up.railway.app/customer-portal", {
+    const res = await fetch(`${API}/customer-portal`, {
       method: "POST",
       headers: {"Authorization": `Bearer ${token}`}
     });
@@ -1170,28 +1171,74 @@ function selectOutcome(btn) {
   _selOutcome = btn.dataset.val;
 }
 
-function saveCampaign() {
+async function saveCampaign() {
   const handle = document.getElementById("camp-handle").value;
   if (!handle) { alert("Select an influencer."); return; }
   if (!_selSpend) { alert("Select how much you spent."); return; }
   if (!_selOutcome) { alert("Select how it went."); return; }
 
+  const today = new Date().toISOString().split("T")[0];
   const camps = getCampaigns();
-  camps.unshift({
+  const localEntry = {
     id: Date.now(),
     handle,
     spend_tier: _selSpend,
     outcome: _selOutcome,
-    date: new Date().toISOString().split("T")[0]
-  });
+    date: today
+  };
+  camps.unshift(localEntry);
   saveCampaignsLocal(camps);
   updateCampaignsBadge(camps.length);
   closeCampaignLog();
   renderCampaigns();
+
+  // Sync to backend (fire-and-forget)
+  try {
+    const { data } = await sb.auth.getSession();
+    if (data.session) {
+      await fetch(`${API}/campaign/create`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${data.session.access_token}` },
+        body: JSON.stringify({ handle, spend_tier: _selSpend, outcome: _selOutcome, campaign_date: today })
+      });
+    }
+  } catch(e) { console.warn("Campaign backend sync failed", e); }
+}
+
+async function syncCampaignsFromBackend() {
+  try {
+    const { data } = await sb.auth.getSession();
+    if (!data.session) return;
+    const res = await fetch(`${API}/campaigns`, {
+      headers: { "Authorization": `Bearer ${data.session.access_token}` }
+    });
+    if (!res.ok) return;
+    const json = await res.json();
+    const remote = (json.campaigns || []).map(c => ({
+      id: c.id,
+      handle: c.handle,
+      spend_tier: c.spend_tier,
+      outcome: c.outcome,
+      date: c.campaign_date || c.created_at?.split("T")[0] || ""
+    }));
+    if (!remote.length) return;
+    // Merge: remote is source of truth (cross-device), local fills any not-yet-synced entries
+    const remoteIds = new Set(remote.map(c => String(c.id)));
+    const localOnly = getCampaigns().filter(c => !remoteIds.has(String(c.id)) && typeof c.id === "number");
+    const merged = [...remote, ...localOnly];
+    saveCampaignsLocal(merged);
+    updateCampaignsBadge(merged.length);
+    renderCampaignsUI(merged);
+  } catch(e) { console.warn("Campaign backend sync failed", e); }
 }
 
 function renderCampaigns() {
   const camps = getCampaigns();
+  renderCampaignsUI(camps);
+  syncCampaignsFromBackend();
+}
+
+function renderCampaignsUI(camps) {
   const list = document.getElementById("campaigns-list");
   const empty = document.getElementById("campaigns-empty");
 
@@ -1214,7 +1261,7 @@ function renderCampaigns() {
         <div class="camp-card-meta">${SPEND_LABELS[c.spend_tier]||c.spend_tier} · ${c.date}</div>
       </div>
       <div class="camp-card-outcome" style="color:${o.col};background:${o.bg};border-color:${o.brd}">${o.txt}</div>
-      <button onclick="deleteCampaign(${c.id})" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0" title="Delete">×</button>
+      <button onclick="deleteCampaign('${c.id}')" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0" title="Delete">×</button>
     </div>`;
   }).join("");
 
@@ -1229,7 +1276,7 @@ function renderCampaigns() {
 }
 
 function deleteCampaign(id) {
-  const camps = getCampaigns().filter(c => c.id !== id);
+  const camps = getCampaigns().filter(c => String(c.id) !== String(id));
   saveCampaignsLocal(camps);
   updateCampaignsBadge(camps.length);
   renderCampaigns();

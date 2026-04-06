@@ -4,8 +4,13 @@
     { "src": "/dashboard", "dest": "/dashboard.html" },
     { "src": "/influencer", "dest": "/influencer.html" },
     { "src": "/auth", "dest": "/auth.html" },
+    { "src": "/terms", "dest": "/terms.html" },
+    { "src": "/privacy", "dest": "/privacy.html" },
     { "src": "/dashboard.html", "dest": "/dashboard.html" },
     { "src": "/influencer.html", "dest": "/influencer.html" },
+    { "src": "/auth.html", "dest": "/auth.html" },
+    { "src": "/terms.html", "dest": "/terms.html" },
+    { "src": "/privacy.html", "dest": "/privacy.html" },
     { "src": "/", "dest": "/index.html" }
   ]
 }

@@ -29,16 +29,19 @@ def get_cached(handle: str) -> dict:
         print(f"Cache get error: {e}")
     return None
 
-def save_analysis(handle: str, score: int, label: str, result: dict):
+def save_analysis(handle: str, score: int, label: str, result: dict, user_email: str = None):
     sb = get_supabase()
     if not sb:
         return
     try:
-        sb.table("analyses").insert({
+        record = {
             "handle": handle,
             "score": score,
             "label": label,
-            "result": result
-        }).execute()
+            "result": result,
+        }
+        if user_email:
+            record["user_email"] = user_email
+        sb.table("analyses").insert(record).execute()
     except Exception as e:
         print(f"Cache save error: {e}")
