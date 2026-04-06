@@ -19,9 +19,9 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;-webkit-font-smoothing:antialiased}
-.logo{display:flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:40px}
-.logo-mark{width:24px;height:24px;background:var(--accent);border-radius:6px;position:relative}
-.logo-mark::after{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;background:#fff;border-radius:50%}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none;margin-bottom:40px}
+.logo-mark{width:30px;height:30px;background:var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 24px rgba(26,23,20,.12)}
+.logo-mark svg{display:block}
 .logo-text{font-family:var(--syne);font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-.02em}
 .card{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:36px;width:100%;max-width:400px;box-shadow:var(--shadow)}
 .card-title{font-family:var(--syne);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px;letter-spacing:-.02em}
@@ -56,7 +56,12 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);min-height:10
 </head>
 <body>
 <a class="logo" href="/">
-  <div class="logo-mark"></div>
+  <div class="logo-mark" aria-hidden="true">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <circle cx="7" cy="7" r="3" fill="white"/>
+      <circle cx="7" cy="7" r="6" stroke="white" stroke-width="1.5" fill="none"/>
+    </svg>
+  </div>
   <span class="logo-text">Inflaid</span>
 </a>
 
