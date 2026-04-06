@@ -752,12 +752,7 @@ function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.v
 
     input.value = "";
     renderGrid();
-
-    // Flash the first card to draw attention
-    setTimeout(()=>{
-      const first = document.querySelector(".inf-card");
-      if(first){ first.style.borderColor="var(--accent)"; setTimeout(()=>first.style.borderColor="",1200); }
-    }, 100);
+    window.location.href = `/influencer.html?handle=${encodeURIComponent(inf.handle)}&from=dashboard`;
 
   } catch(e) {
     showToast("API unavailable — is the backend running?", "error");

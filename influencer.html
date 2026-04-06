@@ -51,7 +51,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 /* MAIN */
 .main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden}
 .topbar{height:52px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:12px;padding:0 24px;flex-shrink:0;background:var(--s1)}
-.back-btn{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink3);cursor:pointer;transition:color .15s;background:none;border:none;font-family:var(--sans);padding:0}
+.back-btn{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink3);cursor:pointer;transition:color .15s;background:none;border:none;font-family:var(--sans);padding:0;text-decoration:none}
 .back-btn:hover{color:var(--ink2)}
 .topbar-sep{width:1px;height:16px;background:var(--b1)}
 .topbar-crumb{font-size:13px;color:var(--ink2)}
@@ -326,10 +326,10 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 
 <div class="main">
   <div class="topbar">
-    <button class="back-btn" onclick="history.back()">
+    <a class="back-btn" href="/dashboard.html">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Back
-    </button>
+      Back to dashboard
+    </a>
     <div class="topbar-sep"></div>
     <div class="topbar-crumb" id="tb-crumb">Loading...</div>
     <div class="topbar-actions">
@@ -843,7 +843,7 @@ function showError(msg){
       <div style="text-align:center;color:var(--ink2)">
         <div style="font-size:32px;margin-bottom:12px">⚠</div>
         <div style="font-size:14px;margin-bottom:8px">${msg}</div>
-        <button onclick="history.back()" style="margin-top:16px;padding:8px 20px;background:var(--accent);border:none;border-radius:7px;color:#fff;font-family:var(--sans);font-size:13px;cursor:pointer">← Go back</button>
+        <button onclick="window.location.href='/dashboard.html'" style="margin-top:16px;padding:8px 20px;background:var(--accent);border:none;border-radius:7px;color:#fff;font-family:var(--sans);font-size:13px;cursor:pointer">← Back to dashboard</button>
       </div>
     </div>`);
 }
