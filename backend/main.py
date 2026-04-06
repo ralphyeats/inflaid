@@ -130,6 +130,11 @@ class ReferralRequest(BaseModel):
 
 REFERRAL_BONUS_REFERRER = 5
 REFERRAL_BONUS_NEW      = 2
+FOUNDER_EMAILS = {
+    email.strip().lower()
+    for email in os.getenv("FOUNDER_EMAILS", "ralphyeats@gmail.com").split(",")
+    if email.strip()
+}
 
 
 def get_user_usage(sb, email):
@@ -231,6 +236,16 @@ def apply_referral(req: ReferralRequest):
     if not referrer.data:
         raise HTTPException(status_code=404, detail="Referrer not found")
 
+    # Ensure the new user row exists so the bonus is actually reflected in plan limits
+    new_user = get_user_usage(sb, req.new_email)
+    if not new_user:
+        sb.table("users").insert({
+            "email": req.new_email,
+            "plan": "free",
+            "analyses_used": 0,
+            "analyses_limit": PLAN_LIMITS["free"],
+        }).execute()
+
     # Apply bonuses
     increment_limit(sb, referrer_email, REFERRAL_BONUS_REFERRER)
     increment_limit(sb, req.new_email, REFERRAL_BONUS_NEW)
@@ -244,6 +259,69 @@ def apply_referral(req: ReferralRequest):
     }).execute()
 
     return {"status": "applied", "referrer_bonus": REFERRAL_BONUS_REFERRER, "new_user_bonus": REFERRAL_BONUS_NEW}
+
+
+@app.get("/referral/stats")
+def referral_stats(authorization: str = Header(default=None)):
+    email = verify_token(authorization)
+    from auth import get_supabase
+
+    sb = get_supabase()
+    if not sb:
+        raise HTTPException(status_code=503, detail="DB unavailable")
+
+    rows = sb.table("analyses").select("handle,label,result").eq("label", "referral").limit(2000).execute()
+    items = rows.data or []
+    sent = [row for row in items if (row.get("result") or {}).get("referrer_email") == email]
+    received = next(((row.get("result") or {}) for row in items if row.get("handle") == f"_ref:{email}"), None)
+
+    return {
+        "invited_count": len(sent),
+        "earned_bonus": len(sent) * REFERRAL_BONUS_REFERRER,
+        "signup_bonus": REFERRAL_BONUS_NEW if received else 0,
+        "was_referred": bool(received),
+        "recent_referrals": [
+            {
+                "new_email": (row.get("result") or {}).get("new_email"),
+            }
+            for row in sent[:5]
+        ]
+    }
+
+
+@app.get("/founder/metrics")
+def founder_metrics(authorization: str = Header(default=None)):
+    email = verify_token(authorization).lower()
+    if email not in FOUNDER_EMAILS:
+        raise HTTPException(status_code=403, detail="forbidden")
+
+    from auth import get_supabase
+
+    sb = get_supabase()
+    if not sb:
+        raise HTTPException(status_code=503, detail="DB unavailable")
+
+    users = (sb.table("users").select("email,plan,analyses_used,analyses_limit").limit(5000).execute().data or [])
+    analyses = (sb.table("analyses").select("label,created_at,user_email").limit(5000).execute().data or [])
+    campaigns = (sb.table("campaigns").select("status,outcome,campaign_date,user_email").limit(5000).execute().data or [])
+
+    referrals = [row for row in analyses if row.get("label") == "referral"]
+    real_analyses = [row for row in analyses if row.get("label") != "referral"]
+
+    plan_counts = {}
+    for user in users:
+        plan = user.get("plan") or "free"
+        plan_counts[plan] = plan_counts.get(plan, 0) + 1
+
+    return {
+        "users_total": len(users),
+        "analyses_total": len(real_analyses),
+        "campaigns_total": len(campaigns),
+        "referrals_total": len(referrals),
+        "campaigns_completed": sum(1 for c in campaigns if c.get("status") == "completed"),
+        "worth_it_total": sum(1 for c in campaigns if c.get("outcome") == "worth_it"),
+        "plans": plan_counts,
+    }
 
 
 @app.get("/public/profile/{handle}")

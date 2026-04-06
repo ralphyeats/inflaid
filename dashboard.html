@@ -59,6 +59,14 @@ body{background:
 .referral-box{background:linear-gradient(180deg, rgba(255,255,255,.92) 0%, rgba(247,242,235,.98) 100%);border:1px solid rgba(232,223,210,.92);border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
 .referral-title{font-size:10px;font-weight:600;color:var(--ink2);margin-bottom:4px;letter-spacing:.03em}
 .referral-desc{font-size:10px;color:var(--ink3);margin-bottom:8px;line-height:1.5}
+.referral-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.ref-stat{background:rgba(255,255,255,.76);border:1px solid rgba(216,204,189,.75);border-radius:12px;padding:8px 9px}
+.ref-stat-label{font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.ref-stat-value{font-family:var(--syne);font-size:16px;line-height:1;color:var(--ink);letter-spacing:-.03em}
+.referral-recent{margin-top:8px;padding-top:8px;border-top:1px solid rgba(216,204,189,.6)}
+.referral-recent-title{font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.referral-recent-list{display:flex;flex-direction:column;gap:4px}
+.referral-recent-item{font-size:10px;color:var(--ink2);line-height:1.4}
 .referral-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
 .referral-badge-pill{font-size:10px;color:var(--ink2);background:rgba(255,255,255,.72);border:1px solid rgba(216,204,189,.75);border-radius:999px;padding:4px 7px}
 .referral-link-row{display:flex;gap:5px}
@@ -166,6 +174,13 @@ body{background:
 .anl-sub{font-size:12px;font-weight:400}
 .anl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .anl-card-title{font-family:var(--syne);font-size:13px;font-weight:600;color:var(--ink);margin-bottom:16px}
+.founder-panel{display:none;margin-top:12px}
+.founder-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.founder-mini{background:linear-gradient(180deg, rgba(255,255,255,.92) 0%, rgba(249,245,239,.98) 100%);border:1px solid rgba(232,223,210,.92);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+.founder-mini-label{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.founder-mini-value{font-family:var(--syne);font-size:24px;font-weight:700;letter-spacing:-.03em;color:var(--ink);line-height:1}
+.founder-plan-list{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.founder-plan-pill{font-size:11px;color:var(--ink2);background:rgba(255,255,255,.76);border:1px solid rgba(216,204,189,.75);border-radius:999px;padding:6px 10px}
 .chart-bars{display:flex;align-items:flex-end;gap:7px;height:100px;margin-bottom:8px}
 .chart-bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
 .chart-bar{width:100%;border-radius:3px 3px 0 0}
@@ -307,10 +322,13 @@ body{background:
 .camp-subrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
 .camp-status-pill{font-size:10px;padding:3px 7px;border-radius:999px;border:1px solid var(--b1);background:var(--s2);color:var(--ink2)}
 .camp-status-pill.done{color:var(--green);border-color:var(--green-mid);background:var(--green-lo)}
+.camp-status-pill.pending{color:var(--amber);border-color:var(--amber-mid);background:var(--amber-lo)}
 .camp-quick-btn{background:var(--s2);border:1px solid var(--b1);border-radius:999px;padding:4px 8px;font-size:10px;color:var(--ink2);cursor:pointer;font-family:var(--sans);transition:all .15s}
 .camp-quick-btn:hover{border-color:var(--accent-mid);color:var(--accent)}
+.camp-quick-btn.active{border-color:var(--accent-mid);background:var(--accent-lo);color:var(--accent)}
 .camp-quick-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .camp-orders-chip{font-size:10px;padding:3px 7px;border-radius:999px;border:1px solid var(--accent-mid);background:var(--accent-lo);color:var(--accent)}
+.camp-empty-icon{width:34px;height:34px;border-radius:12px;border:1px solid var(--b1);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;background:rgba(255,255,255,.7)}
 
 /* ANALYSIS LOADING */
 .analysis-overlay{position:fixed;inset:0;background:rgba(248,247,244,.82);backdrop-filter:blur(8px);z-index:250;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -377,6 +395,16 @@ body{background:
     <div class="referral-box" id="referral-box" style="display:none">
       <div class="referral-title">Referral</div>
       <div class="referral-desc">Share your invite link to bring in a teammate or founder friend.</div>
+      <div class="referral-stats">
+        <div class="ref-stat">
+          <div class="ref-stat-label">Invites joined</div>
+          <div class="ref-stat-value" id="ref-invited-count">0</div>
+        </div>
+        <div class="ref-stat">
+          <div class="ref-stat-label">Bonus earned</div>
+          <div class="ref-stat-value" id="ref-earned-bonus">+0</div>
+        </div>
+      </div>
       <div class="referral-badges">
         <span class="referral-badge-pill">You get +5 analyses</span>
         <span class="referral-badge-pill">They get +2 analyses</span>
@@ -386,7 +414,11 @@ body{background:
         <button class="referral-copy-btn" id="referral-copy-btn" onclick="copyReferralLink()">Copy</button>
         <button class="referral-copy-btn" id="referral-share-btn" onclick="shareReferralLink()" style="display:none">Share</button>
       </div>
-      <div class="referral-note">Bonus is applied after they sign up with your link.</div>
+      <div class="referral-note" id="referral-note">Bonus is applied after they sign up with your link.</div>
+      <div class="referral-recent" id="referral-recent" style="display:none">
+        <div class="referral-recent-title">Recent signups</div>
+        <div class="referral-recent-list" id="referral-recent-list"></div>
+      </div>
     </div>
     <div class="user-row">
       <div class="user-av" id="user-av">—</div>
@@ -487,6 +519,18 @@ body{background:
           <div id="recent-list"></div>
         </div>
       </div>
+      <div class="founder-panel" id="founder-panel">
+        <div class="anl-card fadeup d4" style="margin-top:12px">
+          <div class="anl-card-title">Founder view</div>
+          <div class="founder-grid">
+            <div class="founder-mini"><div class="founder-mini-label">Users</div><div class="founder-mini-value" id="fd-users">—</div></div>
+            <div class="founder-mini"><div class="founder-mini-label">Analyses</div><div class="founder-mini-value" id="fd-analyses">—</div></div>
+            <div class="founder-mini"><div class="founder-mini-label">Campaigns</div><div class="founder-mini-value" id="fd-campaigns">—</div></div>
+            <div class="founder-mini"><div class="founder-mini-label">Referrals</div><div class="founder-mini-value" id="fd-referrals">—</div></div>
+          </div>
+          <div class="founder-plan-list" id="fd-plans"></div>
+        </div>
+      </div>
     </div>
 
     <!-- CAMPAIGNS -->
@@ -550,7 +594,9 @@ body{background:
         <!-- Campaigns list -->
         <div id="campaigns-list">
           <div style="text-align:center;padding:60px 20px;color:var(--ink3)" id="campaigns-empty">
-            <div style="font-size:32px;margin-bottom:12px">📋</div>
+            <div class="camp-empty-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="2.5" width="10" height="11" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 6H10.5M5.5 8.75H10.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </div>
             <div style="font-size:14px;font-weight:500;margin-bottom:6px">No campaigns logged yet</div>
             <div style="font-size:12px">Log your first campaign to start tracking what works.</div>
           </div>
@@ -582,6 +628,7 @@ const LBL={
 
 let apiResults = [];  // loaded from localStorage after auth
 let curSavedOnly=false, selOutreach=null;
+let founderMetricsLoaded = false;
 
 function historyKey(email){ return "inflaid_history_" + email; }
 function legacyHistoryKey(email){ return "vettly_history_" + email; }
@@ -590,7 +637,7 @@ function loadHistory(email){
   try {
     const current = localStorage.getItem(historyKey(email));
     const legacy = localStorage.getItem(legacyHistoryKey(email));
-    apiResults = JSON.parse(current || legacy || "[]");
+    apiResults = dedupeHistory(JSON.parse(current || legacy || "[]"));
     if (!current && legacy && apiResults.length) {
       localStorage.setItem(historyKey(email), JSON.stringify(apiResults));
     }
@@ -599,12 +646,26 @@ function loadHistory(email){
 }
 
 function saveHistory(email){
-  try { localStorage.setItem(historyKey(email), JSON.stringify(apiResults)); }
+  try {
+    apiResults = dedupeHistory(apiResults);
+    localStorage.setItem(historyKey(email), JSON.stringify(apiResults));
+  }
   catch(e){}
 }
 
 function getHistory(){
   return apiResults || [];
+}
+
+function dedupeHistory(items){
+  const seen = new Set();
+  const deduped = [];
+  for(const item of items || []){
+    if(!item?.handle || seen.has(item.handle)) continue;
+    seen.add(item.handle);
+    deduped.push(item);
+  }
+  return deduped;
 }
 
 function clearHistory(){
@@ -616,6 +677,18 @@ function clearHistory(){
     localStorage.removeItem(legacyHistoryKey(email));
   }
   renderGrid();
+}
+
+function dedupeCampaigns(camps){
+  const seen = new Set();
+  const deduped = [];
+  for(const camp of camps || []){
+    const key = String(camp.id || campaignFingerprint(camp));
+    if(seen.has(key)) continue;
+    seen.add(key);
+    deduped.push(camp);
+  }
+  return deduped;
 }
 
 // Supabase sync — load user's analyses from DB, merge with localStorage
@@ -655,7 +728,7 @@ async function syncHistoryFromSupabase(email){
     for(const r of remoteInfs){
       if(!localHandles.has(r.handle)) merged.push(r);
     }
-    apiResults=merged;
+    apiResults=dedupeHistory(merged);
     saveHistory(email);
     renderGrid();
     updateOutreachBadge();
@@ -796,6 +869,64 @@ function showToast(msg, type="info"){
   setTimeout(()=>t.remove(), 3500);
 }
 
+async function loadReferralStats(){
+  try{
+    const { data } = await sb.auth.getSession();
+    if(!data.session) return;
+    const res = await fetch(`${API}/referral/stats`, {
+      headers: { "Authorization": `Bearer ${data.session.access_token}` }
+    });
+    if(!res.ok) return;
+    const stats = await res.json();
+    const invitedEl = document.getElementById("ref-invited-count");
+    const bonusEl = document.getElementById("ref-earned-bonus");
+    const noteEl = document.getElementById("referral-note");
+    const recentWrap = document.getElementById("referral-recent");
+    const recentList = document.getElementById("referral-recent-list");
+    if(invitedEl) invitedEl.textContent = String(stats.invited_count || 0);
+    if(bonusEl) bonusEl.textContent = `+${stats.earned_bonus || 0}`;
+    if(noteEl){
+      noteEl.textContent = stats.was_referred
+        ? `Your signup bonus is active. Invite friends to unlock more analyses.`
+        : `Bonus is applied after they sign up with your link.`;
+    }
+    if(recentWrap && recentList && (stats.recent_referrals || []).length){
+      recentWrap.style.display = "block";
+      recentList.innerHTML = stats.recent_referrals.map(r => {
+        const email = r.new_email || "New signup";
+        return `<div class="referral-recent-item">${email}</div>`;
+      }).join("");
+    }
+  }catch(e){
+    console.warn("Referral stats unavailable", e);
+  }
+}
+
+async function loadFounderMetrics(){
+  if(founderMetricsLoaded) return;
+  try{
+    const { data } = await sb.auth.getSession();
+    if(!data.session) return;
+    const res = await fetch(`${API}/founder/metrics`, {
+      headers: { "Authorization": `Bearer ${data.session.access_token}` }
+    });
+    if(!res.ok) return;
+    const stats = await res.json();
+    founderMetricsLoaded = true;
+    document.getElementById("founder-panel").style.display = "block";
+    document.getElementById("fd-users").textContent = stats.users_total || 0;
+    document.getElementById("fd-analyses").textContent = stats.analyses_total || 0;
+    document.getElementById("fd-campaigns").textContent = stats.campaigns_total || 0;
+    document.getElementById("fd-referrals").textContent = stats.referrals_total || 0;
+    const plans = stats.plans || {};
+    document.getElementById("fd-plans").innerHTML = Object.keys(plans).sort().map(plan => (
+      `<div class="founder-plan-pill">${plan}: ${plans[plan]}</div>`
+    )).join("");
+  }catch(e){
+    console.warn("Founder metrics unavailable", e);
+  }
+}
+
 // ── GRID ─────────────────────────────────────────────────────────────────────
 function renderCard(inf, i){
   const l = LBL[inf.label];
@@ -903,7 +1034,7 @@ function switchTab(name,el){
   const titles={discovery:"Influencer Discovery",outreach:"Outreach",analytics:"Analytics",campaigns:"Campaign Tracker"};
   document.getElementById("topbar-title").textContent=titles[name];
   if(name==="outreach")renderOutreach();
-  if(name==="analytics")renderAnalytics();
+  if(name==="analytics"){renderAnalytics(); loadFounderMetrics();}
   if(name==="campaigns")renderCampaigns();
 }
 
@@ -1144,6 +1275,7 @@ sb.auth.getSession().then(({ data }) => {
   updateOutreachBadge();
   maybeShowOnboarding();
   syncHistoryFromSupabase(email);
+  loadReferralStats();
 
   // Referral link
   const refCode = btoa(email);
@@ -1245,10 +1377,10 @@ function campaignStorageKey(email){
 }
 
 function getCampaigns() {
-  try { return JSON.parse(localStorage.getItem(campaignStorageKey(window.currentUserEmail)) || "[]"); } catch { return []; }
+  try { return dedupeCampaigns(JSON.parse(localStorage.getItem(campaignStorageKey(window.currentUserEmail)) || "[]")); } catch { return []; }
 }
 function saveCampaignsLocal(camps) {
-  localStorage.setItem(campaignStorageKey(window.currentUserEmail), JSON.stringify(camps));
+  localStorage.setItem(campaignStorageKey(window.currentUserEmail), JSON.stringify(dedupeCampaigns(camps)));
 }
 
 function campaignFingerprint(camp) {
@@ -1358,7 +1490,7 @@ async function syncCampaignsFromBackend() {
       const isUnsynced = String(c.id).startsWith("local-") || c.pendingSync;
       return isUnsynced && !remoteFingerprints.has(campaignFingerprint(c));
     });
-    const merged = [...remote, ...localOnly];
+    const merged = dedupeCampaigns([...remote, ...localOnly]);
     saveCampaignsLocal(merged);
     updateCampaignsBadge(merged.length);
     renderCampaignsUI(merged);
@@ -1390,17 +1522,17 @@ function renderCampaignsUI(camps) {
     const initials = c.handle.replace("@","").slice(0,2).toUpperCase();
     const isCompleted = c.status === "completed";
     const canUpdate = !String(c.id).startsWith("local-") && !c.pendingSync;
-    const quickRow = canUpdate && !isCompleted ? `
+    const quickRow = canUpdate ? `
       <div class="camp-quick-row">
-        <button class="camp-quick-btn" onclick="updateCampaignResult(event,'${c.id}','0')">0 orders</button>
-        <button class="camp-quick-btn" onclick="updateCampaignResult(event,'${c.id}','1-5')">1–5</button>
-        <button class="camp-quick-btn" onclick="updateCampaignResult(event,'${c.id}','5-20')">5–20</button>
-        <button class="camp-quick-btn" onclick="updateCampaignResult(event,'${c.id}','20+')">20+</button>
+        <button class="camp-quick-btn ${c.orders_range === "0" ? "active" : ""}" onclick="updateCampaignResult(event,'${c.id}','0')">0 orders</button>
+        <button class="camp-quick-btn ${c.orders_range === "1-5" ? "active" : ""}" onclick="updateCampaignResult(event,'${c.id}','1-5')">1–5</button>
+        <button class="camp-quick-btn ${c.orders_range === "5-20" ? "active" : ""}" onclick="updateCampaignResult(event,'${c.id}','5-20')">5–20</button>
+        <button class="camp-quick-btn ${c.orders_range === "20+" ? "active" : ""}" onclick="updateCampaignResult(event,'${c.id}','20+')">20+</button>
       </div>
     ` : "";
     const subRow = `
       <div class="camp-subrow">
-        <span class="camp-status-pill ${isCompleted ? "done" : ""}">${isCompleted ? "Result saved" : "Add result"}</span>
+        <span class="camp-status-pill ${isCompleted ? "done" : "pending"}">${isCompleted ? "Result saved" : "Capture result"}</span>
         ${c.orders_range ? `<span class="camp-orders-chip">${ORDER_LABELS[c.orders_range] || c.orders_range}</span>` : ""}
       </div>
     `;
@@ -1422,10 +1554,11 @@ function renderCampaignsUI(camps) {
   // Summary stats
   const total = camps.length;
   const worthIt = camps.filter(c => c.outcome === "worth_it").length;
+  const completed = camps.filter(c => c.status === "completed").length;
   const pct = total ? Math.round(worthIt/total*100) : 0;
   const summaryEl = document.getElementById("campaigns-summary");
   if (summaryEl) {
-    summaryEl.innerHTML = `${total} campaign${total!==1?"s":""} logged · <span style="color:var(--green);font-weight:600">${pct}% worth it</span>`;
+    summaryEl.innerHTML = `${total} campaign${total!==1?"s":""} logged · ${completed} result${completed!==1?"s":""} captured · <span style="color:var(--green);font-weight:600">${pct}% worth it</span>`;
   }
 }
 
