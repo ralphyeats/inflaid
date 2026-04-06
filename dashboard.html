@@ -295,6 +295,23 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 .camp-card-handle{font-size:13px;font-weight:600;color:var(--ink)}
 .camp-card-meta{font-size:11px;color:var(--ink3);margin-top:2px}
 .camp-card-outcome{margin-left:auto;font-size:13px;padding:4px 10px;border-radius:6px;font-weight:600;border:1px solid;flex-shrink:0}
+
+/* ANALYSIS LOADING */
+.analysis-overlay{position:fixed;inset:0;background:rgba(248,247,244,.82);backdrop-filter:blur(8px);z-index:250;display:flex;align-items:center;justify-content:center;padding:20px}
+.analysis-modal{width:100%;max-width:460px;background:rgba(255,255,255,.92);border:1px solid var(--b1);border-radius:24px;box-shadow:0 24px 80px rgba(24,20,16,.12);padding:30px 28px;text-align:center}
+.analysis-badge{display:inline-flex;align-items:center;gap:7px;background:var(--accent-lo);border:1px solid var(--accent-mid);color:var(--accent);border-radius:999px;padding:6px 12px;font-size:11px;font-weight:600;letter-spacing:.02em;margin-bottom:18px}
+.analysis-pulse{width:8px;height:8px;border-radius:50%;background:currentColor;animation:analysisPulse 1.2s ease-in-out infinite}
+.analysis-orb-wrap{position:relative;width:118px;height:118px;margin:0 auto 18px}
+.analysis-orb{position:absolute;inset:20px;border-radius:50%;background:radial-gradient(circle at 30% 30%, rgba(79,140,245,.34), rgba(79,140,245,.08) 58%, rgba(79,140,245,0) 70%);border:1px solid rgba(79,140,245,.18);box-shadow:inset 0 1px 10px rgba(255,255,255,.6)}
+.analysis-ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(79,140,245,.22);animation:analysisSpin 7s linear infinite}
+.analysis-ring::before,.analysis-ring::after{content:"";position:absolute;border-radius:50%;background:var(--accent)}
+.analysis-ring::before{width:10px;height:10px;top:9px;left:54px;box-shadow:0 0 0 6px rgba(79,140,245,.10)}
+.analysis-ring::after{width:6px;height:6px;bottom:18px;left:20px;background:#7FA8FF}
+.analysis-title{font-family:var(--syne);font-size:28px;line-height:1.05;letter-spacing:-.04em;color:var(--ink);margin-bottom:10px}
+.analysis-copy{font-size:14px;color:var(--ink2);line-height:1.6;max-width:320px;margin:0 auto 14px}
+.analysis-status{min-height:22px;font-size:12px;font-weight:600;color:var(--ink);letter-spacing:.01em}
+@keyframes analysisSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes analysisPulse{0%,100%{opacity:.45;transform:scale(.9)}50%{opacity:1;transform:scale(1.08)}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27><rect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%234F8CF5%27/><text x=%2716%27 y=%2723%27 text-anchor=%27middle%27 font-size=%2720%27 font-family=%27system-ui%27 font-weight=%27bold%27 fill=%27white%27>V</text></svg>">
@@ -630,6 +647,36 @@ function sc(s){return s>=70?"var(--green)":s>=40?"var(--amber)":"var(--red)";}
 function scHex(s){return s>=70?"#34C77A":s>=40?"#E8962A":"#D95050";}
 function initials(handle){const h=handle.replace("@","");return (h.slice(0,2)).toUpperCase();}
 function randomColor(handle){const colors=["#4F8CF5","#34C77A","#A78BFA","#F59E0B","#6EE7B7","#C084FC","#F87171","#FB923C"];let n=0;for(const c of handle)n+=c.charCodeAt(0);return colors[n%colors.length];}
+const ANALYSIS_MESSAGES = [
+  "Reviewing profile quality...",
+  "Checking engagement patterns...",
+  "Looking for beauty niche signals...",
+  "Estimating campaign fit...",
+  "Building your ROI score..."
+];
+let analysisMessageTimer = null;
+
+function showAnalysisOverlay(){
+  const overlay = document.getElementById("analysis-overlay");
+  const status = document.getElementById("analysis-status");
+  if(!overlay || !status) return;
+  let idx = 0;
+  status.textContent = ANALYSIS_MESSAGES[idx];
+  overlay.style.display = "flex";
+  analysisMessageTimer = setInterval(() => {
+    idx = (idx + 1) % ANALYSIS_MESSAGES.length;
+    status.textContent = ANALYSIS_MESSAGES[idx];
+  }, 1800);
+}
+
+function hideAnalysisOverlay(){
+  const overlay = document.getElementById("analysis-overlay");
+  if(analysisMessageTimer){
+    clearInterval(analysisMessageTimer);
+    analysisMessageTimer = null;
+  }
+  if(overlay) overlay.style.display = "none";
+}
 
 // ── API ANALYZE ──────────────────────────────────────────────────────────────
 function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.value.trim();if(!r)return;doAnalyze(r.startsWith("@")?r:"@"+r);}async function doAnalyze(handle){
@@ -641,6 +688,7 @@ function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.v
   btn.textContent = "…";
   btn.disabled = true;
   input.disabled = true;
+  showAnalysisOverlay();
 
   try {
     const { data: sessionData } = await sb.auth.getSession();
@@ -714,6 +762,7 @@ function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.v
   } catch(e) {
     showToast("API unavailable — is the backend running?", "error");
   } finally {
+    hideAnalysisOverlay();
     btn.textContent = "Analyze →";
     btn.disabled = false;
     input.disabled = false;
@@ -1442,6 +1491,19 @@ function setMobileNav(activeId){
       </div>
     </div>
     <button class="ob-cta" onclick="dismissOnboarding()">Start analyzing →</button>
+</div>
+</div>
+
+<div class="analysis-overlay" id="analysis-overlay" style="display:none">
+  <div class="analysis-modal">
+    <div class="analysis-badge"><span class="analysis-pulse"></span>Analysis in progress</div>
+    <div class="analysis-orb-wrap" aria-hidden="true">
+      <div class="analysis-ring"></div>
+      <div class="analysis-orb"></div>
+    </div>
+    <div class="analysis-title">Reading the signals behind the profile</div>
+    <div class="analysis-copy">We are checking engagement quality, beauty niche fit, risk indicators, and campaign potential.</div>
+    <div class="analysis-status" id="analysis-status">Reviewing profile quality...</div>
   </div>
 </div>
 <script>
