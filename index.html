@@ -2149,6 +2149,12 @@ footer {
 </footer>
 
 <script>
+// Password recovery links can land on the homepage with a hash token.
+// Forward them to the auth reset screen so the user sees the new password form.
+if (window.location.hash.includes("access_token=") && window.location.hash.includes("type=recovery")) {
+  window.location.replace(`/auth.html?mode=update${window.location.hash}`);
+}
+
 // ── SCROLL REVEAL ────────────────────────────────────────────────────────────
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => {

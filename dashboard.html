@@ -1131,11 +1131,19 @@ function logout() {
 const CAMPS_KEY = "inflaid_campaigns";
 let _selSpend = null, _selOutcome = null;
 
+function campaignStorageKey(email){
+  return email ? `${CAMPS_KEY}_${email}` : CAMPS_KEY;
+}
+
 function getCampaigns() {
-  try { return JSON.parse(localStorage.getItem(CAMPS_KEY) || "[]"); } catch { return []; }
+  try { return JSON.parse(localStorage.getItem(campaignStorageKey(window.currentUserEmail)) || "[]"); } catch { return []; }
 }
 function saveCampaignsLocal(camps) {
-  localStorage.setItem(CAMPS_KEY, JSON.stringify(camps));
+  localStorage.setItem(campaignStorageKey(window.currentUserEmail), JSON.stringify(camps));
+}
+
+function campaignFingerprint(camp) {
+  return [camp.handle, camp.spend_tier, camp.outcome, camp.date || camp.campaign_date || ""].join("|");
 }
 
 function openCampaignLog() {
@@ -1180,11 +1188,12 @@ async function saveCampaign() {
   const today = new Date().toISOString().split("T")[0];
   const camps = getCampaigns();
   const localEntry = {
-    id: Date.now(),
+    id: `local-${Date.now()}`,
     handle,
     spend_tier: _selSpend,
     outcome: _selOutcome,
-    date: today
+    date: today,
+    pendingSync: true
   };
   camps.unshift(localEntry);
   saveCampaignsLocal(camps);
@@ -1196,11 +1205,21 @@ async function saveCampaign() {
   try {
     const { data } = await sb.auth.getSession();
     if (data.session) {
-      await fetch(`${API}/campaign/create`, {
+      const res = await fetch(`${API}/campaign/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${data.session.access_token}` },
         body: JSON.stringify({ handle, spend_tier: _selSpend, outcome: _selOutcome, campaign_date: today })
       });
+      if (res.ok) {
+        const json = await res.json();
+        const updated = getCampaigns().map(c => String(c.id) === String(localEntry.id)
+          ? { ...c, id: json.id, pendingSync: false }
+          : c
+        );
+        saveCampaignsLocal(updated);
+        updateCampaignsBadge(updated.length);
+        renderCampaignsUI(updated);
+      }
     }
   } catch(e) { console.warn("Campaign backend sync failed", e); }
 }
@@ -1219,12 +1238,17 @@ async function syncCampaignsFromBackend() {
       handle: c.handle,
       spend_tier: c.spend_tier,
       outcome: c.outcome,
-      date: c.campaign_date || c.created_at?.split("T")[0] || ""
+      date: c.campaign_date || c.created_at?.split("T")[0] || "",
+      status: c.status || "logged",
+      orders_range: c.orders_range || null,
+      notes: c.notes || ""
     }));
-    if (!remote.length) return;
-    // Merge: remote is source of truth (cross-device), local fills any not-yet-synced entries
-    const remoteIds = new Set(remote.map(c => String(c.id)));
-    const localOnly = getCampaigns().filter(c => !remoteIds.has(String(c.id)) && typeof c.id === "number");
+    // Merge: remote is source of truth; keep only local entries that are still unsynced
+    const remoteFingerprints = new Set(remote.map(c => campaignFingerprint(c)));
+    const localOnly = getCampaigns().filter(c => {
+      const isUnsynced = String(c.id).startsWith("local-") || c.pendingSync;
+      return isUnsynced && !remoteFingerprints.has(campaignFingerprint(c));
+    });
     const merged = [...remote, ...localOnly];
     saveCampaignsLocal(merged);
     updateCampaignsBadge(merged.length);
@@ -1258,7 +1282,7 @@ function renderCampaignsUI(camps) {
       <div class="camp-card-av" style="background:var(--accent-lo);color:var(--accent)">${initials}</div>
       <div>
         <div class="camp-card-handle">${c.handle}</div>
-        <div class="camp-card-meta">${SPEND_LABELS[c.spend_tier]||c.spend_tier} · ${c.date}</div>
+        <div class="camp-card-meta">${SPEND_LABELS[c.spend_tier]||c.spend_tier} · ${c.date}${c.pendingSync ? " · Syncing..." : ""}</div>
       </div>
       <div class="camp-card-outcome" style="color:${o.col};background:${o.bg};border-color:${o.brd}">${o.txt}</div>
       <button onclick="deleteCampaign('${c.id}')" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0" title="Delete">×</button>
@@ -1275,11 +1299,34 @@ function renderCampaignsUI(camps) {
   }
 }
 
-function deleteCampaign(id) {
-  const camps = getCampaigns().filter(c => String(c.id) !== String(id));
+async function deleteCampaign(id) {
+  const existing = getCampaigns();
+  const camps = existing.filter(c => String(c.id) !== String(id));
   saveCampaignsLocal(camps);
   updateCampaignsBadge(camps.length);
   renderCampaigns();
+
+  if (String(id).startsWith("local-")) return;
+
+  try {
+    const { data } = await sb.auth.getSession();
+    if (!data.session) return;
+    const res = await fetch(`${API}/campaign/${id}`, {
+      method: "DELETE",
+      headers: { "Authorization": `Bearer ${data.session.access_token}` }
+    });
+    if (!res.ok) {
+      saveCampaignsLocal(existing);
+      updateCampaignsBadge(existing.length);
+      renderCampaignsUI(existing);
+      showToast("Could not delete campaign from server.", "error");
+    }
+  } catch(e) {
+    saveCampaignsLocal(existing);
+    updateCampaignsBadge(existing.length);
+    renderCampaignsUI(existing);
+    console.warn("Campaign delete failed", e);
+  }
 }
 
 function updateCampaignsBadge(count) {

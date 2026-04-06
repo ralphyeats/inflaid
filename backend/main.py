@@ -11,9 +11,16 @@ from scorer import compute_score
 
 app = FastAPI(title="Inflaid API", version="0.1.0")
 
-FRONTEND_URL = os.getenv("FRONTEND_URL", "")
+DEFAULT_FRONTEND_URL = "https://inflaid.com"
+FRONTEND_URL = os.getenv("FRONTEND_URL", DEFAULT_FRONTEND_URL).rstrip("/")
 
-ALLOWED_ORIGINS = ["*", FRONTEND_URL]
+ALLOWED_ORIGINS = [
+    "https://inflaid.com",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+if FRONTEND_URL not in ALLOWED_ORIGINS:
+    ALLOWED_ORIGINS.append(FRONTEND_URL)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
@@ -466,6 +473,23 @@ def list_campaigns(authorization: str = Header(default=None)):
 
     result = sb.table("campaigns").select("*").eq("user_email", email).order("campaign_date", desc=True).limit(50).execute()
     return {"campaigns": result.data or []}
+
+
+@app.delete("/campaign/{campaign_id}")
+def delete_campaign(campaign_id: str, authorization: str = Header(default=None)):
+    email = verify_token(authorization)
+    from auth import get_supabase
+
+    sb = get_supabase()
+    if not sb:
+        raise HTTPException(status_code=503, detail="DB unavailable")
+
+    existing = sb.table("campaigns").select("id,user_email").eq("id", campaign_id).execute()
+    if not existing.data or existing.data[0]["user_email"] != email:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+
+    sb.table("campaigns").delete().eq("id", campaign_id).execute()
+    return {"status": "deleted"}
 
 
 @app.post("/campaign/{campaign_id}/result")

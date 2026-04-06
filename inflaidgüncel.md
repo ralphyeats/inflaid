@@ -172,7 +172,7 @@ FRONTEND_URL              # inflaid.com için güncellenmeli
 - Discovery: influencer kartları, skor, verdict, silme butonu, geçmişi temizle
 - Outreach: influencer seç → AI outreach mesajı oluştur (Claude Haiku via /outreach)
 - Analytics: skor dağılımı, toplam analiz, kategori özeti
-- Campaigns: handle + spend tier + outcome formu → **şu an localStorage'a kaydediyor** (backend endpoint'lerine bağlı değil)
+- Campaigns: handle + spend tier + outcome formu → localStorage + backend senkronu birlikte çalışıyor; `/campaign/create` ve `/campaigns` aktif, silme işlemi için `DELETE /campaign/{id}` eklendi
 - Sidebar: kullanım çubuğu + plan bilgisi + upgrade/yönet butonu
 
 ### `influencer.html` — Detay Sayfası
@@ -253,24 +253,30 @@ CREATE INDEX IF NOT EXISTS analyses_user_email_idx ON analyses (user_email);
 **Nasıl koşturulur:** Supabase Dashboard → SQL Editor → dosyayı yapıştır → Run
 
 Bu yapılmadan:
-- Campaign Tracker backend'e hiçbir şey kaydedemez
-- Analiz geçmişi kullanıcıya göre filtrelenemez (şu an tüm analizler herkese görünür)
+- Campaign Tracker backend kayıtları çalışmaz
+- Analiz geçmişi kullanıcıya göre güvenilir şekilde filtrelenemez
 
-### 2. Campaign Tracker → Backend Bağlantısı
+### 2. Campaign Tracker Senkronu (KISMEN TAMAMLANDI)
 
-`dashboard.html`'deki Campaigns sekmesi kampanyaları localStorage'a yazıyor. Backend endpoint'leri (`/campaign/create`, `/campaigns`, `/campaign/{id}/result`) hazır ve çalışır durumda. Frontend bu endpoint'leri çağıracak şekilde güncellenmeli.
+`dashboard.html` artık kampanya kayıtlarını kullanıcı bazlı localStorage anahtarında tutuyor ve backend ile senkronlamaya çalışıyor. Aktif akış:
+- `POST /campaign/create` çağrılıyor
+- `GET /campaigns` ile uzak kayıtlar çekiliyor
+- `DELETE /campaign/{id}` endpoint'i eklendi ve dashboard silme işlemi backend'e de yansıtılıyor
+- Unsynced local kayıtlar geçici `local-*` ID ile tutuluyor, backend başarılı dönerse gerçek Supabase ID'si ile değiştiriliyor
+
+Kalan kritik bağımlılık: Supabase migration çalıştırılmadığı sürece bu akış production'da tam çalışmaz çünkü `campaigns` tablosu henüz oluşturulmuş değil.
 
 ### 3. FRONTEND_URL Ortam Değişkeni
 
 Railway'deki `FRONTEND_URL` değişkeni `inflaid.com` için güncellenmeli. Stripe success/cancel redirect ve Supabase Auth redirect URL'leri de Supabase Dashboard'da güncellenmeli (Site URL + Redirect URLs).
 
-### 4. OG Image Eksik
+### 4. OG Image (TAMAMLANDI)
 
-`index.html` meta tag'lerinde `og-image.png` referans veriliyor ama dosya yok. Sosyal paylaşımlarda görsel gelmiyor.
+`og-image.png` dosyası repoda mevcut ve `index.html` meta tag'leri bu dosyayı referanslıyor.
 
-### 5. Footer'da Legal Link Yok
+### 5. Legal Linkler (TAMAMLANDI)
 
-`legal.html` var ama `index.html` footer'ında sadece "Sign in" linki görünüyor. Privacy Policy ve Terms of Service linkleri eklenmeli (ödeme alan bir site için gerekli).
+`index.html` footer'ında `Terms` ve `Privacy` linkleri mevcut. Ayrıca `auth.html` içindeki yasal metin de ayrı `/terms` ve `/privacy` sayfalarına güncellendi.
 
 ---
 
