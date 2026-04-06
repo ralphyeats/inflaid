@@ -848,7 +848,18 @@ function showError(msg){
     </div>`);
 }
 
-function historyKey(email){return"vettly_history_"+email;}
+function historyKey(email){return"inflaid_history_"+email;}
+function legacyHistoryKey(email){return"vettly_history_"+email;}
+
+function readHistory(email){
+  const current = localStorage.getItem(historyKey(email));
+  const legacy = localStorage.getItem(legacyHistoryKey(email));
+  const history = JSON.parse(current || legacy || "[]");
+  if (!current && legacy && history.length) {
+    localStorage.setItem(historyKey(email), JSON.stringify(history));
+  }
+  return history;
+}
 
 let _currentHandle=null;
 
@@ -867,7 +878,7 @@ function toggleSave(){
   if(!email||!_currentHandle)return;
   const key=historyKey(email);
   try{
-    const history=JSON.parse(localStorage.getItem(key)||"[]");
+    const history=readHistory(email);
     const inf=history.find(r=>r.handle===_currentHandle||r.handle===_currentHandle.replace(/^@?/,"@"));
     if(inf){
       inf.saved=!inf.saved;
@@ -904,7 +915,7 @@ async function init(){
   // Try localStorage cache first
   if(email){
     try{
-      const history=JSON.parse(localStorage.getItem(historyKey(email))||"[]");
+      const history=readHistory(email);
       const cached=history.find(r=>r.handle===handle||r.handle===handle.replace(/^@?/,"@"));
       if(cached){render(cached);updateSaveBtn(!!cached.saved);return;}
     }catch(e){}

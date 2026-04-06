@@ -1,7 +1,7 @@
-# Vettly Project Configuration
+# Inflaid Project Configuration
 
 ## Project Overview
-- **Name**: Vettly
+- **Name**: Inflaid
 - **Description**: Instagram influencer analysis platform for beauty brands (ROI scoring).
 - **Tech Stack**: HTML/JS (Frontend), Supabase (Database/Auth), Railway (Backend), Vercel (Hosting).
 - **Target User**: Beauty/skincare/makeup brand owners (Shopify).

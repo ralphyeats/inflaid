@@ -1,5 +1,5 @@
 """
-Vettly ROI Scorer — 7-factor modular system with fraud multiplier.
+Inflaid ROI Scorer — 7-factor modular system with fraud multiplier.
 
 Formula:
   score = round(weighted_sum * fraud_multiplier)

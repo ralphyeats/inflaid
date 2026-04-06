@@ -54,10 +54,13 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
 .referral-box{background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:10px;margin-bottom:10px}
 .referral-title{font-size:10px;font-weight:600;color:var(--ink2);margin-bottom:4px;letter-spacing:.03em}
 .referral-desc{font-size:10px;color:var(--ink3);margin-bottom:8px;line-height:1.5}
+.referral-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.referral-badge-pill{font-size:10px;color:var(--ink2);background:var(--s3);border:1px solid var(--b1);border-radius:999px;padding:4px 7px}
 .referral-link-row{display:flex;gap:5px}
 .referral-link-input{flex:1;background:var(--s3);border:1px solid var(--b1);border-radius:5px;padding:5px 7px;color:var(--ink2);font-size:10px;font-family:var(--sans);outline:none;min-width:0}
 .referral-copy-btn{padding:5px 9px;background:var(--accent-lo);border:1px solid var(--accent-mid);border-radius:5px;color:var(--accent);font-size:10px;font-weight:500;cursor:pointer;font-family:var(--sans);white-space:nowrap;transition:all .15s}
 .referral-copy-btn:hover{background:var(--accent-mid)}
+.referral-note{font-size:10px;color:var(--ink3);margin-top:7px;line-height:1.45}
 .user-row{display:flex;align-items:center;gap:8px}
 .user-av{width:28px;height:28px;border-radius:50%;background:var(--accent-lo);border:1px solid var(--accent-mid);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--accent);flex-shrink:0}
 .user-name{font-size:12px;font-weight:500;color:var(--ink)}
@@ -334,12 +337,18 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
       <button class="upgrade-btn" id="manage-btn" onclick="manageSubscription()" style="display:none;margin-top:4px;background:transparent;color:var(--ink3);border-color:var(--b1)">Manage subscription</button>
     </div>
     <div class="referral-box" id="referral-box" style="display:none">
-      <div class="referral-title">Invite friends · +5 analyses each</div>
-      <div class="referral-desc">Share your link. You both get 5 free analyses when they sign up.</div>
+      <div class="referral-title">Referral</div>
+      <div class="referral-desc">Share your invite link to bring in a teammate or founder friend.</div>
+      <div class="referral-badges">
+        <span class="referral-badge-pill">You get +5 analyses</span>
+        <span class="referral-badge-pill">They get +2 analyses</span>
+      </div>
       <div class="referral-link-row">
         <input class="referral-link-input" id="referral-link-input" readonly>
-        <button class="referral-copy-btn" onclick="copyReferralLink()">Copy</button>
+        <button class="referral-copy-btn" id="referral-copy-btn" onclick="copyReferralLink()">Copy</button>
+        <button class="referral-copy-btn" id="referral-share-btn" onclick="shareReferralLink()" style="display:none">Share</button>
       </div>
+      <div class="referral-note">Bonus is applied after they sign up with your link.</div>
     </div>
     <div class="user-row">
       <div class="user-av" id="user-av">—</div>
@@ -536,10 +545,18 @@ const LBL={
 let apiResults = [];  // loaded from localStorage after auth
 let curSavedOnly=false, selOutreach=null;
 
-function historyKey(email){ return "vettly_history_" + email; }
+function historyKey(email){ return "inflaid_history_" + email; }
+function legacyHistoryKey(email){ return "vettly_history_" + email; }
 
 function loadHistory(email){
-  try { apiResults = JSON.parse(localStorage.getItem(historyKey(email)) || "[]"); }
+  try {
+    const current = localStorage.getItem(historyKey(email));
+    const legacy = localStorage.getItem(legacyHistoryKey(email));
+    apiResults = JSON.parse(current || legacy || "[]");
+    if (!current && legacy && apiResults.length) {
+      localStorage.setItem(historyKey(email), JSON.stringify(apiResults));
+    }
+  }
   catch(e){ apiResults = []; }
 }
 
@@ -556,7 +573,10 @@ function clearHistory(){
   if(!confirm("Clear all analysis history? This only removes local data.")) return;
   apiResults = [];
   const email = window.currentUserEmail;
-  if(email) localStorage.removeItem(historyKey(email));
+  if(email) {
+    localStorage.removeItem(historyKey(email));
+    localStorage.removeItem(legacyHistoryKey(email));
+  }
   renderGrid();
 }
 
@@ -833,9 +853,25 @@ function copyReferralLink(){
   const input = document.getElementById("referral-link-input");
   if(!input) return;
   navigator.clipboard?.writeText(input.value) || (input.select(), document.execCommand("copy"));
-  const btn = document.querySelector(".referral-copy-btn");
+  const btn = document.getElementById("referral-copy-btn");
   btn.textContent = "Copied ✓"; btn.style.background = "var(--green-lo)"; btn.style.borderColor = "var(--green-mid)"; btn.style.color = "var(--green)";
   setTimeout(() => { btn.textContent = "Copy"; btn.style.background = ""; btn.style.borderColor = ""; btn.style.color = ""; }, 2000);
+}
+
+async function shareReferralLink(){
+  const input = document.getElementById("referral-link-input");
+  if(!input?.value) return;
+  try{
+    if(navigator.share){
+      await navigator.share({
+        title: "Try Inflaid",
+        text: "Use my Inflaid invite link. You get 2 bonus analyses when you sign up.",
+        url: input.value
+      });
+      return;
+    }
+    copyReferralLink();
+  }catch(e){}
 }
 
 function updateOutreachBadge(){
@@ -1045,7 +1081,12 @@ sb.auth.getSession().then(({ data }) => {
   const refCode = btoa(email);
   const refLink = `${window.location.origin}/auth.html?ref=${refCode}`;
   const refInput = document.getElementById("referral-link-input");
-  if(refInput){ refInput.value = refLink; document.getElementById("referral-box").style.display = "block"; }
+  if(refInput){
+    refInput.value = refLink;
+    document.getElementById("referral-box").style.display = "block";
+    const shareBtn = document.getElementById("referral-share-btn");
+    if(shareBtn && navigator.share) shareBtn.style.display = "";
+  }
 
   // Load real plan from Supabase
   sb.from("users").select("plan,analyses_used,analyses_limit").eq("email", email).then(({data}) => {
@@ -1403,10 +1444,10 @@ function setMobileNav(activeId){
 <script>
 function dismissOnboarding(){
   document.getElementById("ob-overlay").style.display="none";
-  localStorage.setItem("vettly_onboarded","1");
+  localStorage.setItem("inflaid_onboarded","1");
 }
 function maybeShowOnboarding(){
-  if(localStorage.getItem("vettly_onboarded"))return;
+  if(localStorage.getItem("inflaid_onboarded") || localStorage.getItem("vettly_onboarded"))return;
   if(apiResults.length===0){
     document.getElementById("ob-overlay").style.display="flex";
   }

@@ -27,7 +27,7 @@
 | Ödeme | Stripe | Canlı mod (LemonSqueezy'ye geçiş planlanıyor) |
 | AI | Anthropic Claude Haiku | Outreach mesajı üretimi |
 
-> **Not:** Railway ve Vercel projeleri ile GitHub repo'su hâlâ "vettly" adını taşıyor. Rename henüz yapılmadı.
+> **Not:** Runtime ve ürün içi metinlerde `Inflaid` kullanılıyor. Railway/Vercel/GitHub tarafındaki bazı teknik adlar ve URL'ler hâlâ `vettly` olarak duruyor.
 
 ---
 
@@ -154,7 +154,7 @@ STRIPE_GROWTH_PRICE
 STRIPE_PRO_PRICE
 APIFY_API_TOKEN
 ANTHROPIC_API_KEY
-FRONTEND_URL              # inflaid.com için güncellenmeli
+FRONTEND_URL              # ayarlandi: https://inflaid.com
 ```
 
 ---
@@ -213,7 +213,7 @@ FRONTEND_URL              # inflaid.com için güncellenmeli
 | label | text | |
 | result | jsonb | Tam ScoreResponse JSON |
 | created_at | timestamp | 7 günlük TTL |
-| user_email | text | **Henüz eklenmedi** (migration bekliyor) |
+| user_email | text | Eklendi ve yeni analizlerde doluyor |
 
 ### `campaigns`
 | Kolon | Tip | Not |
@@ -229,7 +229,7 @@ FRONTEND_URL              # inflaid.com için güncellenmeli
 | status | text | logged / completed |
 | created_at | timestamptz | |
 
-> **UYARI:** `campaigns` tablosu Supabase'de henüz oluşturulmadı. SQL `supabase_migrations.sql` dosyasında hazır, ancak Supabase SQL Editor'da koşturulması gerekiyor.
+> `campaigns` tablosu Supabase'de oluşturuldu ve aktif olarak kayıt alıyor.
 
 **RLS: tüm tablolarda devre dışı.** Backend service_role key kullanıyor.
 
@@ -237,24 +237,12 @@ FRONTEND_URL              # inflaid.com için güncellenmeli
 
 ## Bekleyen Kritik Görevler
 
-### 1. Supabase Migration Koşturulmalı (EN ACİL)
+### 1. Supabase Migration (TAMAMLANDI)
 
-`supabase_migrations.sql` dosyası iki şey yapıyor ama **henüz Supabase'e uygulanmadı:**
-
-```sql
--- 1. campaigns tablosunu oluştur
-CREATE TABLE IF NOT EXISTS campaigns ( ... );
-
--- 2. analyses tablosuna user_email kolonu ekle
-ALTER TABLE analyses ADD COLUMN IF NOT EXISTS user_email text;
-CREATE INDEX IF NOT EXISTS analyses_user_email_idx ON analyses (user_email);
-```
-
-**Nasıl koşturulur:** Supabase Dashboard → SQL Editor → dosyayı yapıştır → Run
-
-Bu yapılmadan:
-- Campaign Tracker backend kayıtları çalışmaz
-- Analiz geçmişi kullanıcıya göre güvenilir şekilde filtrelenemez
+`supabase_migrations.sql` Supabase üzerinde çalıştırıldı. Sonuç:
+- `campaigns` tablosu oluşturuldu
+- `analyses.user_email` kolonu eklendi
+- yeni analiz ve kampanya kayıtları veritabanına düzgün yazılıyor
 
 ### 2. Campaign Tracker Senkronu (KISMEN TAMAMLANDI)
 
@@ -264,11 +252,11 @@ Bu yapılmadan:
 - `DELETE /campaign/{id}` endpoint'i eklendi ve dashboard silme işlemi backend'e de yansıtılıyor
 - Unsynced local kayıtlar geçici `local-*` ID ile tutuluyor, backend başarılı dönerse gerçek Supabase ID'si ile değiştiriliyor
 
-Kalan kritik bağımlılık: Supabase migration çalıştırılmadığı sürece bu akış production'da tam çalışmaz çünkü `campaigns` tablosu henüz oluşturulmuş değil.
+Bu akış artık production'da çalışıyor; kampanya kayıtları Supabase'e yazılıyor ve dashboard ile senkron oluyor.
 
-### 3. FRONTEND_URL Ortam Değişkeni
+### 3. FRONTEND_URL ve Auth Redirect Ayarlari (TAMAMLANDI)
 
-Railway'deki `FRONTEND_URL` değişkeni `inflaid.com` için güncellenmeli. Stripe success/cancel redirect ve Supabase Auth redirect URL'leri de Supabase Dashboard'da güncellenmeli (Site URL + Redirect URLs).
+Railway'de `FRONTEND_URL=https://inflaid.com` olarak ayarlandi. Supabase Auth tarafinda `Site URL` ve gerekli redirect URL'ler de guncellendi.
 
 ### 4. OG Image (TAMAMLANDI)
 
@@ -277,6 +265,18 @@ Railway'deki `FRONTEND_URL` değişkeni `inflaid.com` için güncellenmeli. Stri
 ### 5. Legal Linkler (TAMAMLANDI)
 
 `index.html` footer'ında `Terms` ve `Privacy` linkleri mevcut. Ayrıca `auth.html` içindeki yasal metin de ayrı `/terms` ve `/privacy` sayfalarına güncellendi.
+
+---
+
+## Güncel Durum
+
+Proje şu an calisan bir launch-ready MVP asamasinda:
+- auth ve password reset akisi calisiyor
+- influencer analizi veritabanina kaydoluyor
+- campaign loglama Supabase'e yaziyor
+- Campaign Tracker dashboard ile backend senkronu calisiyor
+
+Kalan isler artik kritik blokaj degil; daha cok growth, polish ve yeni ozellik sinifinda.
 
 ---
 
@@ -296,16 +296,16 @@ Railway'deki `FRONTEND_URL` değişkeni `inflaid.com` için güncellenmeli. Stri
 
 ## Gelecek / Growth (Henüz Yapılmadı)
 
-- **LemonSqueezy geçişi** — KYC onayı bekleniyor. Onaylanınca `/create-checkout`, `/customer-portal`, `/webhook` endpoint'leri yeniden yazılacak.
-- **ROI kalibrasyon** — 50+ kampanya verisi birikince gerçek ROAS verisini skora besle
-- **Email hatırlatma** — Kampanya kaydından 7 gün sonra "nasıl gitti?" emaili
-- **Toplu analiz** — Pro plan özelliği (UI yok, backend yok)
-- **CSV export** — Pro plan özelliği (UI yok, backend yok)
-- **Team seats** — Pro plan özelliği (implement edilmedi)
-- **Fashion / food / fitness kategorileri** — `categories/config.py`'de placeholder var, sadece keyword lazım
-- **Admin panel** — Başarısız scrape'ler ve kullanım istatistikleri için görünürlük yok
-- **Gerçek testimonials** — Şu an landing page'deki testimonials mock data
-- **Infrastructure rename** — GitHub repo, Vercel project, Railway project hâlâ "vettly" adını taşıyor
+- **LemonSqueezy geçişi** — KYC onayı bekleniyor. Onaylanınca `/create-checkout`, `/customer-portal`, `/webhook` endpoint'leri yeniden yazılacak. Yani Stripe yerine yeni ödeme sağlayıcısına taşınacak.
+- **ROI kalibrasyon** — 50+ kampanya verisi birikince gerçek ROAS verisini skora besle. Yani skor formülü gerçek sonuçlara göre daha doğru hale getirilecek.
+- **Email hatırlatma** — Kampanya kaydından 7 gün sonra "nasıl gitti?" emaili. Yani kullanıcıdan kampanya sonucu toplamak için otomatik follow-up gönderilecek.
+- **Toplu analiz** — Pro plan özelliği (UI yok, backend yok). Yani tek tek handle girmek yerine aynı anda birden fazla influencer analiz edilebilecek.
+- **CSV export** — Pro plan özelliği (UI yok, backend yok). Yani kullanıcı analiz veya kampanya verilerini Excel/Sheets'e aktarmak için dışa aktarabilecek.
+- **Team seats** — Pro plan özelliği (implement edilmedi). Yani aynı hesap altında birden fazla ekip üyesi erişebilecek.
+- **Fashion / food / fitness kategorileri** — `categories/config.py`'de placeholder var, sadece keyword lazım. Yani beauty dışındaki sektörlere genişleme altyapısı kısmen hazır.
+- **Admin panel** — Başarısız scrape'ler ve kullanım istatistikleri için görünürlük yok. Yani içeride sistem sağlığını ve kullanıcı aktivitesini izlemek için yönetim ekranı eksik.
+- **Gerçek testimonials** — Şu an landing page'deki testimonials mock data. Yani müşteri geri bildirimi bölümü gerçek kullanıcı yorumlarıyla değiştirilmeli.
+- **Infrastructure rename** — Runtime içindeki ana marka izleri temizlendi; ancak GitHub repo, Vercel project, Railway project ve backend URL'si hâlâ "vettly" adını taşıyor. Yani dış servis isimlerinde eski marka izleri duruyor.
 
 ---
 
