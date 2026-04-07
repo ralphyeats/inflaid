@@ -127,7 +127,6 @@ class ScoreResponse(BaseModel):
 
 class CheckoutRequest(BaseModel):
     plan: str
-    user_email: str
 
 
 class ReferralRequest(BaseModel):
