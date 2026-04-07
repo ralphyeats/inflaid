@@ -345,6 +345,18 @@ body{background:
 .analysis-title{font-family:var(--syne);font-size:28px;line-height:1.05;letter-spacing:-.04em;color:var(--ink);margin-bottom:10px}
 .analysis-copy{font-size:14px;color:var(--ink2);line-height:1.6;max-width:320px;margin:0 auto 14px}
 .analysis-status{min-height:22px;font-size:12px;font-weight:600;color:var(--ink);letter-spacing:.01em}
+.checkout-overlay{position:fixed;inset:0;background:rgba(248,247,244,.78);backdrop-filter:blur(10px);z-index:260;display:flex;align-items:center;justify-content:center;padding:20px}
+.checkout-modal{width:100%;max-width:430px;background:rgba(255,255,255,.94);border:1px solid var(--b1);border-radius:24px;box-shadow:0 24px 80px rgba(24,20,16,.12);padding:28px 26px;text-align:center}
+.checkout-badge{display:inline-flex;align-items:center;gap:7px;background:var(--accent-lo);border:1px solid var(--accent-mid);color:var(--accent);border-radius:999px;padding:6px 12px;font-size:11px;font-weight:600;letter-spacing:.02em;margin-bottom:18px}
+.checkout-pulse{width:8px;height:8px;border-radius:50%;background:currentColor;animation:analysisPulse 1.2s ease-in-out infinite}
+.checkout-loader{position:relative;width:94px;height:94px;margin:0 auto 18px}
+.checkout-loader::before,.checkout-loader::after{content:"";position:absolute;inset:0;border-radius:50%}
+.checkout-loader::before{border:1px solid rgba(79,140,245,.18);box-shadow:inset 0 1px 10px rgba(255,255,255,.55)}
+.checkout-loader::after{inset:14px;border:2px solid rgba(59,110,245,.16);border-top-color:var(--accent);border-right-color:rgba(59,110,245,.4);animation:analysisSpin 1.2s linear infinite}
+.checkout-core{position:absolute;inset:32px;border-radius:50%;background:radial-gradient(circle at 30% 30%, rgba(79,140,245,.34), rgba(79,140,245,.08) 58%, rgba(79,140,245,0) 70%);border:1px solid rgba(79,140,245,.18)}
+.checkout-title{font-family:var(--syne);font-size:26px;line-height:1.06;letter-spacing:-.04em;color:var(--ink);margin-bottom:10px}
+.checkout-copy{font-size:14px;color:var(--ink2);line-height:1.6;max-width:320px;margin:0 auto 14px}
+.checkout-status{min-height:22px;font-size:12px;font-weight:600;color:var(--ink);letter-spacing:.01em}
 @keyframes analysisSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes analysisPulse{0%,100%{opacity:.45;transform:scale(.9)}50%{opacity:1;transform:scale(1.08)}}
 </style>
@@ -749,7 +761,20 @@ const ANALYSIS_MESSAGES = [
   "Estimating campaign fit...",
   "Building your ROI score..."
 ];
+const CHECKOUT_MESSAGES = [
+  "Preparing your secure checkout...",
+  "Loading your plan details...",
+  "Opening Lemon Squeezy...",
+  "Bringing your upgrade screen into view..."
+];
+const PORTAL_MESSAGES = [
+  "Preparing your subscription portal...",
+  "Loading your billing details...",
+  "Opening Lemon Squeezy...",
+  "Bringing your account settings into view..."
+];
 let analysisMessageTimer = null;
+let checkoutMessageTimer = null;
 
 function showAnalysisOverlay(){
   const overlay = document.getElementById("analysis-overlay");
@@ -769,6 +794,39 @@ function hideAnalysisOverlay(){
   if(analysisMessageTimer){
     clearInterval(analysisMessageTimer);
     analysisMessageTimer = null;
+  }
+  if(overlay) overlay.style.display = "none";
+}
+
+function showCheckoutOverlay(mode="checkout"){
+  const overlay = document.getElementById("checkout-overlay");
+  const badge = document.getElementById("checkout-badge-label");
+  const title = document.getElementById("checkout-title");
+  const copy = document.getElementById("checkout-copy");
+  const status = document.getElementById("checkout-status");
+  if(!overlay || !badge || !title || !copy || !status) return;
+  const isPortal = mode === "portal";
+  const messages = isPortal ? PORTAL_MESSAGES : CHECKOUT_MESSAGES;
+  badge.textContent = isPortal ? "Opening subscription portal" : "Opening checkout";
+  title.textContent = isPortal ? "Bringing your billing settings into view" : "Getting your upgrade screen ready";
+  copy.textContent = isPortal
+    ? "We are connecting your account with Lemon Squeezy so you can manage plan changes and billing in one place."
+    : "We are preparing a secure Lemon Squeezy checkout with your selected plan so you can upgrade without re-entering your details twice.";
+  let idx = 0;
+  status.textContent = messages[idx];
+  overlay.style.display = "flex";
+  if(checkoutMessageTimer) clearInterval(checkoutMessageTimer);
+  checkoutMessageTimer = setInterval(() => {
+    idx = (idx + 1) % messages.length;
+    status.textContent = messages[idx];
+  }, 1600);
+}
+
+function hideCheckoutOverlay(){
+  const overlay = document.getElementById("checkout-overlay");
+  if(checkoutMessageTimer){
+    clearInterval(checkoutMessageTimer);
+    checkoutMessageTimer = null;
   }
   if(overlay) overlay.style.display = "none";
 }
@@ -1347,6 +1405,7 @@ async function upgradePlan(plan) {
   if (!data.session) { window.location.href = "/auth.html"; return; }
   const token = data.session.access_token;
   setBtnBusy(upgradeBtn, "Opening checkout...");
+  showCheckoutOverlay("checkout");
   try {
     const res = await fetch(`${API}/create-checkout`, {
       method: "POST",
@@ -1356,6 +1415,7 @@ async function upgradePlan(plan) {
     const d = await res.json().catch(() => ({}));
     if (!res.ok) {
       showToast(d.detail || "Could not start checkout.", "error");
+      hideCheckoutOverlay();
       resetBtnBusy(upgradeBtn);
       return;
     }
@@ -1364,9 +1424,11 @@ async function upgradePlan(plan) {
       return;
     }
     showToast("Checkout link was not returned.", "error");
+    hideCheckoutOverlay();
     resetBtnBusy(upgradeBtn);
   } catch(e) {
     showToast("Payment error: " + e.message, "error");
+    hideCheckoutOverlay();
     resetBtnBusy(upgradeBtn);
   }
 }
@@ -1377,22 +1439,25 @@ async function manageSubscription() {
   if (!data.session) { window.location.href = "/auth.html"; return; }
   const token = data.session.access_token;
   setBtnBusy(manageBtn, "Opening portal...");
+  showCheckoutOverlay("portal");
   try {
     const res = await fetch(`${API}/customer-portal`, {
       method: "POST",
       headers: {"Authorization": `Bearer ${token}`}
     });
     const d = await res.json().catch(() => ({}));
-    if (res.status === 404) { showToast("No active subscription found.", "error"); resetBtnBusy(manageBtn); return; }
-    if (!res.ok) { showToast(d.detail || "Could not open customer portal.", "error"); resetBtnBusy(manageBtn); return; }
+    if (res.status === 404) { showToast("No active subscription found.", "error"); hideCheckoutOverlay(); resetBtnBusy(manageBtn); return; }
+    if (!res.ok) { showToast(d.detail || "Could not open customer portal.", "error"); hideCheckoutOverlay(); resetBtnBusy(manageBtn); return; }
     if (d.url) {
       window.location.href = d.url;
       return;
     }
     showToast("Customer portal link was not returned.", "error");
+    hideCheckoutOverlay();
     resetBtnBusy(manageBtn);
   } catch(e) {
     showToast("Error opening portal: " + e.message, "error");
+    hideCheckoutOverlay();
     resetBtnBusy(manageBtn);
   }
 }
@@ -1749,6 +1814,18 @@ function setMobileNav(activeId){
     <div class="analysis-title">Reading the signals behind the profile</div>
     <div class="analysis-copy">We are checking engagement quality, beauty niche fit, risk indicators, and campaign potential.</div>
     <div class="analysis-status" id="analysis-status">Reviewing profile quality...</div>
+  </div>
+</div>
+
+<div class="checkout-overlay" id="checkout-overlay" style="display:none">
+  <div class="checkout-modal">
+    <div class="checkout-badge"><span class="checkout-pulse"></span><span id="checkout-badge-label">Opening checkout</span></div>
+    <div class="checkout-loader" aria-hidden="true">
+      <div class="checkout-core"></div>
+    </div>
+    <div class="checkout-title" id="checkout-title">Getting your upgrade screen ready</div>
+    <div class="checkout-copy" id="checkout-copy">We are preparing a secure Lemon Squeezy checkout with your selected plan so you can upgrade without re-entering your details twice.</div>
+    <div class="checkout-status" id="checkout-status">Preparing your secure checkout...</div>
   </div>
 </div>
 <script>
