@@ -33,6 +33,7 @@ body{background:
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.spinner{width:12px;height:12px;border:1.5px solid currentColor;border-right-color:transparent;border-radius:50%;display:inline-block;animation:spin .8s linear infinite;vertical-align:-2px}
 .fadeup{animation:fadeUp .4s cubic-bezier(.22,1,.36,1) both}
 .d1{animation-delay:.05s}.d2{animation-delay:.10s}.d3{animation-delay:.15s}.d4{animation-delay:.20s}.d5{animation-delay:.25s}.d6{animation-delay:.30s}
 
@@ -869,6 +870,19 @@ function showToast(msg, type="info"){
   setTimeout(()=>t.remove(), 3500);
 }
 
+function setBtnBusy(btn, text){
+  if(!btn) return;
+  btn.disabled = true;
+  btn.dataset.prevHtml = btn.innerHTML;
+  btn.innerHTML = `<span class="spinner"></span> ${text}`;
+}
+
+function resetBtnBusy(btn){
+  if(!btn) return;
+  btn.disabled = false;
+  if(btn.dataset.prevHtml) btn.innerHTML = btn.dataset.prevHtml;
+}
+
 async function loadReferralStats(){
   try{
     const { data } = await sb.auth.getSession();
@@ -1328,33 +1342,59 @@ sb.auth.getSession().then(({ data }) => {
 });
 
 async function upgradePlan(plan) {
+  const upgradeBtn = document.getElementById("upgrade-btn");
   const { data } = await sb.auth.getSession();
   if (!data.session) { window.location.href = "/auth.html"; return; }
   const token = data.session.access_token;
+  setBtnBusy(upgradeBtn, "Opening checkout...");
   try {
     const res = await fetch(`${API}/create-checkout`, {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": `Bearer ${token}`},
       body: JSON.stringify({plan})
     });
-    const d = await res.json();
-    if (d.url) window.location.href = d.url;
-  } catch(e) { showToast("Payment error: " + e.message, "error"); }
+    const d = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      showToast(d.detail || "Could not start checkout.", "error");
+      resetBtnBusy(upgradeBtn);
+      return;
+    }
+    if (d.url) {
+      window.location.href = d.url;
+      return;
+    }
+    showToast("Checkout link was not returned.", "error");
+    resetBtnBusy(upgradeBtn);
+  } catch(e) {
+    showToast("Payment error: " + e.message, "error");
+    resetBtnBusy(upgradeBtn);
+  }
 }
 
 async function manageSubscription() {
+  const manageBtn = document.getElementById("manage-btn");
   const { data } = await sb.auth.getSession();
   if (!data.session) { window.location.href = "/auth.html"; return; }
   const token = data.session.access_token;
+  setBtnBusy(manageBtn, "Opening portal...");
   try {
     const res = await fetch(`${API}/customer-portal`, {
       method: "POST",
       headers: {"Authorization": `Bearer ${token}`}
     });
-    if (res.status === 404) { showToast("No active subscription found.", "error"); return; }
-    const d = await res.json();
-    if (d.url) window.location.href = d.url;
-  } catch(e) { showToast("Error opening portal: " + e.message, "error"); }
+    const d = await res.json().catch(() => ({}));
+    if (res.status === 404) { showToast("No active subscription found.", "error"); resetBtnBusy(manageBtn); return; }
+    if (!res.ok) { showToast(d.detail || "Could not open customer portal.", "error"); resetBtnBusy(manageBtn); return; }
+    if (d.url) {
+      window.location.href = d.url;
+      return;
+    }
+    showToast("Customer portal link was not returned.", "error");
+    resetBtnBusy(manageBtn);
+  } catch(e) {
+    showToast("Error opening portal: " + e.message, "error");
+    resetBtnBusy(manageBtn);
+  }
 }
 
 let _currentPlan = "free";

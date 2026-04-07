@@ -37,6 +37,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);min-height:10
 .btn-primary{width:100%;padding:12px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--syne);margin-top:8px;transition:background .15s;letter-spacing:-.01em}
 .btn-primary:hover{opacity:.9}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.spinner{width:12px;height:12px;border:1.5px solid currentColor;border-right-color:transparent;border-radius:50%;display:inline-block;animation:spin .8s linear infinite;vertical-align:-2px}
 .msg{font-size:13px;padding:10px 14px;border-radius:8px;margin-top:12px;display:none}
 .msg.error{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.18);color:var(--red)}
 .msg.success{background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.18);color:var(--green)}
@@ -189,25 +190,47 @@ function showPasswordUpdateForm() {
   document.getElementById("card-sub").textContent = "Choose a new password for your account.";
 }
 
+function setBtnBusy(btn, text) {
+  if (!btn) return;
+  btn.disabled = true;
+  btn.dataset.prevHtml = btn.innerHTML;
+  btn.innerHTML = `<span class="spinner"></span> ${text}`;
+}
+
+function resetBtnBusy(btn) {
+  if (!btn) return;
+  btn.disabled = false;
+  if (btn.dataset.prevHtml) btn.innerHTML = btn.dataset.prevHtml;
+}
+
 async function signIn() {
   const email = document.getElementById("signin-email").value.trim();
   const password = document.getElementById("signin-password").value;
   if (!email || !password) return showMsg("Please fill in all fields.", "error");
   const btn = event.target;
-  btn.disabled = true; btn.textContent = "Signing in...";
+  setBtnBusy(btn, "Signing in...");
   const { data: signInData, error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) { showMsg(error.message, "error"); btn.disabled = false; btn.textContent = "Sign in →"; }
+  if (error) { showMsg(error.message, "error"); resetBtnBusy(btn); }
   else {
     const params = new URLSearchParams(window.location.search);
     const plan = params.get("plan");
     if (plan) {
+      setBtnBusy(btn, "Opening checkout...");
       const token = signInData.session?.access_token;
       const res = await fetch(`${API}/create-checkout`, {
         method: "POST", headers: {"Content-Type":"application/json", "Authorization": `Bearer ${token}`},
         body: JSON.stringify({plan})
       });
-      const d = await res.json();
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        showMsg(d.detail || "Could not start checkout.", "error");
+        resetBtnBusy(btn);
+        return;
+      }
       if (d.url) { window.location.href = d.url; return; }
+      showMsg("Checkout link was not returned.", "error");
+      resetBtnBusy(btn);
+      return;
     }
     window.location.href = "/dashboard.html";
   }
