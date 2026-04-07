@@ -14,7 +14,7 @@
 | Backend | **FastAPI** (Python) — deployed on **Railway** |
 | Database / Auth | **Supabase** (PostgreSQL + Auth) |
 | Data Source | **Apify** (Instagram scraper — feed posts only) |
-| Payments | **Stripe** (switching to LemonSqueezy — KYC pending) |
+| Payments | **Lemon Squeezy** |
 | AI Outreach | **Anthropic Claude Haiku** |
 | Version Control | GitHub (`ralphyeats/vettly`) |
 
@@ -65,9 +65,9 @@ All protected endpoints require `Authorization: Bearer <token>` header. Token is
 |---|---|---|---|
 | POST | `/score` | ✅ | Analyze an Instagram handle |
 | POST | `/outreach` | ✅ | Generate AI outreach message (Claude Haiku) |
-| POST | `/create-checkout` | ✅ | Create Stripe checkout session |
-| POST | `/customer-portal` | ✅ | Open Stripe billing portal |
-| POST | `/webhook` | Stripe sig | Handle Stripe payment events |
+| POST | `/create-checkout` | ✅ | Create Lemon Squeezy checkout |
+| POST | `/customer-portal` | ✅ | Open Lemon Squeezy customer portal |
+| POST | `/webhook` | Lemon sig | Handle Lemon Squeezy payment events |
 | POST | `/campaign/create` | ✅ | Log a new campaign (spend tier + outcome) |
 | GET | `/campaigns` | ✅ | List user's logged campaigns |
 | POST | `/campaign/{id}/result` | ✅ | Update campaign with orders/notes |
@@ -142,11 +142,12 @@ All protected endpoints require `Authorization: Bearer <token>` header. Token is
 ```
 SUPABASE_URL
 SUPABASE_KEY              # service_role key
-STRIPE_SECRET_KEY
-STRIPE_WEBHOOK_SECRET
-STRIPE_STARTER_PRICE
-STRIPE_GROWTH_PRICE
-STRIPE_PRO_PRICE
+LEMONSQUEEZY_API_KEY
+LEMONSQUEEZY_WEBHOOK_SECRET
+LEMONSQUEEZY_STORE_ID
+LEMONSQUEEZY_STARTER_VARIANT
+LEMONSQUEEZY_GROWTH_VARIANT
+LEMONSQUEEZY_PRO_VARIANT
 APIFY_API_TOKEN
 ANTHROPIC_API_KEY
 FRONTEND_URL              # update after domain purchase
@@ -260,12 +261,12 @@ When enough campaign data exists (target: 50+ campaigns):
 
 ## Payments
 
-Currently **Stripe** (test/live mode). Switching to **LemonSqueezy** when KYC approved (no registered company required — Merchant of Record model).
+Currently **Lemon Squeezy**.
 
-**Stripe flow:**
+**Lemon Squeezy flow:**
 1. User clicks upgrade → `POST /create-checkout` with plan + JWT
-2. Backend creates Stripe Checkout Session
-3. User pays → `checkout.session.completed` webhook
+2. Backend creates Lemon Squeezy checkout URL
+3. User pays → Lemon Squeezy webhook fires
 4. Backend updates `users` table: plan + analyses_limit
 5. Redirect to `/dashboard.html?upgraded=1`
 
@@ -287,7 +288,7 @@ Currently **Stripe** (test/live mode). Switching to **LemonSqueezy** when KYC ap
 
 ### Blocking (must fix before launch)
 - [ ] **Domain** — still on `vettly-eight.vercel.app` / `vettly-production-63d5.up.railway.app`. After purchase: update `FRONTEND_URL` in Railway + Supabase Auth URLs (Site URL + Redirect URLs)
-- [ ] **LemonSqueezy** — blocked on KYC. Will replace `/create-checkout`, `/customer-portal`, `/webhook`
+- [x] **LemonSqueezy** — checkout, portal, webhook flow moved off Stripe
 - [ ] **`campaigns` Supabase table** — must be created manually (SQL in this file above)
 - [ ] **Rename infrastructure** — repo name, Vercel project, Railway project still say "vettly"
 

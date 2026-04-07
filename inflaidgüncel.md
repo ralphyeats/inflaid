@@ -24,7 +24,7 @@
 | Backend | Railway | https://vettly-production-63d5.up.railway.app |
 | Veritabanı | Supabase | `qpfjxbsvymlrbeoqwqmr.supabase.co` |
 | Auth | Supabase Auth | Email/password |
-| Ödeme | Stripe | Canlı mod (LemonSqueezy'ye geçiş planlanıyor) |
+| Ödeme | Lemon Squeezy | Checkout + portal + webhook akışı bağlandı |
 | AI | Anthropic Claude Haiku | Outreach mesajı üretimi |
 
 > **Not:** Runtime ve ürün içi metinlerde `Inflaid` kullanılıyor. Railway/Vercel/GitHub tarafındaki bazı teknik adlar ve URL'ler hâlâ `vettly` olarak duruyor.
@@ -77,9 +77,9 @@ vettly/
 |--------|------|------|----------|
 | POST | `/score` | JWT | Instagram handle analiz et |
 | POST | `/outreach` | JWT | AI outreach mesajı üret (Claude Haiku) |
-| POST | `/create-checkout` | JWT | Stripe checkout oturumu başlat |
-| POST | `/customer-portal` | JWT | Stripe fatura portalı aç |
-| POST | `/webhook` | Stripe sig | Stripe ödeme olaylarını işle |
+| POST | `/create-checkout` | JWT | Lemon Squeezy checkout oturumu başlat |
+| POST | `/customer-portal` | JWT | Lemon Squeezy müşteri portalını aç |
+| POST | `/webhook` | Lemon sig | Lemon Squeezy ödeme olaylarını işle |
 | POST | `/campaign/create` | JWT | Yeni kampanya kaydet |
 | GET | `/campaigns` | JWT | Kullanıcının kampanyalarını listele |
 | POST | `/campaign/{id}/result` | JWT | Kampanya sonucunu güncelle |
@@ -147,11 +147,12 @@ vettly/
 ```
 SUPABASE_URL
 SUPABASE_KEY              # service_role key
-STRIPE_SECRET_KEY
-STRIPE_WEBHOOK_SECRET
-STRIPE_STARTER_PRICE
-STRIPE_GROWTH_PRICE
-STRIPE_PRO_PRICE
+LEMONSQUEEZY_API_KEY
+LEMONSQUEEZY_WEBHOOK_SECRET
+LEMONSQUEEZY_STORE_ID
+LEMONSQUEEZY_STARTER_VARIANT
+LEMONSQUEEZY_GROWTH_VARIANT
+LEMONSQUEEZY_PRO_VARIANT
 APIFY_API_TOKEN
 ANTHROPIC_API_KEY
 FRONTEND_URL              # ayarlandi: https://inflaid.com
@@ -296,7 +297,7 @@ Kalan isler artik kritik blokaj degil; daha cok growth, polish ve yeni ozellik s
 
 ## Gelecek / Growth (Henüz Yapılmadı)
 
-- **LemonSqueezy geçişi** — KYC onayı bekleniyor. Onaylanınca `/create-checkout`, `/customer-portal`, `/webhook` endpoint'leri yeniden yazılacak. Yani Stripe yerine yeni ödeme sağlayıcısına taşınacak.
+- **Lemon Squeezy geçişi tamamlandı** — `/create-checkout`, `/customer-portal`, `/webhook` akışı Stripe yerine Lemon Squeezy ile çalışıyor.
 - **ROI kalibrasyon** — 50+ kampanya verisi birikince gerçek ROAS verisini skora besle. Yani skor formülü gerçek sonuçlara göre daha doğru hale getirilecek.
 - **Email hatırlatma** — Kampanya kaydından 7 gün sonra "nasıl gitti?" emaili. Yani kullanıcıdan kampanya sonucu toplamak için otomatik follow-up gönderilecek.
 - **Toplu analiz** — Pro plan özelliği (UI yok, backend yok). Yani tek tek handle girmek yerine aynı anda birden fazla influencer analiz edilebilecek.
@@ -304,7 +305,7 @@ Kalan isler artik kritik blokaj degil; daha cok growth, polish ve yeni ozellik s
 - **Team seats** — Pro plan özelliği (implement edilmedi). Yani aynı hesap altında birden fazla ekip üyesi erişebilecek.
 - **Fashion / food / fitness kategorileri** — `categories/config.py`'de placeholder var, sadece keyword lazım. Yani beauty dışındaki sektörlere genişleme altyapısı kısmen hazır.
 - **Admin panel** — Başarısız scrape'ler ve kullanım istatistikleri için görünürlük yok. Yani içeride sistem sağlığını ve kullanıcı aktivitesini izlemek için yönetim ekranı eksik.
-- **Gerçek testimonials** — Şu an landing page'deki testimonials mock data. Yani müşteri geri bildirimi bölümü gerçek kullanıcı yorumlarıyla değiştirilmeli.
+- **Gerçek testimonials** — Şu an landing page'de kimliksiz proof/quote copy kullanılıyor. Yani doğrulanabilir gerçek müşteri geri bildirimi gelirse o bölüm güçlendirilebilir.
 - **Infrastructure rename** — Runtime içindeki ana marka izleri temizlendi; ancak GitHub repo, Vercel project, Railway project ve backend URL'si hâlâ "vettly" adını taşıyor. Yani dış servis isimlerinde eski marka izleri duruyor.
 
 ---
@@ -321,7 +322,7 @@ Backend'de `/referral/apply` endpoint'i var. `btoa(referrer_email)` formatında 
 
 **GitHub:** `https://github.com/ralphyeats/vettly`
 
-**Stripe plan price ID env variable isimleri:**
-- `STRIPE_STARTER_PRICE` → $19/ay
-- `STRIPE_GROWTH_PRICE` → $49/ay
-- `STRIPE_PRO_PRICE` → $99/ay
+**Lemon Squeezy env variable isimleri:**
+- `LEMONSQUEEZY_STARTER_VARIANT` → Starter varyant ID
+- `LEMONSQUEEZY_GROWTH_VARIANT` → Growth varyant ID
+- `LEMONSQUEEZY_PRO_VARIANT` → Pro varyant ID

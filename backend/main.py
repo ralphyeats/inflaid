@@ -1,6 +1,11 @@
 import os
-import stripe
 import anthropic
+import hashlib
+import hmac
+import json
+from urllib import error as urlerror
+from urllib import parse as urlparse
+from urllib import request as urlrequest
 from typing import Optional
 from fastapi import FastAPI, HTTPException, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
@@ -48,13 +53,15 @@ def verify_token(authorization: str) -> str:
         raise
     except Exception:
         raise HTTPException(status_code=401, detail="auth_required")
-PLAN_PRICE_IDS = {
-    "starter": os.getenv("STRIPE_STARTER_PRICE"),
-    "growth":  os.getenv("STRIPE_GROWTH_PRICE"),
-    "pro":     os.getenv("STRIPE_PRO_PRICE"),
+PLAN_VARIANT_IDS = {
+    "starter": os.getenv("LEMONSQUEEZY_STARTER_VARIANT"),
+    "growth":  os.getenv("LEMONSQUEEZY_GROWTH_VARIANT"),
+    "pro":     os.getenv("LEMONSQUEEZY_PRO_VARIANT"),
 }
-
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+LEMONSQUEEZY_API_KEY = os.getenv("LEMONSQUEEZY_API_KEY")
+LEMONSQUEEZY_STORE_ID = os.getenv("LEMONSQUEEZY_STORE_ID")
+LEMONSQUEEZY_WEBHOOK_SECRET = os.getenv("LEMONSQUEEZY_WEBHOOK_SECRET")
+LEMONSQUEEZY_API_BASE = "https://api.lemonsqueezy.com/v1"
 
 
 class ScoreRequest(BaseModel):
@@ -152,6 +159,43 @@ def increment_usage(sb, email):
     u = sb.table("users").select("analyses_used").eq("email", email).execute()
     if u.data:
         sb.table("users").update({"analyses_used": u.data[0]["analyses_used"] + 1}).eq("email", email).execute()
+
+
+def lemon_headers():
+    if not LEMONSQUEEZY_API_KEY:
+        raise HTTPException(status_code=503, detail="billing_unavailable")
+    return {
+        "Accept": "application/vnd.api+json",
+        "Content-Type": "application/vnd.api+json",
+        "Authorization": f"Bearer {LEMONSQUEEZY_API_KEY}",
+    }
+
+
+def lemon_request(method: str, path: str, payload: Optional[dict] = None, query: Optional[dict] = None):
+    url = f"{LEMONSQUEEZY_API_BASE}{path}"
+    if query:
+        url = f"{url}?{urlparse.urlencode(query)}"
+    body = json.dumps(payload).encode("utf-8") if payload is not None else None
+    req = urlrequest.Request(url, data=body, headers=lemon_headers(), method=method.upper())
+    try:
+        with urlrequest.urlopen(req, timeout=20) as resp:
+            raw = resp.read().decode("utf-8")
+            return json.loads(raw) if raw else {}
+    except urlerror.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="ignore")
+        raise HTTPException(status_code=exc.code, detail=detail or "billing_error")
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"billing_error:{exc}")
+
+
+def plan_from_variant(variant_id) -> Optional[str]:
+    variant_id = str(variant_id) if variant_id is not None else None
+    for plan, configured_variant_id in PLAN_VARIANT_IDS.items():
+        if configured_variant_id and str(configured_variant_id) == variant_id:
+            return plan
+    return None
 
 
 class OutreachRequest(BaseModel):
@@ -357,32 +401,68 @@ def public_profile(handle: str):
 @app.post("/create-checkout")
 def create_checkout(req: CheckoutRequest, authorization: str = Header(default=None)):
     email = verify_token(authorization)
-    price_id = PLAN_PRICE_IDS.get(req.plan)
-    if not price_id:
+    variant_id = PLAN_VARIANT_IDS.get(req.plan)
+    if not variant_id or not LEMONSQUEEZY_STORE_ID:
         raise HTTPException(status_code=400, detail=f"Invalid plan: {req.plan}")
-    session = stripe.checkout.Session.create(
-        payment_method_types=["card"],
-        mode="subscription",
-        line_items=[{"price": price_id, "quantity": 1}],
-        customer_email=email,
-        metadata={"plan": req.plan},
-        success_url=f"{FRONTEND_URL}/dashboard.html?upgraded=1",
-        cancel_url=f"{FRONTEND_URL}/dashboard.html",
+    checkout = lemon_request(
+        "POST",
+        "/checkouts",
+        payload={
+            "data": {
+                "type": "checkouts",
+                "attributes": {
+                    "product_options": {
+                        "redirect_url": f"{FRONTEND_URL}/dashboard.html?upgraded=1",
+                        "enabled_variants": [int(variant_id)],
+                    },
+                    "checkout_options": {
+                        "embed": False,
+                        "media": False,
+                        "logo": True,
+                    },
+                    "checkout_data": {
+                        "email": email,
+                        "custom": {
+                            "user_email": email,
+                            "plan": req.plan,
+                        },
+                    },
+                },
+                "relationships": {
+                    "store": {"data": {"type": "stores", "id": str(LEMONSQUEEZY_STORE_ID)}},
+                    "variant": {"data": {"type": "variants", "id": str(variant_id)}},
+                },
+            }
+        },
     )
-    return {"url": session.url}
+    url = ((checkout.get("data") or {}).get("attributes") or {}).get("url")
+    if not url:
+        raise HTTPException(status_code=502, detail="billing_error:no_checkout_url")
+    return {"url": url}
 
 
 @app.post("/customer-portal")
 def customer_portal(authorization: str = Header(default=None)):
     email = verify_token(authorization)
-    customers = stripe.Customer.list(email=email, limit=1)
-    if not customers.data:
-        raise HTTPException(status_code=404, detail="no_subscription")
-    portal = stripe.billing_portal.Session.create(
-        customer=customers.data[0].id,
-        return_url=f"{FRONTEND_URL}/dashboard.html",
+    if not LEMONSQUEEZY_STORE_ID:
+        raise HTTPException(status_code=503, detail="billing_unavailable")
+    customers = lemon_request(
+        "GET",
+        "/customers",
+        query={
+            "filter[store_id]": LEMONSQUEEZY_STORE_ID,
+            "filter[email]": email,
+        },
     )
-    return {"url": portal.url}
+    rows = customers.get("data") or []
+    if not rows:
+        raise HTTPException(status_code=404, detail="no_subscription")
+    customer_id = rows[0]["id"]
+    customer = lemon_request("GET", f"/customers/{customer_id}")
+    url = (((customer.get("data") or {}).get("attributes") or {}).get("urls") or {}).get("customer_portal")
+    if not url:
+        raise HTTPException(status_code=404, detail="no_subscription")
+    return {"url": url}
 
 
 @app.post("/score", response_model=ScoreResponse)
@@ -469,27 +549,45 @@ def score(req: ScoreRequest, authorization: str = Header(default=None)):
 @app.post("/webhook")
 async def webhook(request: Request):
     payload = await request.body()
-    sig_header = request.headers.get("stripe-signature")
-    webhook_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
+    signature = request.headers.get("X-Signature", "")
+    if not LEMONSQUEEZY_WEBHOOK_SECRET:
+        raise HTTPException(status_code=503, detail="billing_unavailable")
 
-    try:
-        event = stripe.Webhook.construct_event(payload, sig_header, webhook_secret)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    digest = hmac.new(
+        LEMONSQUEEZY_WEBHOOK_SECRET.encode("utf-8"),
+        payload,
+        hashlib.sha256,
+    ).hexdigest()
+    if not signature or not hmac.compare_digest(digest, signature):
+        raise HTTPException(status_code=400, detail="invalid_signature")
 
-    if event["type"] == "checkout.session.completed":
-        session = event["data"]["object"]
-        email = session.get("customer_email")
-        plan = session.get("metadata", {}).get("plan", "starter")
-        limit = PLAN_LIMITS.get(plan, 20)
+    event = json.loads(payload.decode("utf-8"))
+    event_name = (event.get("meta") or {}).get("event_name") or request.headers.get("X-Event-Name", "")
+    data = event.get("data") or {}
+    attrs = data.get("attributes") or {}
+    custom = (event.get("meta") or {}).get("custom_data") or {}
 
-        from auth import get_supabase
-        sb = get_supabase()
-        if sb and email:
+    email = custom.get("user_email") or attrs.get("user_email")
+    variant_id = attrs.get("variant_id")
+    plan = custom.get("plan") or plan_from_variant(variant_id)
+
+    from auth import get_supabase
+    sb = get_supabase()
+    if sb and email and plan in PLAN_LIMITS:
+        if event_name in {"subscription_created", "subscription_updated", "subscription_resumed", "subscription_unpaused", "subscription_plan_changed", "order_created"}:
             sb.table("users").upsert({
                 "email": email,
                 "plan": plan,
-                "analyses_limit": limit
+                "analyses_limit": PLAN_LIMITS[plan],
+            }, on_conflict="email").execute()
+        elif event_name in {"subscription_cancelled", "subscription_expired"}:
+            current = get_user_usage(sb, email)
+            used = current["analyses_used"] if current else 0
+            sb.table("users").upsert({
+                "email": email,
+                "plan": "free",
+                "analyses_used": used,
+                "analyses_limit": PLAN_LIMITS["free"],
             }, on_conflict="email").execute()
 
     return {"status": "ok"}
