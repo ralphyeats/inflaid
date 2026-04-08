@@ -197,6 +197,65 @@ def plan_from_variant(variant_id) -> Optional[str]:
     return None
 
 
+def effective_limit_for_plan(current_user: Optional[dict], next_plan: str) -> int:
+    current_plan = (current_user or {}).get("plan") or "free"
+    current_limit = int((current_user or {}).get("analyses_limit") or PLAN_LIMITS.get(current_plan, PLAN_LIMITS["free"]))
+    base_current_limit = PLAN_LIMITS.get(current_plan, PLAN_LIMITS["free"])
+    bonus_extra = max(0, current_limit - base_current_limit)
+    return PLAN_LIMITS[next_plan] + bonus_extra
+
+
+def sync_user_billing_state(sb, email: str) -> dict:
+    current = get_user_usage(sb, email)
+    if not current:
+        current = {
+            "email": email,
+            "plan": "free",
+            "analyses_used": 0,
+            "analyses_limit": PLAN_LIMITS["free"],
+        }
+        sb.table("users").upsert(current, on_conflict="email").execute()
+
+    if not LEMONSQUEEZY_STORE_ID or not LEMONSQUEEZY_API_KEY:
+        return current
+
+    subscriptions = lemon_request(
+        "GET",
+        "/subscriptions",
+        query={
+            "filter[store_id]": LEMONSQUEEZY_STORE_ID,
+            "filter[user_email]": email,
+        },
+    )
+    rows = subscriptions.get("data") or []
+    paid_statuses = {"on_trial", "active", "paused", "past_due", "unpaid", "cancelled"}
+    active_plan = None
+    for row in rows:
+        attrs = row.get("attributes") or {}
+        if attrs.get("status") not in paid_statuses:
+            continue
+        plan = plan_from_variant(attrs.get("variant_id"))
+        if plan:
+            active_plan = plan
+            break
+
+    desired_plan = active_plan or ("free" if current.get("plan") not in {"free", "trial"} else current.get("plan") or "free")
+    desired_limit = effective_limit_for_plan(current, desired_plan)
+    used = int(current.get("analyses_used") or 0)
+
+    if current.get("plan") != desired_plan or int(current.get("analyses_limit") or 0) != desired_limit:
+        payload = {
+            "email": email,
+            "plan": desired_plan,
+            "analyses_used": used,
+            "analyses_limit": desired_limit,
+        }
+        sb.table("users").upsert(payload, on_conflict="email").execute()
+        current = payload
+
+    return current
+
+
 class OutreachRequest(BaseModel):
     handle: str
     name: Optional[str] = None
@@ -454,6 +513,23 @@ def customer_portal(authorization: str = Header(default=None)):
     return {"url": url}
 
 
+@app.get("/billing/status")
+def billing_status(authorization: str = Header(default=None)):
+    email = verify_token(authorization)
+    from auth import get_supabase
+
+    sb = get_supabase()
+    if not sb:
+        raise HTTPException(status_code=503, detail="DB unavailable")
+
+    current = sync_user_billing_state(sb, email)
+    return {
+        "plan": current.get("plan") or "free",
+        "analyses_used": int(current.get("analyses_used") or 0),
+        "analyses_limit": int(current.get("analyses_limit") or PLAN_LIMITS["free"]),
+    }
+
+
 @app.post("/score", response_model=ScoreResponse)
 def score(req: ScoreRequest, authorization: str = Header(default=None)):
     from auth import get_cached, save_analysis, get_supabase
@@ -564,10 +640,11 @@ async def webhook(request: Request):
     sb = get_supabase()
     if sb and email and plan in PLAN_LIMITS:
         if event_name in {"subscription_created", "subscription_updated", "subscription_resumed", "subscription_unpaused", "subscription_plan_changed", "order_created"}:
+            current = get_user_usage(sb, email)
             sb.table("users").upsert({
                 "email": email,
                 "plan": plan,
-                "analyses_limit": PLAN_LIMITS[plan],
+                "analyses_limit": effective_limit_for_plan(current, plan),
             }, on_conflict="email").execute()
         elif event_name in {"subscription_cancelled", "subscription_expired"}:
             current = get_user_usage(sb, email)
@@ -576,7 +653,7 @@ async def webhook(request: Request):
                 "email": email,
                 "plan": "free",
                 "analyses_used": used,
-                "analyses_limit": PLAN_LIMITS["free"],
+                "analyses_limit": effective_limit_for_plan(current, "free"),
             }, on_conflict="email").execute()
 
     return {"status": "ok"}

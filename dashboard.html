@@ -1323,6 +1323,32 @@ const APP_ORIGIN = (window.location.hostname === "localhost" || window.location.
   ? window.location.origin
   : "https://inflaid.com";
 
+function applyUsageState(u){
+  if(!u) return;
+  _currentPlan = u.plan || "free";
+  const planName = _currentPlan.charAt(0).toUpperCase() + _currentPlan.slice(1) + " plan";
+  const used = Number(u.analyses_used || 0);
+  const limit = Number(u.analyses_limit || 0);
+  const remaining = limit > 0 ? Math.max(0, limit - used) : "∞";
+  const pct = limit > 0 ? Math.min(100, (used / limit) * 100) : 100;
+  document.getElementById("usage-plan").textContent = planName;
+  document.getElementById("usage-count").textContent = used + "/" + (limit || "∞");
+  document.getElementById("usage-fill").style.width = pct + "%";
+  document.getElementById("usage-fill").style.background = pct >= 90 ? "var(--red)" : pct >= 70 ? "var(--amber)" : "var(--accent)";
+  document.getElementById("usage-remaining").textContent = limit > 0 ? remaining + " analyses remaining" : "Unlimited analyses";
+  document.getElementById("user-plan").textContent = planName;
+  const upgradeBtn = document.getElementById("upgrade-btn");
+  const manageBtn = document.getElementById("manage-btn");
+  if (_currentPlan === "pro" || _currentPlan === "growth") {
+    upgradeBtn.style.display = "none";
+  } else {
+    const NEXT = { free:"Starter", trial:"Starter", starter:"Growth" };
+    upgradeBtn.textContent = `Upgrade to ${NEXT[_currentPlan] || "Growth"} →`;
+    upgradeBtn.style.display = "block";
+  }
+  manageBtn.style.display = (_currentPlan !== "free" && _currentPlan !== "trial") ? "block" : "none";
+}
+
 sb.auth.getSession().then(({ data }) => {
   if (!data.session) {
     window.location.href = "/auth.html";
@@ -1360,35 +1386,20 @@ sb.auth.getSession().then(({ data }) => {
     if(shareBtn && navigator.share) shareBtn.style.display = "";
   }
 
-  // Load real plan from Supabase
-  sb.from("users").select("plan,analyses_used,analyses_limit").eq("email", email).then(({data}) => {
-    if (data && data[0]) {
-      const u = data[0];
-      const PLAN_LIMITS = { free: 2, trial: 2, starter: 20, growth: 75, pro: 200 };
-      _currentPlan = u.plan;
-      const planName = u.plan.charAt(0).toUpperCase() + u.plan.slice(1) + " plan";
-      const remaining = u.analyses_limit > 0 ? u.analyses_limit - u.analyses_used : "∞";
-      const pct = u.analyses_limit > 0 ? Math.min(100, (u.analyses_used / u.analyses_limit) * 100) : 100;
-      document.getElementById("usage-plan").textContent = planName;
-      document.getElementById("usage-count").textContent = u.analyses_used + "/" + (u.analyses_limit || "∞");
-      document.getElementById("usage-fill").style.width = pct + "%";
-      document.getElementById("usage-fill").style.background = pct >= 90 ? "var(--red)" : pct >= 70 ? "var(--amber)" : "var(--accent)";
-      document.getElementById("usage-remaining").textContent = u.analyses_limit > 0 ? remaining + " analyses remaining" : "Unlimited analyses";
-      document.getElementById("user-plan").textContent = planName;
-      const upgradeBtn = document.getElementById("upgrade-btn");
-      const manageBtn = document.getElementById("manage-btn");
-      if (u.plan === "pro" || u.plan === "growth") {
-        upgradeBtn.style.display = "none";
-      } else {
-        const NEXT = { free:"Starter", trial:"Starter", starter:"Growth" };
-        upgradeBtn.textContent = `Upgrade to ${NEXT[u.plan] || "Growth"} →`;
-        upgradeBtn.style.display = "block";
-      }
-      if (u.plan !== "free" && u.plan !== "trial") {
-        manageBtn.style.display = "block";
-      }
-    }
-  });
+  // Sync billing state against Lemon first, then render usage
+  fetch(`${API}/billing/status`, {
+    headers: { "Authorization": `Bearer ${data.session.access_token}` }
+  })
+    .then(async (res) => {
+      if(!res.ok) throw new Error("billing_sync_failed");
+      return res.json();
+    })
+    .then(applyUsageState)
+    .catch(() => {
+      sb.from("users").select("plan,analyses_used,analyses_limit").eq("email", email).then(({data}) => {
+        if (data && data[0]) applyUsageState(data[0]);
+      });
+    });
 
   // Show upgrade success message
   const params = new URLSearchParams(window.location.search);
