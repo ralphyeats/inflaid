@@ -412,19 +412,9 @@ def create_checkout(req: CheckoutRequest, authorization: str = Header(default=No
                 "attributes": {
                     "product_options": {
                         "redirect_url": f"{FRONTEND_URL}/dashboard.html?upgraded=1",
-                        "enabled_variants": [int(variant_id)],
-                    },
-                    "checkout_options": {
-                        "embed": False,
-                        "media": False,
-                        "logo": True,
                     },
                     "checkout_data": {
                         "email": email,
-                        "custom": {
-                            "user_email": email,
-                            "plan": req.plan,
-                        },
                     },
                 },
                 "relationships": {
