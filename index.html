@@ -3,2431 +3,650 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inflaid — Stop guessing which influencer will convert</title>
-<meta name="description" content="Inflaid gives beauty brands a clear decision on any Instagram influencer — Gift, Paid, or Avoid — with ROI estimate and ready-to-send outreach. Stop wasting budget on the wrong creators.">
-<meta property="og:title" content="Inflaid — Stop guessing which influencer will convert">
-<meta property="og:description" content="Clear influencer decisions for beauty brands. Know who converts before you spend a dollar.">
+<title>Inflaid - Creator decisions before budget moves</title>
+<meta name="description" content="Inflaid helps beauty brands decide who to gift, who to pay, and who to avoid before influencer budget leaves the account.">
+<meta property="og:title" content="Inflaid - Creator decisions before budget moves">
+<meta property="og:description" content="A creator decision system for beauty brands. Score fit, pressure-test risk, and track what actually converts.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://inflaid.com/">
 <meta property="og:image" content="https://inflaid.com/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Inflaid — Stop guessing which influencer will convert">
-<meta name="twitter:description" content="Clear influencer decisions for beauty brands. Know who converts before you spend a dollar.">
+<meta name="twitter:title" content="Inflaid - Creator decisions before budget moves">
+<meta name="twitter:description" content="Know who deserves creator budget before outreach starts.">
 <meta name="twitter:image" content="https://inflaid.com/og-image.png">
 <link rel="canonical" href="https://inflaid.com/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #F8F7F4;
-  --surface: #FFFFFF;
-  --surface2: #F3F1EE;
-  --border: #E4E0D9;
-  --border2: #EDE9E3;
-  --text: #1A1714;
-  --text2: #6B6360;
-  --text3: #A09C97;
-  --accent: #3B6EF5;
-  --accent-lo: rgba(59,110,245,.08);
-  --accent-mid: rgba(59,110,245,.18);
-  --green: #16A34A;
-  --green-lo: rgba(22,163,74,.08);
-  --green-mid: rgba(22,163,74,.2);
-  --amber: #D97706;
-  --amber-lo: rgba(217,119,6,.08);
-  --red: #DC2626;
-  --red-lo: rgba(220,38,38,.08);
-  --sans: 'DM Sans', -apple-system, sans-serif;
-  --display: 'Bricolage Grotesque', sans-serif;
-  --shadow: 0 1px 3px rgba(0,0,0,.05), 0 8px 32px rgba(0,0,0,.07);
-  --shadow-lg: 0 2px 8px rgba(0,0,0,.05), 0 24px 64px rgba(0,0,0,.1);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  font-size: 15px;
-  line-height: 1.6;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-/* ── ANIMATIONS ── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-10px); }
-}
-@keyframes floatSlow {
-  0%, 100% { transform: translateY(0px) rotate(-1deg); }
-  50%       { transform: translateY(-6px) rotate(1deg); }
-}
-@keyframes pulse {
-  0%, 100% { opacity: .5; transform: scale(1); }
-  50%       { opacity: 1; transform: scale(1.15); }
-}
-@keyframes barIn {
-  from { width: 0 !important; }
-}
-@keyframes countUp {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes scanLine {
-  0%   { top: 0; opacity: 0; }
-  10%  { opacity: .6; }
-  90%  { opacity: .6; }
-  100% { top: 100%; opacity: 0; }
-}
-@keyframes typing {
-  from { width: 0; }
-  to   { width: 100%; }
-}
-@keyframes blink {
-  50% { border-color: transparent; }
-}
-
-.reveal {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity .65s cubic-bezier(.22,1,.36,1), transform .65s cubic-bezier(.22,1,.36,1);
-}
-.reveal.in { opacity: 1; transform: none; }
-.reveal-d1 { transition-delay: .08s; }
-.reveal-d2 { transition-delay: .16s; }
-.reveal-d3 { transition-delay: .24s; }
-.reveal-d4 { transition-delay: .32s; }
-
-/* ── NAV ── */
-nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  height: 62px;
-  display: flex;
-  align-items: center;
-  padding: 0 48px;
-  background: rgba(248,247,244,.9);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border2);
-}
-.nav-logo {
-  display: flex; align-items: center; gap: 9px;
-  text-decoration: none; flex-shrink: 0;
-}
-.nav-mark {
-  width: 30px; height: 30px;
-  background: var(--text);
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-}
-.nav-mark svg { display: block; }
-.nav-brand {
-  font-family: var(--display);
-  font-size: 17px; font-weight: 700;
-  color: var(--text); letter-spacing: -.025em;
-}
-.nav-links {
-  display: flex; gap: 2px;
-  position: absolute; left: 50%; transform: translateX(-50%);
-}
-.nav-link {
-  padding: 6px 14px; border-radius: 8px;
-  font-size: 14px; font-weight: 500;
-  color: var(--text2); text-decoration: none;
-  transition: color .15s, background .15s;
-}
-.nav-link:hover { color: var(--text); background: var(--surface2); }
-.nav-actions { display: flex; gap: 8px; align-items: center; margin-left: auto; }
-.btn {
-  padding: 8px 18px; border-radius: 9px;
-  font-size: 14px; font-weight: 500;
-  cursor: pointer; transition: all .15s;
-  font-family: var(--sans); border: none;
-  text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
-}
-.btn-ghost {
-  background: transparent;
-  border: 1px solid var(--border); color: var(--text2);
-}
-.btn-ghost:hover { border-color: var(--text3); color: var(--text); background: var(--surface2); }
-.btn-dark { background: var(--text); color: #fff; }
-.btn-dark:hover { background: #2d2926; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,.15); }
-.btn-lg { padding: 13px 28px; font-size: 15px; border-radius: 11px; }
-
-/* ── HERO ── */
-.hero {
-  padding: 148px 48px 80px;
-  text-align: center;
-  max-width: 860px;
-  margin: 0 auto;
-  position: relative;
-}
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 7px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 5px 14px 5px 10px;
-  margin-bottom: 28px;
-  font-size: 12px; font-weight: 500; color: var(--text2);
-  box-shadow: var(--shadow);
-  animation: fadeUp .6s cubic-bezier(.22,1,.36,1) both .05s;
-}
-.badge-dot {
-  width: 7px; height: 7px;
-  background: var(--green); border-radius: 50%;
-  animation: pulse 2.2s ease-in-out infinite;
-}
-.hero h1 {
-  font-family: var(--display);
-  font-size: clamp(46px, 7.5vw, 76px);
-  font-weight: 800;
-  line-height: 1.03;
-  letter-spacing: -.035em;
-  color: var(--text);
-  margin-bottom: 22px;
-  animation: fadeUp .6s cubic-bezier(.22,1,.36,1) both .1s;
-}
-.grad-text {
-  background: linear-gradient(130deg, var(--accent) 0%, #8B5CF6 55%, #EC4899 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.hero-sub {
-  font-size: 17px; color: var(--text2);
-  line-height: 1.7; max-width: 520px;
-  margin: 0 auto 36px;
-  animation: fadeUp .6s cubic-bezier(.22,1,.36,1) both .15s;
-}
-.hero-actions {
-  display: flex; gap: 10px; justify-content: center; margin-bottom: 12px;
-  animation: fadeUp .6s cubic-bezier(.22,1,.36,1) both .2s;
-}
-.hero-fine {
-  font-size: 12px; color: var(--text3);
-  animation: fadeUp .6s cubic-bezier(.22,1,.36,1) both .25s;
-}
-.arrow-icon {
-  display: inline-block;
-  transition: transform .15s;
-}
-.btn:hover .arrow-icon { transform: translateX(3px); }
-
-/* ── HERO MOCKUP ── */
-.hero-visual {
-  max-width: 960px;
-  margin: 60px auto 0;
-  position: relative;
-  animation: fadeUp .9s cubic-bezier(.22,1,.36,1) both .35s;
-}
-.hero-glow {
-  position: absolute;
-  top: -100px; left: 50%; transform: translateX(-50%);
-  width: 700px; height: 400px;
-  background: radial-gradient(ellipse at 50% 40%, rgba(59,110,245,.09) 0%, rgba(139,92,246,.06) 40%, transparent 70%);
-  pointer-events: none;
-}
-.browser-frame {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.7) inset;
-  position: relative;
-}
-.browser-bar {
-  display: flex; align-items: center; gap: 6px;
-  padding: 12px 16px;
-  background: var(--surface2);
-  border-bottom: 1px solid var(--border2);
-}
-.b-dot { width: 10px; height: 10px; border-radius: 50%; }
-.browser-url {
-  flex: 1; margin: 0 10px;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 5px; padding: 4px 12px;
-  font-size: 11px; color: var(--text3);
-}
-.browser-body {
-  display: flex; height: 400px; overflow: hidden;
-  position: relative;
-}
-.browser-scan {
-  position: absolute; left: 0; right: 0; height: 48px;
-  background: linear-gradient(transparent, rgba(59,110,245,.03), transparent);
-  pointer-events: none;
-  animation: scanLine 5s linear infinite;
-}
-.b-sidebar {
-  width: 200px; flex-shrink: 0;
-  border-right: 1px solid var(--border2);
-  padding: 14px 10px;
-  display: flex; flex-direction: column; gap: 3px;
-}
-.b-nav {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 10px; border-radius: 7px;
-  font-size: 12px; color: var(--text3);
-}
-.b-nav.active { background: var(--accent-lo); color: var(--accent); font-weight: 600; }
-.b-nav-ic { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
-.b-main { flex: 1; padding: 18px; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
-.b-search { display: flex; gap: 8px; }
-.b-input {
-  flex: 1; background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 7px; padding: 9px 13px;
-  font-size: 12px; color: var(--text2); font-family: var(--sans);
-}
-.b-analyze {
-  padding: 9px 16px; background: var(--text); color: #fff;
-  border: none; border-radius: 7px;
-  font-size: 12px; font-weight: 500; font-family: var(--sans); cursor: default;
-  white-space: nowrap;
-}
-.b-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.b-card {
-  background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 10px; padding: 13px;
-}
-.b-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }
-.b-av {
-  width: 26px; height: 26px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 9px; font-weight: 700; color: #fff;
-}
-.b-sc { font-family: var(--display); font-size: 20px; font-weight: 700; }
-.b-name { font-size: 11px; font-weight: 600; color: var(--text); }
-.b-handle { font-size: 10px; color: var(--text3); margin-bottom: 7px; }
-.b-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 6px; }
-.b-fill { height: 100%; border-radius: 2px; }
-.b-badge {
-  display: inline-block; font-size: 9px; font-weight: 600;
-  padding: 2px 7px; border-radius: 4px; margin-top: 5px;
-}
-
-/* ── HERO MOCKUP DETAIL SPLIT ── */
-.b-list-panel {
-  width: 180px; flex-shrink: 0;
-  border-right: 1px solid var(--border2);
-  padding: 12px 10px;
-  display: flex; flex-direction: column; gap: 6px; overflow: hidden;
-}
-.b-list-card {
-  background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 8px; padding: 9px 10px;
-}
-.b-list-card.sel {
-  background: rgba(22,163,74,.05);
-  border-color: rgba(22,163,74,.3);
-  box-shadow: 0 0 0 1px rgba(22,163,74,.15);
-}
-.b-list-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
-.b-list-name { font-size: 11px; font-weight: 600; color: var(--text); }
-.b-list-handle { font-size: 9px; color: var(--text3); }
-
-.b-detail-panel {
-  flex: 1; padding: 13px 14px;
-  display: flex; flex-direction: column; gap: 9px; overflow: hidden;
-}
-.b-det-header {
-  display: flex; align-items: center; gap: 9px;
-  padding-bottom: 10px; border-bottom: 1px solid var(--border2);
-}
-.b-decision-bar {
-  background: rgba(22,163,74,.07); border: 1px solid rgba(22,163,74,.22);
-  border-radius: 8px; padding: 10px 12px;
-}
-.b-db-eyebrow { font-size: 8px; text-transform: uppercase; letter-spacing: .09em; font-weight: 700; color: #16A34A; margin-bottom: 3px; }
-.b-db-verdict { font-size: 13px; font-weight: 800; color: #16A34A; letter-spacing: -.02em; margin-bottom: 4px; }
-.b-db-directive { font-size: 9px; font-weight: 600; color: #16A34A; background: rgba(22,163,74,.13); display: inline-block; padding: 2px 7px; border-radius: 3px; margin-bottom: 7px; }
-.b-db-pills { display: flex; gap: 5px; flex-wrap: wrap; }
-.b-db-pill { background: rgba(255,255,255,.65); border: 1px solid rgba(0,0,0,.07); border-radius: 5px; padding: 3px 7px; }
-.b-dp-lbl { font-size: 7px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); font-weight: 600; }
-.b-dp-val { font-size: 10px; font-weight: 700; color: var(--text); line-height: 1.2; }
-
-.b-roi-split { display: grid; grid-template-columns: 1fr 16px 1fr; gap: 5px; align-items: center; }
-.b-roi-cell { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 7px 9px; }
-.b-roi-cell.ret { background: rgba(22,163,74,.07); border-color: rgba(22,163,74,.2); }
-.b-rc-lbl { font-size: 8px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); font-weight: 600; margin-bottom: 2px; }
-.b-rc-val { font-size: 12px; font-weight: 800; color: var(--text); letter-spacing: -.01em; }
-.b-rc-sub { font-size: 8px; color: var(--text3); margin-top: 1px; }
-
-.b-sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.b-sig { border-radius: 6px; padding: 7px 9px; border: 1px solid; }
-.b-sig-ey { font-size: 7px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; margin-bottom: 3px; }
-.b-sig-name { font-size: 10px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
-.b-sig-tier { font-size: 8px; font-weight: 600; }
-
-/* floating chips around mockup */
-.hero-chip {
-  position: absolute;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 10px 14px;
-  box-shadow: var(--shadow);
-  font-size: 12px;
-  white-space: nowrap;
-  pointer-events: none;
-}
-.chip-1 {
-  left: -60px; top: 80px;
-  animation: floatSlow 5s ease-in-out infinite;
-}
-.chip-2 {
-  right: -60px; top: 60px;
-  animation: floatSlow 6s ease-in-out infinite .8s;
-}
-.chip-3 {
-  right: -50px; bottom: 80px;
-  animation: floatSlow 5.5s ease-in-out infinite 1.2s;
-}
-.chip-ic { font-size: 16px; margin-right: 6px; }
-.chip-label { font-weight: 600; color: var(--text); font-size: 13px; }
-.chip-sub { font-size: 11px; color: var(--text3); }
-
-/* ── STATS BAR ── */
-.stats-bar {
-  border-top: 1px solid var(--border2);
-  border-bottom: 1px solid var(--border2);
-  background: var(--surface);
-  padding: 28px 48px;
-  display: flex; justify-content: center;
-}
-.stats-inner {
-  display: flex; max-width: 1000px; width: 100%;
-  justify-content: space-between;
-}
-.stat-item {
-  display: flex; align-items: center; gap: 12px;
-}
-.stat-icon {
-  width: 36px; height: 36px; border-radius: 9px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 17px; flex-shrink: 0; overflow: hidden;
-}
-.stat-num {
-  font-family: var(--display);
-  font-size: 22px; font-weight: 700;
-  color: var(--text); letter-spacing: -.02em; line-height: 1.1;
-}
-.stat-lbl { font-size: 12px; color: var(--text3); }
-.stat-sep { width: 1px; background: var(--border2); align-self: stretch; }
-
-/* ── STAT ICON ANIMATIONS ── */
-
-/* 1. Bar chart — 4 bars grow up sequentially */
-@keyframes sbarGrow1 { 0%,100%{height:4px} 20%,70%{height:14px} }
-@keyframes sbarGrow2 { 0%,100%{height:4px} 30%,75%{height:20px} }
-@keyframes sbarGrow3 { 0%,100%{height:4px} 40%,80%{height:10px} }
-@keyframes sbarGrow4 { 0%,100%{height:4px} 50%,85%{height:18px} }
-.si-bars {
-  display: flex; align-items: flex-end; gap: 2px; height: 22px;
-}
-.si-bar {
-  width: 5px; border-radius: 2px 2px 0 0;
-  background: var(--accent); height: 4px;
-}
-.si-bar:nth-child(1){ animation: sbarGrow1 1.6s ease-in-out infinite; }
-.si-bar:nth-child(2){ animation: sbarGrow2 1.6s ease-in-out infinite .1s; }
-.si-bar:nth-child(3){ animation: sbarGrow3 1.6s ease-in-out infinite .2s; }
-.si-bar:nth-child(4){ animation: sbarGrow4 1.6s ease-in-out infinite .3s; }
-
-/* 2. Pulsing signal dot with rings */
-@keyframes sRipple1 {
-  0%   { transform: scale(.55); opacity: .7; }
-  100% { transform: scale(1.5);  opacity: 0; }
-}
-@keyframes sRipple2 {
-  0%   { transform: scale(.55); opacity: .5; }
-  100% { transform: scale(2.1);  opacity: 0; }
-}
-.si-signal {
-  position: relative; width: 20px; height: 20px;
-  display: flex; align-items: center; justify-content: center;
-}
-.si-signal-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--green, #16A34A); position: relative; z-index: 1;
-}
-.si-signal-ring {
-  position: absolute; border-radius: 50%;
-  border: 2px solid var(--green, #16A34A); opacity: 0;
-  width: 100%; height: 100%;
-}
-.si-signal-ring:nth-child(1){ animation: sRipple1 1.8s ease-out infinite; }
-.si-signal-ring:nth-child(2){ animation: sRipple2 1.8s ease-out infinite .5s; }
-
-/* 3. Scanning line inside a box */
-@keyframes sScan {
-  0%,100% { top: 3px; }
-  50%      { top: calc(100% - 5px); }
-}
-.si-scan {
-  position: relative; width: 22px; height: 18px;
-  border: 1.5px solid rgba(139,92,246,.6); border-radius: 3px; overflow: hidden;
-}
-.si-scan-line {
-  position: absolute; left: 0; right: 0; height: 2px;
-  background: rgba(139,92,246,.9);
-  top: 3px; border-radius: 1px;
-  animation: sScan 1.4s ease-in-out infinite;
-  box-shadow: 0 0 4px rgba(139,92,246,.6);
-}
-
-/* 4. Animated checkmark drawing itself */
-@keyframes sCheck {
-  0%    { stroke-dashoffset: 30; opacity: 1; }
-  60%   { stroke-dashoffset: 0;  opacity: 1; }
-  80%   { stroke-dashoffset: 0;  opacity: 1; }
-  100%  { stroke-dashoffset: 30; opacity: 0; }
-}
-.si-check svg {
-  overflow: visible;
-}
-.si-check path {
-  stroke: rgba(236,72,153,1);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
-  stroke-dasharray: 30;
-  stroke-dashoffset: 30;
-  animation: sCheck 2s ease-in-out infinite;
-}
-
-/* ── FEATURE SPLIT ── */
-.features-wrap { background: var(--bg); }
-.feat-split {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 80px; align-items: center;
-  padding: 96px 80px;
-  max-width: 1200px; margin: 0 auto;
-}
-.feat-split + .feat-split { border-top: 1px solid var(--border2); }
-.feat-split.flip { }
-.feat-split.flip .feat-visual { order: -1; }
-.feat-label {
-  display: inline-flex; align-items: center; gap: 7px;
-  font-size: 11px; font-weight: 600;
-  letter-spacing: .08em; text-transform: uppercase;
-  color: var(--accent); margin-bottom: 16px;
-}
-.feat-label-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
-.feat-split h2 {
-  font-family: var(--display);
-  font-size: clamp(28px, 3.5vw, 42px);
-  font-weight: 700; line-height: 1.1;
-  letter-spacing: -.025em;
-  color: var(--text); margin-bottom: 14px;
-}
-.feat-sub {
-  font-size: 15px; color: var(--text2);
-  line-height: 1.7; margin-bottom: 28px;
-}
-.feat-points { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-.feat-points li {
-  display: flex; align-items: flex-start; gap: 10px;
-  font-size: 14px; color: var(--text2); line-height: 1.5;
-}
-.feat-check {
-  width: 18px; height: 18px; border-radius: 5px;
-  background: var(--green-lo); border: 1px solid var(--green-mid);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; margin-top: 1px;
-  font-size: 10px; color: var(--green);
-}
-
-/* ── SCORE CARD VISUAL ── */
-.score-card-wrap {
-  position: relative;
-}
-.score-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 28px;
-  box-shadow: var(--shadow-lg);
-}
-.score-card-head {
-  display: flex; align-items: center;
-  justify-content: space-between; margin-bottom: 22px;
-}
-.score-profile { display: flex; align-items: center; gap: 12px; }
-.score-av {
-  width: 44px; height: 44px; border-radius: 50%;
-  background: linear-gradient(135deg, #FBBF24, #F59E0B);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: 700; color: #fff;
-}
-.score-name { font-weight: 600; font-size: 15px; color: var(--text); }
-.score-handle { font-size: 12px; color: var(--text3); }
-.score-big-wrap { text-align: right; }
-.score-big {
-  font-family: var(--display);
-  font-size: 56px; font-weight: 800;
-  color: var(--green); letter-spacing: -.03em; line-height: 1;
-}
-.score-verdict {
-  display: inline-block; font-size: 11px; font-weight: 600;
-  padding: 3px 10px; border-radius: 6px;
-  background: var(--green-lo); color: var(--green);
-  border: 1px solid var(--green-mid); margin-top: 4px;
-}
-.factor-list { display: flex; flex-direction: column; gap: 11px; }
-.fac { }
-.fac-top { display: flex; justify-content: space-between; margin-bottom: 5px; }
-.fac-name { font-size: 12px; color: var(--text2); font-weight: 500; }
-.fac-val { font-size: 12px; font-weight: 700; color: var(--text); }
-.fac-track { height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
-.fac-fill {
-  height: 100%; border-radius: 3px;
-  transition: width 1.1s cubic-bezier(.22,1,.36,1);
-}
-.score-card-wrap .float-tag {
-  position: absolute;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 9px 13px;
-  box-shadow: var(--shadow);
-  font-size: 12px;
-  animation: float 5s ease-in-out infinite;
-}
-.float-tag-1 { top: -20px; right: 20px; animation-delay: .3s; }
-.float-tag-2 { bottom: -16px; left: 16px; animation-delay: 1s; }
-.float-tag-val { font-weight: 700; color: var(--text); font-size: 14px; }
-.float-tag-lbl { color: var(--text3); }
-
-/* ── DATA VISUAL ── */
-.data-visual {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
-}
-.dv-header {
-  background: var(--surface2);
-  border-bottom: 1px solid var(--border2);
-  padding: 16px 20px;
-  display: flex; align-items: center; gap: 10px;
-}
-.dv-av {
-  width: 36px; height: 36px; border-radius: 50%;
-  background: linear-gradient(135deg, #A78BFA, #8B5CF6);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
-}
-.dv-name { font-weight: 600; font-size: 14px; }
-.dv-handle { font-size: 12px; color: var(--text3); }
-.dv-live {
-  margin-left: auto;
-  display: flex; align-items: center; gap: 5px;
-  font-size: 11px; font-weight: 600;
-  padding: 4px 10px; border-radius: 6px;
-  background: var(--green-lo); color: var(--green);
-  border: 1px solid var(--green-mid);
-}
-.dv-live-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--green); animation: pulse 2s infinite;
-}
-.dv-body { padding: 20px; }
-.dv-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 11px 0; border-bottom: 1px solid var(--border2);
-  font-size: 13px;
-}
-.dv-row:last-child { border-bottom: none; }
-.dv-lbl { color: var(--text2); }
-.dv-val { font-weight: 600; color: var(--text); }
-.dv-val.green { color: var(--green); }
-.dv-val.amber { color: var(--amber); }
-.dv-posts {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
-  margin-top: 14px;
-}
-.dv-post {
-  aspect-ratio: 1;
-  border-radius: 6px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-}
-
-/* ── OUTREACH VISUAL ── */
-.outreach-visual {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
-  max-width: 640px; margin: 0 auto;
-}
-.ov-header {
-  background: var(--surface2);
-  border-bottom: 1px solid var(--border2);
-  padding: 14px 20px;
-  display: flex; align-items: center; gap: 10px;
-  font-size: 13px; font-weight: 500; color: var(--text2);
-}
-.ov-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); }
-.ov-body { padding: 24px; }
-.ov-to {
-  display: flex; align-items: center; gap: 8px;
-  padding-bottom: 14px; border-bottom: 1px solid var(--border2); margin-bottom: 16px;
-}
-.ov-to-label { font-size: 12px; color: var(--text3); min-width: 32px; }
-.ov-to-chip {
-  background: var(--accent-lo); border: 1px solid var(--accent-mid);
-  border-radius: 6px; padding: 3px 10px;
-  font-size: 12px; color: var(--accent); font-weight: 500;
-}
-.ov-text {
-  font-size: 14px; line-height: 1.8; color: var(--text2);
-}
-.ov-text p { margin-bottom: 12px; }
-.ov-text p:last-child { margin-bottom: 0; }
-.ov-highlight { color: var(--text); font-weight: 500; }
-.ov-btns {
-  display: flex; gap: 8px; margin-top: 20px;
-  padding-top: 16px; border-top: 1px solid var(--border2);
-}
-.ov-btn {
-  padding: 8px 16px; border-radius: 8px;
-  font-size: 13px; font-weight: 500; font-family: var(--sans);
-  cursor: default; border: none;
-}
-.ov-btn-pri { background: var(--text); color: #fff; }
-.ov-btn-sec { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
-
-/* ── HOW IT WORKS ── */
-.how-section {
-  padding: 100px 48px;
-  text-align: center;
-  background: var(--surface);
-  border-top: 1px solid var(--border2);
-  border-bottom: 1px solid var(--border2);
-}
-.how-inner { max-width: 1100px; margin: 0 auto; }
-.how-section h2 { font-family: var(--display); font-size: clamp(28px, 4vw, 44px); font-weight: 700; letter-spacing: -.025em; margin-bottom: 8px; }
-.how-sub { font-size: 16px; color: var(--text2); margin-bottom: 60px; }
-.how-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; position: relative; }
-.how-steps::before {
-  content: '';
-  position: absolute;
-  top: 28px; left: calc(16% + 20px); right: calc(16% + 20px);
-  height: 1px;
-  background: linear-gradient(90deg, var(--border2), var(--accent-mid), var(--border2));
-}
-.how-step { text-align: center; }
-.how-num {
-  width: 56px; height: 56px; border-radius: 50%;
-  background: var(--surface); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 18px;
-  font-family: var(--display);
-  font-size: 20px; font-weight: 700;
-  color: var(--text); box-shadow: var(--shadow);
-  position: relative; z-index: 1;
-}
-.how-step-title {
-  font-family: var(--display);
-  font-size: 17px; font-weight: 700;
-  color: var(--text); margin-bottom: 8px;
-  letter-spacing: -.01em;
-}
-.how-step-desc { font-size: 14px; color: var(--text2); line-height: 1.65; }
-
-/* ── PRICING ── */
-#pricing {
-  padding: 100px 48px;
-  max-width: 1160px; margin: 0 auto;
-  text-align: center;
-}
-#pricing > .reveal > h2 { font-family: var(--display); font-size: clamp(30px, 4vw, 48px); font-weight: 700; letter-spacing: -.025em; margin-bottom: 8px; }
-.pricing-sub { font-size: 16px; color: var(--text2); margin-bottom: 52px; }
-.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: left; }
-.plan {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 18px; padding: 28px;
-  display: flex; flex-direction: column;
-  transition: box-shadow .2s, transform .2s;
-}
-.plan:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
-.plan.featured {
-  background: var(--text); border-color: var(--text);
-  color: #fff;
-}
-.plan-badge {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
-  padding: 3px 9px; border-radius: 5px; margin-bottom: 16px;
-  width: fit-content;
-}
-.plan-badge.popular { background: rgba(255,255,255,.12); color: rgba(255,255,255,.9); }
-.plan-badge.free { background: var(--surface2); color: var(--text3); }
-.plan-badge.growth { background: var(--accent-lo); color: var(--accent); }
-.plan-name {
-  font-family: var(--display);
-  font-size: 18px; font-weight: 700; margin-bottom: 4px; color: inherit;
-}
-.plan-desc { font-size: 13px; color: var(--text2); margin-bottom: 22px; }
-.plan.featured .plan-desc { color: rgba(255,255,255,.55); }
-.plan-price {
-  font-family: var(--display);
-  font-size: 44px; font-weight: 800;
-  letter-spacing: -.035em; color: inherit; margin-bottom: 3px; line-height: 1;
-}
-.plan-period { font-size: 13px; color: var(--text3); margin-bottom: 24px; }
-.plan.featured .plan-period { color: rgba(255,255,255,.45); }
-.plan-sep { height: 1px; background: var(--border2); margin-bottom: 20px; }
-.plan.featured .plan-sep { background: rgba(255,255,255,.1); }
-.plan-features { list-style: none; flex: 1; margin-bottom: 28px; display: flex; flex-direction: column; gap: 11px; }
-.plan-features li {
-  display: flex; align-items: flex-start; gap: 9px;
-  font-size: 13px; color: var(--text2);
-}
-.plan.featured .plan-features li { color: rgba(255,255,255,.72); }
-.plan-features li::before {
-  content: '✓'; font-size: 11px; font-weight: 800;
-  color: var(--green); flex-shrink: 0; margin-top: 2px;
-}
-.plan.featured .plan-features li::before { color: #4ADE80; }
-.plan-cta {
-  display: block; text-align: center;
-  padding: 12px; border-radius: 10px;
-  font-size: 14px; font-weight: 600;
-  text-decoration: none; cursor: pointer; border: none;
-  font-family: var(--sans); transition: all .15s;
-}
-.plan-cta-outline {
-  border: 1px solid var(--border); color: var(--text);
-  background: transparent;
-}
-.plan-cta-outline:hover { border-color: var(--text); background: var(--surface2); }
-.plan-cta-white { background: #fff; color: var(--text); }
-.plan-cta-white:hover { background: #f0f0ee; }
-.plan-cta-accent {
-  background: var(--accent); color: #fff;
-}
-.plan-cta-accent:hover { background: #2a5ee8; transform: translateY(-1px); }
-
-/* ── PRICING ADDITIONS ── */
-.plan-badge.starter { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
-.plan-usage {
-  font-family: var(--display);
-  font-size: 26px; font-weight: 800; letter-spacing: -.02em;
-  color: var(--text); line-height: 1; margin-bottom: 10px;
-}
-.plan-usage span { font-size: 12px; font-weight: 500; color: var(--text3); letter-spacing: 0; }
-.plan.featured .plan-usage { color: #fff; }
-.plan.featured .plan-usage span { color: rgba(255,255,255,.4); }
-.plan-value {
-  font-size: 11px; line-height: 1.5;
-  color: rgba(255,255,255,.6);
-  background: rgba(255,255,255,.07);
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 7px; padding: 8px 11px;
-  margin-bottom: 14px;
-}
-.pricing-strip {
-  display: flex; justify-content: center; gap: 28px;
-  flex-wrap: wrap; margin-bottom: 48px;
-}
-.pricing-strip span { font-size: 13px; color: var(--text3); }
-.pricing-fine { font-size: 12px; color: var(--text3); margin-top: 28px; }
-
-/* PROOF */
-.testi-section { padding: 110px 24px; max-width: 1140px; margin: 0 auto; text-align: center; position: relative; }
-.testi-label { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--accent); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 14px; }
-.testi-heading { font-family: var(--syne); font-size: 36px; font-weight: 700; letter-spacing: -.03em; color: var(--text1); margin-bottom: 56px; }
-.testi-grid { display: grid; grid-template-columns: 1.08fr .92fr 1fr; gap: 24px; align-items: start; text-align: left; }
-.testi-card { position: relative; background: linear-gradient(180deg, rgba(255,255,255,.94) 0%, rgba(250,247,242,.98) 100%); border: 1px solid var(--border); border-radius: 22px; padding: 24px 24px 22px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 18px 44px rgba(22,18,14,.08), 0 2px 6px rgba(22,18,14,.04); overflow: hidden; }
-.testi-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(59,110,245,.08), transparent 38%, transparent 62%, rgba(59,110,245,.04)); pointer-events: none; }
-.testi-card:nth-child(1) { transform: rotate(-1.2deg); }
-.testi-card:nth-child(2) { margin-top: 28px; transform: rotate(.6deg); }
-.testi-card:nth-child(3) { margin-top: 10px; transform: rotate(-.6deg); }
-.testi-kicker { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 8px; width: fit-content; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--border2); background: rgba(243,241,238,.78); color: var(--text2); font-size: 11px; font-weight: 600; letter-spacing: .03em; }
-.testi-kicker-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px rgba(59,110,245,.12); }
-.testi-title { position: relative; z-index: 1; font-family: var(--display); font-size: 36px; line-height: .96; letter-spacing: -.055em; color: var(--text); max-width: 9ch; }
-.testi-quote { position: relative; z-index: 1; font-size: 14px; line-height: 1.7; color: var(--text2); max-width: 31ch; }
-.testi-foot { position: relative; z-index: 1; padding-top: 14px; border-top: 1px solid var(--border2); font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; }
-.testi-mark { position: absolute; right: 20px; top: 18px; font-family: Georgia, serif; font-size: 62px; line-height: 1; color: rgba(59,110,245,.12); pointer-events: none; }
-@media (max-width: 900px) {
-  .testi-grid { grid-template-columns: 1fr; max-width: 560px; margin: 0 auto; }
-  .testi-heading { font-size: 26px; }
-  .testi-card:nth-child(1),
-  .testi-card:nth-child(2),
-  .testi-card:nth-child(3) { transform: none; margin-top: 0; }
-  .testi-title { max-width: none; font-size: 30px; }
-  .pricing-grid { grid-template-columns: 1fr; max-width: 460px; margin: 0 auto; }
-}
-@media (max-width: 768px) {
-  /* ── NAV ── */
-  nav { padding: 0 16px; }
-  .nav-links { display: none; }
-  .nav-actions .btn-ghost { display: none; }
-  .nav-actions { gap: 6px; }
-  .btn-dark { padding: 8px 14px; font-size: 13px; }
-
-  /* ── HERO ── */
-  .hero { padding: 100px 16px 48px; }
-  .hero h1 { font-size: clamp(32px, 10vw, 52px); }
-  .hero-sub { font-size: 15px; }
-  .hero-actions { flex-direction: column; align-items: center; gap: 8px; }
-  .btn-lg { padding: 12px 22px; font-size: 14px; width: 100%; max-width: 280px; justify-content: center; }
-
-  /* ── HERO MOCKUP ── */
-  .hero-mockup-wrap { padding: 0 16px !important; }
-  .hero-chip { display: none; }
-  .browser-body { height: auto; flex-direction: column; overflow: visible; }
-  .b-sidebar { display: none; }
-  .b-list-panel { display: none; }
-  .b-detail-panel { flex: 1; padding: 12px; }
-  .b-cards { grid-template-columns: 1fr; }
-  .b-sig-grid { grid-template-columns: 1fr; }
-  .b-roi-split { grid-template-columns: 1fr; gap: 8px; }
-  .b-roi-split > div:nth-child(2) { display: none; }
-  .b-db-pills { gap: 4px; }
-  .b-db-pill { flex: 1; min-width: calc(50% - 4px); }
-
-  /* ── STATS BAR ── */
-  .stats-bar { padding: 20px 16px; }
-  .stats-inner { flex-wrap: wrap; gap: 16px; justify-content: flex-start; }
-  .stat-sep { display: none; }
-  .stat-item { flex: 1; min-width: calc(50% - 8px); }
-
-  /* ── FEATURE SPLITS ── */
-  .feat-split {
-    grid-template-columns: 1fr !important;
-    padding: 56px 16px;
-    gap: 36px;
-  }
-  .feat-split.flip .feat-visual { order: 0; }
-  .feat-split h2 { font-size: clamp(24px, 6vw, 34px); }
-  .feat-sub { font-size: 14px; }
-  .score-card-wrap .float-tag { display: none; }
-  .score-big { font-size: 42px; }
-
-  /* ── HOW IT WORKS ── */
-  .how-section { padding: 64px 16px; }
-  .how-steps {
-    grid-template-columns: 1fr !important;
-    gap: 32px;
-  }
-  .how-steps::before { display: none; }
-
-  /* ── PRICING ── */
-  #pricing { padding: 60px 16px; }
-  .pricing-grid { grid-template-columns: 1fr !important; max-width: 100%; }
-  .pricing-strip { gap: 8px; flex-direction: column; align-items: center; }
-  .pricing-strip span { font-size: 13px; }
-
-  /* ── TESTIMONIALS ── */
-  .testi-section { padding: 56px 16px; }
-  .testi-grid { grid-template-columns: 1fr !important; max-width: 100%; }
-  .testi-heading { font-size: 26px; }
-
-  /* ── CTA ── */
-  .cta-section { padding: 64px 16px; }
-
-  /* ── FOOTER ── */
-  footer {
-    flex-direction: column;
-    gap: 16px;
-    padding: 28px 16px;
-    text-align: center;
-    align-items: center;
-  }
-  .footer-links { gap: 16px; }
-}
-
-/* ── CTA ── */
-.cta-section {
-  background: var(--text);
-  padding: 100px 48px; text-align: center;
-}
-.cta-section h2 {
-  font-family: var(--display);
-  font-size: clamp(30px, 4.5vw, 52px);
-  font-weight: 800; color: #fff;
-  letter-spacing: -.03em; margin-bottom: 14px;
-}
-.cta-section p { font-size: 16px; color: rgba(255,255,255,.5); margin-bottom: 36px; }
-.btn-white { background: #fff; color: var(--text); }
-.btn-white:hover { background: #eeecea; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,0,0,.2); }
-.cta-fine { font-size: 12px; color: rgba(255,255,255,.3); margin-top: 12px; }
-
-/* ── FOOTER ── */
-footer {
-  background: var(--surface);
-  border-top: 1px solid var(--border2);
-  padding: 36px 48px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.footer-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
-.footer-mark {
-  width: 26px; height: 26px; background: var(--text);
-  border-radius: 6px; display: flex; align-items: center; justify-content: center;
-}
-.footer-brand {
-  font-family: var(--display); font-size: 14px; font-weight: 700;
-  color: var(--text); letter-spacing: -.02em;
-}
-.footer-links { display: flex; gap: 24px; }
-.footer-link {
-  font-size: 13px; color: var(--text3);
-  text-decoration: none; transition: color .15s;
-}
-.footer-link:hover { color: var(--text2); }
-.footer-copy { font-size: 12px; color: var(--text3); }
-
-/* PREMIUM DIRECTION PASS — Inflaid signal lab */
 :root{
-  --bg:#F4EFE6;
-  --surface:#FFFCF6;
-  --surface2:#EEE6DA;
-  --border:#E1D6C7;
-  --border2:#ECE3D7;
-  --text:#181411;
-  --text2:#6F6255;
-  --text3:#A99E91;
-  --accent:#315CFF;
-  --shadow:0 18px 46px rgba(51,39,25,.08),0 1px 2px rgba(51,39,25,.08);
-  --shadow-lg:0 36px 90px rgba(51,39,25,.16),0 6px 20px rgba(51,39,25,.08);
+  --bg:#050609;
+  --bg2:#0A0D14;
+  --ink:#F7F1E8;
+  --muted:rgba(247,241,232,.64);
+  --dim:rgba(247,241,232,.40);
+  --line:rgba(247,241,232,.13);
+  --glass:rgba(247,241,232,.075);
+  --glass2:rgba(247,241,232,.045);
+  --acid:#9DFFB3;
+  --blue:#8EA5FF;
+  --amber:#FFC06D;
+  --red:#FF7182;
+  --display:"Bricolage Grotesque",sans-serif;
+  --sans:"DM Sans",-apple-system,BlinkMacSystemFont,sans-serif;
+  --shadow:0 34px 110px rgba(0,0,0,.48);
 }
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;background:var(--bg)}
 body{
+  min-height:100vh;
   background:
-    radial-gradient(circle at 8% 0%, rgba(49,92,255,.12), transparent 28%),
-    radial-gradient(circle at 92% 4%, rgba(217,119,6,.10), transparent 28%),
-    linear-gradient(135deg, rgba(24,20,17,.035) 0 1px, transparent 1px) 0 0/30px 30px,
-    linear-gradient(180deg,#FBF7EF 0%,#F1EADF 100%);
+    radial-gradient(circle at 18% 0%,rgba(142,165,255,.22),transparent 25%),
+    radial-gradient(circle at 78% 6%,rgba(157,255,179,.18),transparent 25%),
+    linear-gradient(135deg,rgba(255,255,255,.045) 0 1px,transparent 1px) 0 0/42px 42px,
+    linear-gradient(180deg,#050609 0%,#0A0D14 44%,#050609 100%);
+  color:var(--ink);
+  font-family:var(--sans);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
 }
-nav{
-  top:14px;left:22px;right:22px;
-  height:64px;
-  border:1px solid rgba(53,43,33,.10);
-  border-radius:22px;
-  background:rgba(255,252,246,.78);
-  box-shadow:0 18px 44px rgba(51,39,25,.08);
-}
-.nav-mark,.footer-mark{background:#181411}
-.btn-dark{background:linear-gradient(180deg,#1E1A16,#312820);box-shadow:0 14px 30px rgba(24,20,17,.16)}
-.btn-ghost{background:rgba(255,252,246,.58)}
-.hero{
-  max-width:1180px;
-  min-height:760px;
-  padding:178px 48px 96px;
-  text-align:left;
-  isolation:isolate;
-}
-.hero::before{
-  content:"";position:absolute;right:2%;top:136px;width:460px;height:460px;border-radius:50%;
-  background:radial-gradient(circle at 34% 30%,rgba(255,255,255,.92),rgba(49,92,255,.14) 38%,rgba(217,119,6,.08) 60%,transparent 72%);
-  filter:blur(.2px);
-  box-shadow:inset 0 1px 26px rgba(255,255,255,.65),0 34px 100px rgba(51,39,25,.16);
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(90deg,rgba(255,255,255,.04),transparent 20%,transparent 80%,rgba(157,255,179,.05));
   z-index:-1;
-  animation:floatSlow 7s ease-in-out infinite;
 }
-.hero::after{
-  content:"ROI\A SIGNAL\A FIT";
-  white-space:pre;
-  position:absolute;right:8%;top:230px;width:290px;height:290px;border-radius:36px;
-  display:flex;align-items:center;justify-content:center;text-align:center;
-  font-family:var(--display);font-size:46px;line-height:.92;font-weight:800;letter-spacing:-.06em;color:#181411;
-  background:linear-gradient(145deg,rgba(255,252,246,.78),rgba(255,252,246,.36));
-  border:1px solid rgba(53,43,33,.12);
-  box-shadow:0 26px 70px rgba(51,39,25,.16),inset 0 1px 0 rgba(255,255,255,.7);
-  transform:rotate(-7deg) perspective(900px) rotateY(-14deg);
-  backdrop-filter:blur(14px);
+a{color:inherit;text-decoration:none}
+button,input{font:inherit}
+::selection{background:rgba(157,255,179,.30);color:#fff}
+
+.noise{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.22;
+  z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+  mix-blend-mode:soft-light;
 }
-.hero-badge{background:rgba(255,252,246,.78);border-color:rgba(53,43,33,.10);box-shadow:0 16px 40px rgba(51,39,25,.08)}
-.hero h1{
-  max-width:690px;
-  font-size:clamp(56px,7vw,92px);
-  line-height:.94;
-  letter-spacing:-.065em;
+
+.nav{
+  position:fixed;
+  top:18px;
+  left:22px;
+  right:22px;
+  z-index:50;
+  height:70px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding:0 18px;
+  border:1px solid var(--line);
+  border-radius:26px;
+  background:rgba(8,10,16,.62);
+  backdrop-filter:blur(24px);
+  box-shadow:0 24px 90px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08);
 }
-.grad-text{
-  background:linear-gradient(120deg,#181411 0%,#315CFF 46%,#C06A2B 100%);
+.brand{display:flex;align-items:center;gap:11px;min-width:160px}
+.mark{
+  width:34px;
+  height:34px;
+  border-radius:11px;
+  display:grid;
+  place-items:center;
+  background:var(--ink);
+  color:var(--bg);
+  box-shadow:0 0 34px rgba(247,241,232,.18);
+}
+.mark svg{display:block}
+.brand span{font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:-.04em}
+.nav-mid{display:flex;align-items:center;justify-content:center;gap:4px;flex:1}
+.nav-mid a{
+  color:var(--dim);
+  font-size:13px;
+  font-weight:600;
+  padding:8px 13px;
+  border-radius:999px;
+  transition:.2s ease;
+}
+.nav-mid a:hover{color:var(--ink);background:rgba(255,255,255,.07)}
+.nav-actions{display:flex;align-items:center;gap:8px}
+.btn{
+  border:none;
+  border-radius:999px;
+  padding:11px 18px;
+  font-size:13px;
+  font-weight:800;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  cursor:pointer;
+  transition:.22s ease;
+  white-space:nowrap;
+}
+.btn-primary{background:var(--ink);color:var(--bg);box-shadow:0 18px 44px rgba(247,241,232,.13)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 24px 70px rgba(247,241,232,.20)}
+.btn-ghost{background:rgba(255,255,255,.055);border:1px solid var(--line);color:var(--muted)}
+.btn-ghost:hover{background:rgba(255,255,255,.10);color:var(--ink)}
+
+.hero{
+  position:relative;
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:minmax(0,1.02fr) minmax(360px,.98fr);
+  align-items:center;
+  gap:36px;
+  max-width:1320px;
+  margin:0 auto;
+  padding:138px 48px 78px;
+  z-index:1;
+}
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color:var(--muted);
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(255,255,255,.055);
+  padding:7px 12px;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  margin-bottom:22px;
+}
+.eyebrow::before{
+  content:"";
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--acid);
+  box-shadow:0 0 24px rgba(157,255,179,.85);
+}
+h1{
+  font-family:var(--display);
+  font-size:clamp(58px,8vw,122px);
+  line-height:.86;
+  letter-spacing:-.085em;
+  max-width:800px;
+  text-wrap:balance;
+}
+.gradient{
+  background:linear-gradient(112deg,#fff 0%,var(--acid) 42%,var(--blue) 100%);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
   background-clip:text;
 }
-.hero-sub{max-width:560px;margin-left:0;font-size:18px;color:#6F6255}
-.hero-actions{justify-content:flex-start}.hero-fine{text-align:left}
-.hero-mockup-wrap{margin-top:-92px!important;max-width:1040px!important}
-.ad-browser,.browser-frame{
-  border-radius:26px!important;
-  border-color:rgba(53,43,33,.12)!important;
-  box-shadow:0 38px 100px rgba(51,39,25,.18),inset 0 1px 0 rgba(255,255,255,.72)!important;
+.hero-copy{
+  max-width:610px;
+  margin-top:24px;
+  color:var(--muted);
+  font-size:18px;
+  line-height:1.72;
 }
-.ad-bar,.browser-bar{background:rgba(255,252,246,.78)!important}
-.testi-section,.feature-section,.how-section,#pricing{background:transparent}
-.cta-section{background:radial-gradient(circle at 18% 0%,rgba(49,92,255,.18),transparent 28%),linear-gradient(180deg,#181411,#241D18)}
-@media(max-width:900px){
-  nav{top:0;left:0;right:0;border-radius:0}
-  .hero{text-align:center;min-height:auto;padding:128px 20px 60px}
-  .hero::before,.hero::after{display:none}
-  .hero h1,.hero-sub{margin-left:auto;margin-right:auto}
-  .hero-actions{justify-content:center}
-  .hero-fine{text-align:center}
-  .hero-mockup-wrap{margin-top:0!important}
+.hero-actions{display:flex;gap:10px;margin-top:34px;flex-wrap:wrap}
+.fine{margin-top:12px;color:var(--dim);font-size:12px}
+
+.stage{
+  position:relative;
+  height:620px;
+  perspective:1200px;
+}
+.orb{
+  position:absolute;
+  inset:66px 10px auto auto;
+  width:470px;
+  height:470px;
+  border-radius:42%;
+  background:
+    radial-gradient(circle at 34% 24%,rgba(255,255,255,.95),rgba(255,255,255,.32) 8%,transparent 17%),
+    conic-gradient(from 230deg,var(--acid),var(--blue),rgba(255,255,255,.15),var(--acid));
+  box-shadow:0 70px 180px rgba(0,0,0,.58),0 0 120px rgba(157,255,179,.16),inset 0 1px 42px rgba(255,255,255,.44);
+  transform:rotateY(-22deg) rotateX(12deg) rotateZ(-10deg);
+  animation:floaty 7s ease-in-out infinite;
+}
+.glass-slab{
+  position:absolute;
+  right:36px;
+  top:190px;
+  width:360px;
+  min-height:360px;
+  border-radius:38px;
+  border:1px solid rgba(255,255,255,.18);
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.17),rgba(255,255,255,.035)),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.08) 0 1px,transparent 1px 62px);
+  backdrop-filter:blur(22px);
+  box-shadow:0 42px 110px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.18);
+  transform:rotateY(-24deg) rotateX(7deg) rotateZ(6deg);
+  padding:24px;
+}
+.slab-kicker{font-size:11px;font-weight:900;color:var(--acid);letter-spacing:.12em;text-transform:uppercase}
+.slab-score{font-family:var(--display);font-size:112px;line-height:.82;letter-spacing:-.08em;margin-top:24px}
+.slab-label{font-size:13px;color:var(--muted);margin-top:8px}
+.mini-bars{display:grid;gap:8px;margin-top:28px}
+.mini-bar{height:8px;border-radius:999px;background:rgba(255,255,255,.10);overflow:hidden}
+.mini-bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--acid),var(--blue))}
+.float-card{
+  position:absolute;
+  left:24px;
+  bottom:62px;
+  width:260px;
+  border-radius:28px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.075);
+  backdrop-filter:blur(20px);
+  box-shadow:var(--shadow);
+  padding:18px;
+  transform:rotateY(18deg) rotateZ(-5deg);
+}
+.float-card b{display:block;font-family:var(--display);font-size:26px;letter-spacing:-.05em}
+.float-card p{color:var(--muted);font-size:13px;line-height:1.5;margin-top:8px}
+@keyframes floaty{
+  0%,100%{transform:rotateY(-22deg) rotateX(12deg) rotateZ(-10deg) translateY(0)}
+  50%{transform:rotateY(-16deg) rotateX(8deg) rotateZ(-6deg) translateY(-18px)}
 }
 
-/* REFERENCE REDESIGN PASS — Voxr x Raben x Oryzo */
-:root{
-  --bg:#06070B;
-  --surface:rgba(255,255,255,.075);
-  --surface2:rgba(255,255,255,.045);
-  --border:rgba(255,255,255,.12);
-  --border2:rgba(255,255,255,.075);
-  --text:#F7F4EE;
-  --text2:rgba(247,244,238,.68);
-  --text3:rgba(247,244,238,.42);
-  --accent:#7CFFB2;
-  --accent-lo:rgba(124,255,178,.12);
-  --accent-mid:rgba(124,255,178,.26);
-  --shadow:0 22px 70px rgba(0,0,0,.34);
-  --shadow-lg:0 42px 120px rgba(0,0,0,.46);
+.ticker{
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  overflow:hidden;
+  color:rgba(247,241,232,.34);
+  font-family:var(--display);
+  font-weight:800;
+  letter-spacing:-.06em;
+  font-size:clamp(42px,7vw,110px);
+  line-height:1;
+  white-space:nowrap;
 }
-body{
-  background:
-    radial-gradient(circle at 72% 8%, rgba(124,255,178,.18), transparent 22%),
-    radial-gradient(circle at 12% 18%, rgba(91,121,255,.20), transparent 24%),
-    linear-gradient(135deg, rgba(255,255,255,.055) 0 1px, transparent 1px) 0 0/42px 42px,
-    #06070B;
-  color:var(--text);
+.ticker-track{
+  display:flex;
+  gap:34px;
+  width:max-content;
+  padding:22px 0 30px;
+  animation:marquee 24s linear infinite;
 }
-body::before{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;
-  background:linear-gradient(180deg,rgba(255,255,255,.035),transparent 28%,rgba(124,255,178,.045));
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+.scroll-story{
+  position:relative;
+  max-width:1320px;
+  margin:0 auto;
+  padding:120px 48px;
+  display:grid;
+  grid-template-columns:minmax(320px,.88fr) minmax(0,1.12fr);
+  gap:56px;
 }
-nav{
-  top:18px;left:24px;right:24px;height:70px;border-radius:24px;
-  background:rgba(8,10,16,.62);
-  border:1px solid rgba(255,255,255,.12);
-  box-shadow:0 24px 80px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08);
-}
-.nav-brand,.nav-link,.footer-brand,.footer-link,.footer-copy{color:var(--text)}
-.nav-link{color:rgba(247,244,238,.62)}
-.nav-link:hover{background:rgba(255,255,255,.07);color:#fff}
-.nav-mark,.footer-mark{background:#F7F4EE}.nav-mark svg circle:first-child,.footer-mark svg circle:first-child{fill:#06070B}.nav-mark svg circle:last-child,.footer-mark svg circle:last-child{stroke:#06070B}
-.btn{border-radius:999px}
-.btn-dark,.btn-white{
-  background:#F7F4EE;color:#06070B;
-  box-shadow:0 18px 46px rgba(247,244,238,.16);
-}
-.btn-dark:hover,.btn-white:hover{background:#fff;box-shadow:0 22px 60px rgba(247,244,238,.22)}
-.btn-ghost{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.14);color:rgba(247,244,238,.74)}
-.btn-ghost:hover{background:rgba(255,255,255,.10);color:#fff;border-color:rgba(255,255,255,.22)}
-.hero{
-  max-width:1240px;min-height:860px;padding:190px 54px 120px;text-align:left;
-  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
-}
-.hero::before{
-  content:"";position:absolute;right:1%;top:150px;width:520px;height:520px;border-radius:42%;
-  background:
-    radial-gradient(circle at 34% 24%, rgba(255,255,255,.95), rgba(255,255,255,.28) 8%, transparent 18%),
-    conic-gradient(from 220deg, rgba(124,255,178,.88), rgba(91,121,255,.78), rgba(255,255,255,.12), rgba(124,255,178,.88));
-  filter:saturate(1.12);
-  box-shadow:0 60px 160px rgba(0,0,0,.50),0 0 110px rgba(124,255,178,.16),inset 0 1px 40px rgba(255,255,255,.42);
-  transform:perspective(900px) rotateY(-20deg) rotateX(10deg) rotateZ(-8deg);
-  animation:floatSlow 7s ease-in-out infinite;
-  z-index:-1;
-}
-.hero::after{
-  content:"";position:absolute;right:8%;top:282px;width:330px;height:330px;border-radius:38px;
-  background:
-    linear-gradient(135deg,rgba(255,255,255,.18),rgba(255,255,255,.035)),
-    repeating-linear-gradient(90deg,rgba(255,255,255,.09) 0 1px,transparent 1px 62px);
-  border:1px solid rgba(255,255,255,.18);
-  box-shadow:0 36px 90px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.16);
-  backdrop-filter:blur(20px);
-  transform:perspective(900px) rotateY(-22deg) rotateX(8deg) rotateZ(6deg);
-}
-.hero-badge{
-  background:rgba(255,255,255,.075);border-color:rgba(255,255,255,.14);color:rgba(247,244,238,.78);
-  box-shadow:0 18px 60px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.10);
-}
-.badge-dot{background:var(--accent);box-shadow:0 0 22px rgba(124,255,178,.8)}
-.hero h1{
-  max-width:780px;font-size:clamp(58px,7.4vw,112px);line-height:.88;letter-spacing:-.082em;color:#F7F4EE;
+.story-copy{position:sticky;top:118px;height:max-content}
+.section-label{color:var(--acid);font-size:12px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;margin-bottom:16px}
+h2{
+  font-family:var(--display);
+  font-size:clamp(42px,5.6vw,86px);
+  line-height:.92;
+  letter-spacing:-.075em;
   text-wrap:balance;
 }
-.grad-text{
-  background:linear-gradient(110deg,#F7F4EE 0%,#7CFFB2 48%,#7EA1FF 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.hero-sub{max-width:610px;margin-left:0;color:rgba(247,244,238,.68);font-size:18px;line-height:1.72}
-.hero-actions{justify-content:flex-start}.hero-fine{color:rgba(247,244,238,.42);text-align:left}
-.hero-mockup-wrap{margin-top:-130px!important;max-width:1120px!important}
-.ad-browser,.browser-frame{
-  background:rgba(255,255,255,.055)!important;
-  border:1px solid rgba(255,255,255,.13)!important;
-  border-radius:30px!important;
-  box-shadow:0 55px 150px rgba(0,0,0,.56),inset 0 1px 0 rgba(255,255,255,.10)!important;
+.story-copy p{color:var(--muted);font-size:17px;line-height:1.72;margin-top:22px;max-width:470px}
+.panels{display:grid;gap:34px}
+.panel{
+  min-height:560px;
+  border:1px solid var(--line);
+  border-radius:42px;
+  background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.035));
+  box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.10);
   backdrop-filter:blur(20px);
+  padding:34px;
+  position:relative;
+  overflow:hidden;
 }
-.ad-bar,.browser-bar,.ad-sidebar,.ad-main,.ad-topbar,.ad-content,.ad-detail-section{
-  background:rgba(8,10,16,.42)!important;
-  border-color:rgba(255,255,255,.09)!important;
+.panel::after{
+  content:"";
+  position:absolute;
+  inset:auto -20% -30% auto;
+  width:320px;
+  height:320px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(157,255,179,.18),transparent 68%);
 }
-.ad-url,.ad-topbar-search,.ad-topbar-input,.ad-inf-card,.ad-signal-card,.ad-action-card,.ad-report-card{
-  background:rgba(255,255,255,.075)!important;
-  border-color:rgba(255,255,255,.12)!important;
-  color:#F7F4EE!important;
+.panel-num{font-family:var(--display);font-size:88px;line-height:.8;letter-spacing:-.08em;color:rgba(247,241,232,.18)}
+.panel h3{font-family:var(--display);font-size:40px;letter-spacing:-.055em;line-height:1;margin-top:34px;max-width:420px}
+.panel p{color:var(--muted);font-size:16px;line-height:1.7;margin-top:18px;max-width:430px}
+.signal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:32px}
+.signal{
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:rgba(255,255,255,.055);
+  padding:16px;
 }
-.ad-inf-name,.ad-user-name{color:#F7F4EE!important}
-.ad-inf-handle,.ad-inf-insight,.ad-user-plan,.ad-section-label{color:rgba(247,244,238,.54)!important}
-.ad-topbar-btn,.ad-inf-btn-pri{background:#F7F4EE!important;color:#06070B!important}
-section{background:transparent!important}
-.feature-card,.price-card,.testi-card,.how-step,.faq-item{
-  background:rgba(255,255,255,.06)!important;
-  border-color:rgba(255,255,255,.12)!important;
-  box-shadow:0 24px 70px rgba(0,0,0,.25)!important;
-  backdrop-filter:blur(18px);
+.signal small{color:var(--dim);font-weight:800;text-transform:uppercase;letter-spacing:.10em}
+.signal strong{display:block;font-family:var(--display);font-size:28px;letter-spacing:-.05em;margin-top:8px}
+
+.product-strip{
+  padding:80px 48px 126px;
+  max-width:1320px;
+  margin:0 auto;
 }
-.feature-card h3,.price-card h3,.how-step h3,.testi-heading,.section-head h2,.how-head h2,#pricing h2{color:#F7F4EE!important}
-.feature-card p,.price-card p,.how-step p,.testi-card p,.section-head p,.how-head p{color:rgba(247,244,238,.64)!important}
-.cta-section{background:radial-gradient(circle at 30% 0%,rgba(124,255,178,.18),transparent 30%),#030406!important}
-footer{background:#030406;border-color:rgba(255,255,255,.09)}
-@media(max-width:900px){
-  nav{top:0;left:0;right:0;border-radius:0}
-  .hero{min-height:auto;text-align:center;align-items:center;padding:128px 20px 72px}
-  .hero::before,.hero::after{display:none}
-  .hero h1,.hero-sub{margin-left:auto;margin-right:auto}
-  .hero-actions{justify-content:center}.hero-fine{text-align:center}
-  .hero-mockup-wrap{margin-top:0!important}
+.strip-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:30px}
+.strip-head p{color:var(--muted);max-width:430px;line-height:1.65}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.work-card{
+  min-height:360px;
+  border:1px solid var(--line);
+  border-radius:34px;
+  background:rgba(255,255,255,.06);
+  box-shadow:var(--shadow);
+  padding:24px;
+  position:relative;
+  overflow:hidden;
+}
+.work-card:nth-child(2){margin-top:46px}
+.work-card:nth-child(3){margin-top:92px}
+.work-card::before{
+  content:"";
+  position:absolute;
+  top:-80px;
+  right:-80px;
+  width:210px;
+  height:210px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(142,165,255,.24),transparent 68%);
+}
+.work-card span{color:var(--acid);font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+.work-card h3{font-family:var(--display);font-size:34px;line-height:1;letter-spacing:-.055em;margin-top:52px}
+.work-card p{color:var(--muted);line-height:1.65;margin-top:16px}
+
+.pricing{
+  padding:118px 48px;
+  background:linear-gradient(180deg,transparent,rgba(255,255,255,.035),transparent);
+}
+.pricing-inner{max-width:1180px;margin:0 auto}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
+.price-card{
+  border:1px solid var(--line);
+  border-radius:34px;
+  background:rgba(255,255,255,.06);
+  padding:26px;
+  box-shadow:var(--shadow);
+}
+.price-card.featured{background:linear-gradient(145deg,rgba(157,255,179,.16),rgba(255,255,255,.055));border-color:rgba(157,255,179,.28)}
+.price-name{font-weight:900;color:var(--dim);text-transform:uppercase;letter-spacing:.13em;font-size:12px}
+.price{font-family:var(--display);font-size:58px;letter-spacing:-.07em;margin-top:16px}
+.price small{font-family:var(--sans);font-size:14px;color:var(--dim);letter-spacing:0}
+.price-card p{color:var(--muted);line-height:1.6;margin-top:12px;min-height:52px}
+.price-card ul{list-style:none;margin:24px 0;display:grid;gap:11px;color:var(--muted);font-size:14px}
+.price-card li::before{content:"";display:inline-block;width:7px;height:7px;background:var(--acid);border-radius:50%;margin-right:10px;box-shadow:0 0 18px rgba(157,255,179,.55)}
+.price-card .btn{width:100%;margin-top:8px}
+
+.final{
+  min-height:84vh;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  padding:110px 24px;
+  position:relative;
+  overflow:hidden;
+}
+.final::before{
+  content:"";
+  position:absolute;
+  width:620px;
+  height:620px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(157,255,179,.16),transparent 64%);
+  filter:blur(4px);
+}
+.final-inner{position:relative;z-index:1;max-width:860px}
+.final p{color:var(--muted);font-size:18px;line-height:1.7;margin:22px auto 34px;max-width:560px}
+
+footer{
+  border-top:1px solid var(--line);
+  padding:28px 48px;
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  color:var(--dim);
+  font-size:13px;
+}
+.footer-links{display:flex;gap:18px}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.reveal.in{opacity:1;transform:none}
+
+@media(max-width:980px){
+  .nav{top:0;left:0;right:0;border-radius:0}
+  .nav-mid{display:none}
+  .hero{grid-template-columns:1fr;min-height:auto;padding:128px 20px 70px;text-align:center}
+  .hero-copy,.hero h1{margin-left:auto;margin-right:auto}
+  .hero-actions{justify-content:center}
+  .stage{height:420px}
+  .orb{right:50%;transform:translateX(50%) rotateY(-18deg) rotateX(10deg) rotateZ(-8deg);width:330px;height:330px}
+  .glass-slab{right:50%;top:120px;transform:translateX(50%) rotateY(-14deg) rotateX(6deg);width:280px;min-height:280px}
+  .float-card{display:none}
+  .scroll-story{grid-template-columns:1fr;padding:82px 20px}
+  .story-copy{position:relative;top:auto}
+  .cards,.pricing-grid{grid-template-columns:1fr}
+  .work-card:nth-child(n){margin-top:0}
+  .product-strip,.pricing{padding-left:20px;padding-right:20px}
+  .strip-head{display:block}
+  footer{flex-direction:column;align-items:center;text-align:center}
 }
 </style>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27><rect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%234F8CF5%27/><text x=%2716%27 y=%2723%27 text-anchor=%27middle%27 font-size=%2720%27 font-family=%27system-ui%27 font-weight=%27bold%27 fill=%27white%27>V</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27><rect width=%2732%27 height=%2732%27 rx=%278%27 fill=%27%23050609%27/><circle cx=%2716%27 cy=%2716%27 r=%278%27 stroke=%27%23F7F1E8%27 stroke-width=%272%27 fill=%27none%27/><circle cx=%2716%27 cy=%2716%27 r=%274%27 fill=%27%23F7F1E8%27/></svg>">
 </head>
 <body>
+<div class="noise"></div>
 
-<!-- NAV -->
-<nav>
-  <a href="/" class="nav-logo">
-    <div class="nav-mark">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <circle cx="7" cy="7" r="3" fill="white"/>
-        <circle cx="7" cy="7" r="6" stroke="white" stroke-width="1.5" fill="none"/>
+<nav class="nav">
+  <a class="brand" href="/">
+    <span class="mark" aria-hidden="true">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="3.5" fill="currentColor"/>
+        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.6"/>
       </svg>
-    </div>
-    <span class="nav-brand">Inflaid</span>
+    </span>
+    <span>Inflaid</span>
   </a>
-  <div class="nav-links">
-    <a href="#features" class="nav-link">Features</a>
-    <a href="#how" class="nav-link">How it works</a>
-    <a href="#pricing" class="nav-link">Pricing</a>
+  <div class="nav-mid">
+    <a href="#system">System</a>
+    <a href="#workflow">Workflow</a>
+    <a href="#pricing">Pricing</a>
   </div>
   <div class="nav-actions">
-    <a href="/auth.html" class="btn btn-ghost">Log in</a>
-    <a href="/auth.html" class="btn btn-dark">Start free <span class="arrow-icon">→</span></a>
+    <a class="btn btn-ghost" href="/auth.html">Log in</a>
+    <a class="btn btn-primary" href="/auth.html">Start free</a>
   </div>
 </nav>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-badge">
-    <span class="badge-dot"></span>
-    Built for beauty & skincare brands
-  </div>
-  <h1>Stop guessing which<br><span class="grad-text">influencer will convert.</span></h1>
-  <p class="hero-sub">Most beauty brands waste 60% of their influencer budget on the wrong people. Inflaid analyzes any Instagram account and gives you a clear decision — Gift, Paid, or Avoid — with ROI estimate and a ready-to-send outreach message. In 30 seconds.</p>
-  <div class="hero-actions">
-    <a href="/auth.html" class="btn btn-dark btn-lg">Start for free <span class="arrow-icon">→</span></a>
-    <a href="#how" class="btn btn-ghost btn-lg">See how it works</a>
-  </div>
-  <p class="hero-fine">No credit card required · 2 free analyses included</p>
-</section>
-
-<!-- HERO MOCKUP — full dashboard replica with animated cursor -->
-<style>
-/* ── DASHBOARD REPLICA MOCKUP ── */
-@keyframes adTyping {
-  0%,8%   { width: 0; }
-  35%,100%{ width: 100%; }
-}
-@keyframes adBlink {
-  50% { border-color: transparent; }
-}
-@keyframes adFadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes adSlideRight {
-  from { opacity: 0; transform: translateX(24px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-@keyframes adPulseGreen {
-  0%,100% { box-shadow: 0 0 0 0 rgba(22,163,74,.3); }
-  50%     { box-shadow: 0 0 0 6px rgba(22,163,74,0); }
-}
-@keyframes adScorePop {
-  0%   { transform: scale(.7); opacity: 0; }
-  70%  { transform: scale(1.05); }
-  100% { transform: scale(1); opacity: 1; }
-}
-@keyframes barFill91  { from { width: 0; } to { width: 91%; } }
-@keyframes barFill88  { from { width: 0; } to { width: 88%; } }
-@keyframes barFill85  { from { width: 0; } to { width: 85%; } }
-@keyframes barFill82  { from { width: 0; } to { width: 82%; } }
-@keyframes barFill79  { from { width: 0; } to { width: 79%; } }
-@keyframes mockScroll {
-  0%,10%   { transform: translateY(0); }
-  18%,38%  { transform: translateY(-280px); }
-  46%,62%  { transform: translateY(-600px); }
-  70%,85%  { transform: translateY(-950px); }
-  93%,100% { transform: translateY(0); }
-}
-/* cursor moves */
-@keyframes cursorMove {
-  /* start: center-right area */
-  0%        { left: 74%; top: 38%; transform: scale(1); }
-  /* move toward analyze input */
-  12%       { left: 52%; top: 28%; transform: scale(1); }
-  /* pause over input */
-  20%       { left: 52%; top: 28%; transform: scale(1); }
-  /* move to Analyze button */
-  28%       { left: 68%; top: 28%; transform: scale(1); }
-  /* click — shrink */
-  30%       { left: 68%; top: 28%; transform: scale(0.72); }
-  32%       { left: 68%; top: 28%; transform: scale(1); }
-  /* move to card */
-  42%       { left: 55%; top: 43%; transform: scale(1); }
-  /* pause */
-  50%       { left: 55%; top: 43%; transform: scale(1); }
-  /* move to View details */
-  58%       { left: 44%; top: 52%; transform: scale(1); }
-  /* click */
-  60%       { left: 44%; top: 52%; transform: scale(0.72); }
-  62%       { left: 44%; top: 52%; transform: scale(1); }
-  /* move to score number after scroll */
-  72%       { left: 62%; top: 68%; transform: scale(1); }
-  /* hover score */
-  84%       { left: 62%; top: 68%; transform: scale(1); }
-  /* return to start */
-  96%,100%  { left: 74%; top: 38%; transform: scale(1); }
-}
-
-/* ── DASHBOARD REPLICA WRAPPER ── */
-.ad-wrap {
-  position: relative;
-}
-.ad-browser {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255,255,255,.7) inset;
-  position: relative;
-  max-width: 860px;
-  margin: 0 auto;
-}
-/* browser chrome bar */
-.ad-bar {
-  display: flex; align-items: center; gap: 6px;
-  padding: 11px 16px;
-  background: #F0EFEC;
-  border-bottom: 1px solid var(--border);
-}
-.ad-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.ad-url {
-  flex: 1; margin: 0 10px;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 5px; padding: 4px 12px;
-  font-size: 11px; color: var(--text3);
-  display: flex; align-items: center; gap: 5px;
-}
-.ad-url-lock { font-size: 9px; opacity: .55; }
-/* browser body */
-.ad-body {
-  display: flex; height: 488px; overflow: hidden; position: relative;
-}
-/* ── SIDEBAR ── */
-.ad-sidebar {
-  width: 178px; flex-shrink: 0;
-  border-right: 1px solid var(--border);
-  padding: 14px 10px;
-  display: flex; flex-direction: column; gap: 2px;
-  background: var(--surface);
-}
-.ad-logo {
-  display: flex; align-items: center; gap: 7px;
-  padding: 6px 10px 14px;
-  font-size: 13px; font-weight: 700; color: var(--text);
-  font-family: var(--display);
-  border-bottom: 1px solid var(--border2);
-  margin-bottom: 8px;
-}
-.ad-logo-dot {
-  width: 20px; height: 20px; border-radius: 5px;
-  background: var(--accent);
-  flex-shrink: 0;
-}
-.ad-nav {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 10px; border-radius: 7px;
-  font-size: 12px; color: var(--text3); font-weight: 500;
-}
-.ad-nav.active {
-  background: var(--accent-lo); color: var(--accent); font-weight: 600;
-}
-.ad-nav-ic {
-  width: 14px; height: 14px; border-radius: 3px;
-  background: currentColor; opacity: .25; flex-shrink: 0;
-}
-.ad-nav.active .ad-nav-ic { opacity: 1; }
-.ad-sidebar-spacer { flex: 1; }
-.ad-sidebar-user {
-  border-top: 1px solid var(--border2);
-  padding: 10px 10px 6px;
-  display: flex; align-items: center; gap: 8px;
-}
-.ad-user-av {
-  width: 26px; height: 26px; border-radius: 50%;
-  background: linear-gradient(135deg,#FBBF24,#F59E0B);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 9px; font-weight: 800; color: #fff; flex-shrink: 0;
-}
-.ad-user-name { font-size: 11px; font-weight: 600; color: var(--text); line-height: 1.2; }
-.ad-user-plan { font-size: 9.5px; color: var(--text3); }
-.ad-usage {
-  margin: 6px 10px 0;
-  background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 7px; padding: 8px 9px;
-}
-.ad-usage-label { font-size: 9.5px; color: var(--text2); margin-bottom: 5px; display: flex; justify-content: space-between; }
-.ad-usage-bar { height: 3px; background: var(--border); border-radius: 2px; }
-.ad-usage-fill { height: 100%; background: var(--accent); border-radius: 2px; width: 40%; }
-
-/* ── MAIN AREA ── */
-.ad-main {
-  flex: 1; overflow: hidden; position: relative;
-  background: var(--bg);
-}
-/* scrollable inner content */
-.ad-scroll-inner {
-  position: absolute;
-  left: 0; right: 0; top: 0;
-  animation: mockScroll 18s cubic-bezier(.4,0,.2,1) infinite;
-}
-
-/* topbar */
-.ad-topbar {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 10px 16px;
-  display: flex; align-items: center; gap: 10px;
-}
-.ad-topbar-search {
-  background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 7px; padding: 7px 11px;
-  font-size: 11.5px; color: var(--text3); font-family: var(--sans);
-  flex: 1;
-}
-.ad-topbar-input {
-  background: var(--surface2); border: 1.5px solid var(--accent);
-  border-radius: 7px; padding: 7px 11px;
-  font-size: 11.5px; color: var(--text); font-family: var(--sans);
-  min-width: 130px;
-}
-.ad-topbar-btn {
-  padding: 7px 14px; background: var(--text); color: #fff;
-  border: none; border-radius: 7px;
-  font-size: 11.5px; font-weight: 600; font-family: var(--sans); cursor: default;
-  white-space: nowrap;
-}
-
-/* content area padding */
-.ad-content { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
-.ad-section-label {
-  font-size: 9.5px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: .09em; color: var(--text3); margin-bottom: 2px;
-}
-
-/* influencer card */
-.ad-inf-card {
-  background: var(--surface); border: 1.5px solid rgba(22,163,74,.3);
-  border-radius: 12px; padding: 13px 15px;
-  display: flex; align-items: center; gap: 12px;
-  box-shadow: 0 0 0 3px rgba(22,163,74,.06);
-}
-.ad-inf-av {
-  width: 40px; height: 40px; border-radius: 50%;
-  background: linear-gradient(135deg,#60A5FA,#2563EB);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 800; color: #fff; flex-shrink: 0;
-}
-.ad-inf-info { flex: 1; min-width: 0; }
-.ad-inf-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.2; }
-.ad-inf-handle { font-size: 10.5px; color: var(--text3); }
-.ad-inf-followers { font-size: 11px; color: var(--text2); margin-top: 3px; }
-.ad-inf-insight { font-size: 10px; color: var(--text3); margin-top: 4px; font-style: italic; }
-.ad-inf-score-col { text-align: center; flex-shrink: 0; margin-left: 6px; }
-.ad-inf-score-num {
-  font-family: var(--display); font-size: 34px; font-weight: 800;
-  color: #16A34A; letter-spacing: -.03em; line-height: 1;
-}
-.ad-inf-badge {
-  display: block; font-size: 9px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: .07em; color: #16A34A;
-  background: rgba(22,163,74,.12); border: 1px solid rgba(22,163,74,.25);
-  padding: 2px 8px; border-radius: 4px; margin: 3px auto 0; width: fit-content;
-}
-.ad-inf-verdict {
-  display: block; font-size: 10px; font-weight: 600; color: var(--text2);
-  margin-top: 3px;
-}
-.ad-inf-actions {
-  display: flex; gap: 6px; margin-top: 8px;
-}
-.ad-inf-btn {
-  padding: 5px 11px; border-radius: 6px;
-  font-size: 10.5px; font-weight: 600; font-family: var(--sans); cursor: default; border: none;
-}
-.ad-inf-btn-pri { background: var(--text); color: #fff; }
-.ad-inf-btn-sec { background: var(--surface2); border: 1px solid var(--border); color: var(--text2); }
-
-/* ── DETAIL VIEW (shown after scroll) ── */
-.ad-detail-section {
-  padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
-  background: var(--bg);
-}
-.ad-detail-divider {
-  height: 1px; background: var(--border2); margin: 6px 0;
-}
-/* decision bar */
-.ad-decision {
-  background: rgba(22,163,74,.07); border: 1px solid rgba(22,163,74,.22);
-  border-radius: 10px; padding: 12px 14px;
-  display: flex; flex-direction: column; gap: 4px;
-}
-.ad-dec-eyebrow {
-  font-size: 8.5px; text-transform: uppercase; letter-spacing: .1em;
-  font-weight: 700; color: #16A34A;
-}
-.ad-dec-verdict {
-  font-size: 14px; font-weight: 800; color: #16A34A;
-  letter-spacing: -.02em;
-}
-.ad-dec-bullets { display: flex; flex-direction: column; gap: 3px; margin-top: 2px; }
-.ad-dec-bullet { font-size: 10.5px; color: #15803D; font-weight: 500; }
-.ad-dec-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-.ad-dec-pill {
-  background: rgba(255,255,255,.75); border: 1px solid rgba(0,0,0,.07);
-  border-radius: 5px; padding: 4px 9px;
-}
-.ad-dp-lbl { font-size: 7.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); font-weight: 600; }
-.ad-dp-val { font-size: 11px; font-weight: 700; color: var(--text); line-height: 1.3; }
-
-/* score + breakdown row */
-.ad-score-row {
-  display: flex; gap: 12px; align-items: flex-start;
-}
-.ad-score-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 14px 16px;
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  flex-shrink: 0; width: 100px;
-  box-shadow: var(--shadow);
-}
-.ad-score-big {
-  font-family: var(--display); font-size: 44px; font-weight: 800;
-  color: #16A34A; letter-spacing: -.04em; line-height: 1;
-}
-.ad-score-lbl {
-  font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
-  color: #16A34A; background: rgba(22,163,74,.12); border: 1px solid rgba(22,163,74,.25);
-  padding: 2px 8px; border-radius: 4px;
-}
-/* breakdown bars */
-.ad-breakdown {
-  flex: 1; background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 12px 14px;
-  display: flex; flex-direction: column; gap: 8px;
-  box-shadow: var(--shadow);
-}
-.ad-bk-row { }
-.ad-bk-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
-.ad-bk-name { font-size: 10.5px; color: var(--text2); font-weight: 500; }
-.ad-bk-val { font-size: 10.5px; font-weight: 700; color: var(--text); }
-.ad-bk-track { height: 4px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
-.ad-bk-fill { height: 100%; border-radius: 3px; background: #16A34A; }
-.ad-bk-fill-91 { animation: barFill91 1.1s cubic-bezier(.22,1,.36,1) 6s both; }
-.ad-bk-fill-88 { animation: barFill88 1.1s cubic-bezier(.22,1,.36,1) 6.1s both; }
-.ad-bk-fill-85 { animation: barFill85 1.1s cubic-bezier(.22,1,.36,1) 6.2s both; }
-.ad-bk-fill-82 { animation: barFill82 1.1s cubic-bezier(.22,1,.36,1) 6.3s both; }
-.ad-bk-fill-79 { animation: barFill79 1.1s cubic-bezier(.22,1,.36,1) 6.4s both; }
-
-/* ── ROI FORECAST CARD ── */
-.ad-roi-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 12px 14px;
-  box-shadow: var(--shadow);
-}
-.ad-roi-head {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 8px;
-}
-.ad-roi-title { font-size: 11px; font-weight: 700; color: var(--text); }
-.ad-roi-conf {
-  display: flex; align-items: center; gap: 4px;
-  font-size: 8.5px; font-weight: 700; color: #D97706;
-  background: rgba(217,119,6,.09); border: 1px solid rgba(217,119,6,.2);
-  border-radius: 5px; padding: 2px 7px;
-}
-.ad-roi-conf-dot {
-  width: 6px; height: 6px; border-radius: 50%; background: #D97706;
-}
-.ad-roi-split {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-}
-.ad-roi-col {
-  background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 7px; padding: 8px 10px;
-}
-.ad-roi-col-lbl {
-  font-size: 7.5px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: .08em; color: var(--text3); margin-bottom: 4px;
-}
-.ad-roi-col-main { font-size: 12px; font-weight: 800; color: var(--text); line-height: 1.2; }
-.ad-roi-col-sub { font-size: 10px; color: var(--text2); margin-top: 2px; }
-.ad-roi-footer {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border2);
-}
-.ad-roi-pct { font-size: 11px; font-weight: 700; color: #16A34A; }
-.ad-roi-note { font-size: 9px; color: var(--text3); }
-
-/* ── KEY SIGNALS CARD ── */
-.ad-signals-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 12px 14px;
-  box-shadow: var(--shadow);
-}
-.ad-signals-title { font-size: 11px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-.ad-signals-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
-}
-.ad-signal-box {
-  border-radius: 7px; padding: 8px 9px; border: 1px solid transparent;
-}
-.ad-signal-box.green  { background: rgba(22,163,74,.07);  border-color: rgba(22,163,74,.2); }
-.ad-signal-box.red    { background: rgba(234,179,8,.07);  border-color: rgba(234,179,8,.22); }
-.ad-signal-box.blue   { background: rgba(59,110,245,.07); border-color: rgba(59,110,245,.2); }
-.ad-signal-eyebrow {
-  font-size: 7.5px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: .08em; margin-bottom: 3px;
-}
-.ad-signal-box.green  .ad-signal-eyebrow { color: #16A34A; }
-.ad-signal-box.red    .ad-signal-eyebrow { color: #B45309; }
-.ad-signal-box.blue   .ad-signal-eyebrow { color: #3B6EF5; }
-.ad-signal-name { font-size: 10px; font-weight: 700; color: var(--text); line-height: 1.25; }
-.ad-signal-sub  { font-size: 9px; color: var(--text3); margin-top: 2px; line-height: 1.3; }
-
-/* ── CAMPAIGN PLAN CARD ── */
-.ad-plan-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 12px 14px;
-  box-shadow: var(--shadow);
-}
-.ad-plan-title { font-size: 11px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-.ad-plan-steps { display: flex; flex-direction: column; gap: 6px; }
-.ad-plan-step {
-  display: flex; align-items: flex-start; gap: 8px;
-  padding: 7px 9px; border-radius: 7px;
-  background: var(--surface2); border: 1px solid var(--border);
-}
-.ad-plan-week {
-  font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
-  color: var(--accent); background: var(--accent-lo);
-  border-radius: 4px; padding: 2px 6px; flex-shrink: 0; margin-top: 1px;
-}
-.ad-plan-arrow { font-size: 10px; color: var(--text3); flex-shrink: 0; margin-top: 1px; }
-.ad-plan-text  { font-size: 10px; color: var(--text2); line-height: 1.4; }
-
-/* ── MOUSE CURSOR ── */
-.ad-cursor {
-  position: absolute;
-  width: 20px; height: 24px;
-  pointer-events: none;
-  z-index: 100;
-  animation: cursorMove 10s cubic-bezier(.4,0,.2,1) infinite;
-  transform-origin: top left;
-}
-.ad-cursor svg { filter: drop-shadow(0 1px 3px rgba(0,0,0,.35)); }
-
-/* responsive */
-@media (max-width: 700px) {
-  .ad-sidebar { display: none; }
-  .ad-browser { border-radius: 12px; width: 100% !important; max-width: 100% !important; }
-  .ad-wrap { padding: 0 12px !important; }
-}
-</style>
-
-<div style="padding: 0 48px; max-width: 920px; margin: 0 auto; position: relative;" class="reveal hero-mockup-wrap">
-  <div class="hero-glow"></div>
-
-  <div class="ad-browser">
-    <!-- browser chrome -->
-    <div class="ad-bar">
-      <div class="ad-dot" style="background:#FF5F57"></div>
-      <div class="ad-dot" style="background:#FFBD2E"></div>
-      <div class="ad-dot" style="background:#28C840"></div>
-      <div class="ad-url">
-        <span class="ad-url-lock">🔒</span>
-        app.inflaid.io/dashboard
+<main>
+  <section class="hero">
+    <div class="hero-text reveal">
+      <div class="eyebrow">Creator intelligence for beauty brands</div>
+      <h1>Know who deserves <span class="gradient">creator budget</span> before it moves.</h1>
+      <p class="hero-copy">Inflaid turns messy Instagram vetting into a clear decision system: who to gift, who to pay, who to avoid, and what to learn after every campaign.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/auth.html">Analyze your first creator</a>
+        <a class="btn btn-ghost" href="#system">Scroll the system</a>
       </div>
+      <div class="fine">No credit card required. 2 analyses included.</div>
     </div>
 
-    <div class="ad-body">
-      <!-- ── SIDEBAR ── -->
-      <div class="ad-sidebar">
-        <div class="ad-logo">
-          <div class="ad-logo-dot"></div>
-          Inflaid
-        </div>
-        <div class="ad-nav active">
-          <span class="ad-nav-ic" style="border-radius:3px;width:12px;height:12px;"></span>
-          Discovery
-        </div>
-        <div class="ad-nav">
-          <span class="ad-nav-ic" style="border-radius:3px;width:12px;height:12px;"></span>
-          Outreach
-        </div>
-        <div class="ad-nav">
-          <span class="ad-nav-ic" style="border-radius:50%;width:12px;height:12px;"></span>
-          Analytics
-        </div>
-        <div class="ad-sidebar-spacer"></div>
-        <div class="ad-usage">
-          <div class="ad-usage-label">
-            <span>8 / 20 analyses used</span>
-          </div>
-          <div class="ad-usage-bar"><div class="ad-usage-fill"></div></div>
-        </div>
-        <div class="ad-sidebar-user">
-          <div class="ad-user-av">SC</div>
-          <div>
-            <div class="ad-user-name">Sarah Chen</div>
-            <div class="ad-user-plan">Growth plan</div>
-          </div>
+    <div class="stage" data-parallax>
+      <div class="orb"></div>
+      <div class="glass-slab">
+        <div class="slab-kicker">Decision read</div>
+        <div class="slab-score">84</div>
+        <div class="slab-label">Paid campaign candidate</div>
+        <div class="mini-bars">
+          <div class="mini-bar"><span style="width:91%"></span></div>
+          <div class="mini-bar"><span style="width:78%"></span></div>
+          <div class="mini-bar"><span style="width:64%"></span></div>
         </div>
       </div>
-
-      <!-- ── MAIN AREA ── -->
-      <div class="ad-main">
-        <!-- scrollable inner: first section = card view, second = detail view -->
-        <div class="ad-scroll-inner">
-
-          <!-- SECTION 1: Topbar + card -->
-          <div>
-            <!-- topbar -->
-            <div class="ad-topbar">
-              <div class="ad-topbar-search">Search influencers…</div>
-              <div class="ad-topbar-input">@hudabeauty</div>
-              <button class="ad-topbar-btn">Analyze →</button>
-            </div>
-
-            <!-- card list -->
-            <div class="ad-content">
-              <div class="ad-section-label">1 result for @hudabeauty</div>
-              <div class="ad-inf-card">
-                <div class="ad-inf-av">HK</div>
-                <div class="ad-inf-info">
-                  <div class="ad-inf-name">Huda Kattan</div>
-                  <div class="ad-inf-handle">@hudabeauty · 52.4M followers</div>
-                  <div class="ad-inf-insight">Elite engagement for scale. Paid collab recommended.</div>
-                  <div class="ad-inf-actions">
-                    <button class="ad-inf-btn ad-inf-btn-pri">View details</button>
-                    <button class="ad-inf-btn ad-inf-btn-sec">Outreach</button>
-                  </div>
-                </div>
-                <div class="ad-inf-score-col">
-                  <div class="ad-inf-score-num">84</div>
-                  <span class="ad-inf-badge">High ROI</span>
-                  <span class="ad-inf-verdict">Paid Campaign</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- SECTION 2: Detail view (revealed after scroll) -->
-          <div class="ad-detail-section">
-            <!-- profile mini header -->
-            <div style="display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--border2);">
-              <div class="ad-inf-av" style="width:34px;height:34px;font-size:11px;">CR</div>
-              <div>
-                <div style="font-size:12.5px;font-weight:700;color:var(--text);">Huda Kattan</div>
-                <div style="font-size:10px;color:var(--text3);">@hudabeauty · 52.4M followers · Beauty / Makeup · <span style="color:#16A34A">High niche alignment</span></div>
-              </div>
-              <div style="margin-left:auto;font-size:9px;font-weight:700;color:#16A34A;background:rgba(22,163,74,.1);border:1px solid rgba(22,163,74,.25);border-radius:5px;padding:3px 10px;">High ROI</div>
-            </div>
-
-            <!-- decision bar -->
-            <div class="ad-decision">
-              <div class="ad-dec-eyebrow">Inflaid Decision</div>
-              <div class="ad-dec-verdict">Paid Campaign — Reels</div>
-              <div class="ad-dec-bullets">
-                <div class="ad-dec-bullet">→ Negotiate fixed fee + performance bonus</div>
-                <div class="ad-dec-bullet">→ Brief: 2 Reels (product showcase)</div>
-              </div>
-              <div class="ad-dec-pills">
-                <div class="ad-dec-pill">
-                  <div class="ad-dp-lbl">Budget</div>
-                  <div class="ad-dp-val">$5K–$15K</div>
-                </div>
-                <div class="ad-dec-pill">
-                  <div class="ad-dp-lbl">Risk</div>
-                  <div class="ad-dp-val" style="color:#D97706">Medium</div>
-                </div>
-                <div class="ad-dec-pill">
-                  <div class="ad-dp-lbl">Est. Sales</div>
-                  <div class="ad-dp-val" style="color:#16A34A">8–18 orders</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- score + breakdown -->
-            <div class="ad-score-row">
-              <div class="ad-score-card">
-                <div class="ad-score-big">84</div>
-                <div class="ad-score-lbl">High ROI</div>
-              </div>
-              <div class="ad-breakdown">
-                <div class="ad-bk-row">
-                  <div class="ad-bk-top"><span class="ad-bk-name">Engagement Rate</span><span class="ad-bk-val">91</span></div>
-                  <div class="ad-bk-track"><div class="ad-bk-fill ad-bk-fill-91" style="width:0%"></div></div>
-                </div>
-                <div class="ad-bk-row">
-                  <div class="ad-bk-top"><span class="ad-bk-name">Audience Quality</span><span class="ad-bk-val">88</span></div>
-                  <div class="ad-bk-track"><div class="ad-bk-fill ad-bk-fill-88" style="width:0%"></div></div>
-                </div>
-                <div class="ad-bk-row">
-                  <div class="ad-bk-top"><span class="ad-bk-name">Niche Alignment</span><span class="ad-bk-val">85</span></div>
-                  <div class="ad-bk-track"><div class="ad-bk-fill ad-bk-fill-85" style="width:0%"></div></div>
-                </div>
-                <div class="ad-bk-row">
-                  <div class="ad-bk-top"><span class="ad-bk-name">Content Quality</span><span class="ad-bk-val">82</span></div>
-                  <div class="ad-bk-track"><div class="ad-bk-fill ad-bk-fill-82" style="width:0%"></div></div>
-                </div>
-                <div class="ad-bk-row">
-                  <div class="ad-bk-top"><span class="ad-bk-name">Authenticity</span><span class="ad-bk-val">79</span></div>
-                  <div class="ad-bk-track"><div class="ad-bk-fill ad-bk-fill-79" style="width:0%"></div></div>
-                </div>
-              </div>
-            </div>
-            <!-- ROI Forecast card -->
-            <div class="ad-roi-card">
-              <div class="ad-roi-head">
-                <div class="ad-roi-title">ROI Forecast</div>
-                <div class="ad-roi-conf"><div class="ad-roi-conf-dot"></div>MEDIUM CONFIDENCE</div>
-              </div>
-              <div class="ad-roi-split">
-                <div class="ad-roi-col">
-                  <div class="ad-roi-col-lbl">You Spend</div>
-                  <div class="ad-roi-col-main">$5K–$15K cash</div>
-                  <div class="ad-roi-col-sub">3.9K–7.2K views</div>
-                </div>
-                <div class="ad-roi-col">
-                  <div class="ad-roi-col-lbl">You Get Back</div>
-                  <div class="ad-roi-col-main" style="color:#16A34A">$8,100–$18,900</div>
-                  <div class="ad-roi-col-sub">8–18 orders</div>
-                </div>
-              </div>
-              <div class="ad-roi-footer">
-                <div class="ad-roi-pct">ROI: +62% to +126%</div>
-                <div class="ad-roi-note">Based on $45 avg order (beauty)</div>
-              </div>
-            </div>
-
-            <!-- Key Signals card -->
-            <div class="ad-signals-card">
-              <div class="ad-signals-title">Key Signals</div>
-              <div class="ad-signals-grid">
-                <div class="ad-signal-box green">
-                  <div class="ad-signal-eyebrow">Biggest Strength</div>
-                  <div class="ad-signal-name">Engagement Rate — 91/100</div>
-                  <div class="ad-signal-sub">Elite tier. Top 5% of beauty accounts.</div>
-                </div>
-                <div class="ad-signal-box red">
-                  <div class="ad-signal-eyebrow">Biggest Risk</div>
-                  <div class="ad-signal-name">Niche Alignment — 85/100</div>
-                  <div class="ad-signal-sub">Sports/Lifestyle audience. Not pure beauty.</div>
-                </div>
-                <div class="ad-signal-box blue">
-                  <div class="ad-signal-eyebrow">Posting Frequency</div>
-                  <div class="ad-signal-name">4.2 posts/week</div>
-                  <div class="ad-signal-sub">Consistent cadence detected.</div>
-                </div>
-                <div class="ad-signal-box green">
-                  <div class="ad-signal-eyebrow">Authenticity</div>
-                  <div class="ad-signal-name">Authenticity — 79/100</div>
-                  <div class="ad-signal-sub">Genuine audience trust signals detected.</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Campaign Plan card -->
-            <div class="ad-plan-card">
-              <div class="ad-plan-title">Campaign Plan</div>
-              <div class="ad-plan-steps">
-                <div class="ad-plan-step">
-                  <div class="ad-plan-week">Week 1</div>
-                  <div class="ad-plan-arrow">→</div>
-                  <div class="ad-plan-text">Ship product — no strings attached</div>
-                </div>
-                <div class="ad-plan-step">
-                  <div class="ad-plan-week">Week 2</div>
-                  <div class="ad-plan-arrow">→</div>
-                  <div class="ad-plan-text">Follow up once. Ask if they'd share if they love it</div>
-                </div>
-                <div class="ad-plan-step">
-                  <div class="ad-plan-week">Week 3</div>
-                  <div class="ad-plan-arrow">→</div>
-                  <div class="ad-plan-text">Review: did they post? Track reach + engagement</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- outreach section -->
-            <div style="background:var(--surface,#fff);border:1px solid var(--border,#E4E0D9);border-radius:10px;padding:14px;margin-top:10px">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-                <div style="font-size:11px;font-weight:600;color:var(--text,#1A1714)">Outreach template</div>
-                <div style="font-size:9.5px;padding:3px 8px;border:1px solid var(--border,#E4E0D9);border-radius:5px;color:var(--text3,#A09C97);display:flex;align-items:center;gap:3px">✦ Generate with AI</div>
-              </div>
-              <div style="background:#F3F1EE;border:1px solid #E4E0D9;border-radius:7px;padding:10px;font-size:10px;color:#6B6360;line-height:1.7">
-                <div>Hi Huda,</div>
-                <div style="margin-top:4px">Your sports and lifestyle content genuinely stands out — the authenticity resonates.</div>
-                <div style="margin-top:4px">We'd love to explore a paid collab. Would you be open to a quick call this week?</div>
-                <div style="margin-top:4px;color:#A09C97">[Your name]</div>
-              </div>
-              <div style="display:flex;gap:6px;margin-top:8px">
-                <div style="flex:1;padding:6px;background:#3B6EF5;border-radius:6px;font-size:10px;font-weight:600;color:#fff;text-align:center">Copy to clipboard</div>
-                <div style="flex:1;padding:6px;background:transparent;border:1px solid #E4E0D9;border-radius:6px;font-size:10px;font-weight:500;color:#6B6360;text-align:center">Mark as sent</div>
-              </div>
-            </div>
-
-          </div><!-- end detail section -->
-
-        </div><!-- end scroll inner -->
-
-        <!-- ── ANIMATED MOUSE CURSOR ── -->
-        <div class="ad-cursor" aria-hidden="true">
-          <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M4 1L4 19L8 15L11.5 23L13.5 22L10 14L16 14L4 1Z" fill="white" stroke="#1A1714" stroke-width="1.5" stroke-linejoin="round"/>
-          </svg>
-        </div>
-
-      </div><!-- end ad-main -->
-    </div><!-- end ad-body -->
-  </div><!-- end ad-browser -->
-</div>
-
-<!-- STATS BAR -->
-<div class="stats-bar" style="margin-top:72px">
-  <div class="stats-inner">
-    <div class="stat-item reveal">
-      <div class="stat-icon" style="background:var(--accent-lo)">
-        <div class="si-bars">
-          <div class="si-bar"></div>
-          <div class="si-bar"></div>
-          <div class="si-bar"></div>
-          <div class="si-bar"></div>
-        </div>
+      <div class="float-card">
+        <b>Risk found early.</b>
+        <p>Surface-level hype is separated from audience quality, niche fit, and commercial signal.</p>
       </div>
+    </div>
+  </section>
+
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>GIFT OR PAY OR AVOID</span><span>STOP GUESSING</span><span>CAMPAIGN MEMORY</span><span>CREATOR SIGNAL</span>
+      <span>GIFT OR PAY OR AVOID</span><span>STOP GUESSING</span><span>CAMPAIGN MEMORY</span><span>CREATOR SIGNAL</span>
+    </div>
+  </div>
+
+  <section class="scroll-story" id="system">
+    <div class="story-copy reveal">
+      <div class="section-label">The system</div>
+      <h2>A decision layer before the DM.</h2>
+      <p>Voxr-style clarity, Raben-style restraint, and Oryzo-style product theatre - but built around a real workflow for creator spend.</p>
+    </div>
+    <div class="panels">
+      <article class="panel reveal">
+        <div class="panel-num">01</div>
+        <h3>Read the creator beyond the profile.</h3>
+        <p>Inflaid looks at signal quality, category fit, risk indicators, and buying intent instead of letting follower count dominate the decision.</p>
+        <div class="signal-grid">
+          <div class="signal"><small>Audience quality</small><strong>91</strong></div>
+          <div class="signal"><small>Niche fit</small><strong>High</strong></div>
+          <div class="signal"><small>Risk</small><strong>Low</strong></div>
+          <div class="signal"><small>Action</small><strong>Pay</strong></div>
+        </div>
+      </article>
+      <article class="panel reveal">
+        <div class="panel-num">02</div>
+        <h3>Move from "maybe" to a sharper shortlist.</h3>
+        <p>Every result lands as a creator card with a verdict, score, outreach action, and full report. The dashboard becomes a decision room, not a spreadsheet.</p>
+        <div class="signal-grid">
+          <div class="signal"><small>Gift</small><strong>Test</strong></div>
+          <div class="signal"><small>Paid</small><strong>Move</strong></div>
+          <div class="signal"><small>Avoid</small><strong>Save</strong></div>
+          <div class="signal"><small>DM</small><strong>Ready</strong></div>
+        </div>
+      </article>
+      <article class="panel reveal">
+        <div class="panel-num">03</div>
+        <h3>Keep what actually happened.</h3>
+        <p>Log campaign outcomes in seconds. Over time, Inflaid becomes memory for your brand: what converted, what looked good but missed, and where budget should go next.</p>
+        <div class="signal-grid">
+          <div class="signal"><small>Outcome</small><strong>Worth it</strong></div>
+          <div class="signal"><small>Orders</small><strong>20+</strong></div>
+          <div class="signal"><small>Learning</small><strong>Saved</strong></div>
+          <div class="signal"><small>Next call</small><strong>Sharper</strong></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="product-strip" id="workflow">
+    <div class="strip-head reveal">
       <div>
-        <div class="stat-num">7</div>
-        <div class="stat-lbl">Scoring factors</div>
+        <div class="section-label">Workflow</div>
+        <h2>Built like a product, not a prompt.</h2>
+      </div>
+      <p>Inflaid gives the brand team one place to analyze, decide, reach out, and learn. The UI is designed around momentum.</p>
+    </div>
+    <div class="cards">
+      <article class="work-card reveal">
+        <span>Analyze</span>
+        <h3>Drop any public Instagram handle.</h3>
+        <p>Get a clear score, commercial read, and recommendation without building a manual research sheet.</p>
+      </article>
+      <article class="work-card reveal">
+        <span>Decide</span>
+        <h3>Gift, paid, or avoid.</h3>
+        <p>Each creator becomes a decision card with risk, fit, and action. No more debating the same profile twice.</p>
+      </article>
+      <article class="work-card reveal">
+        <span>Remember</span>
+        <h3>Log outcomes fast.</h3>
+        <p>Capture what happened after the campaign so future decisions build on real signal, not memory.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="pricing" id="pricing">
+    <div class="pricing-inner">
+      <div class="section-label">Pricing</div>
+      <h2>Start small. Upgrade when the creator list gets serious.</h2>
+      <div class="pricing-grid">
+        <article class="price-card reveal">
+          <div class="price-name">Starter</div>
+          <div class="price">$19 <small>/ mo</small></div>
+          <p>For founders testing creator spend without hiring a full growth team.</p>
+          <ul>
+            <li>20 analyses per month</li>
+            <li>Creator decision cards</li>
+            <li>Outreach templates</li>
+          </ul>
+          <a class="btn btn-ghost" href="/auth.html?plan=starter">Choose Starter</a>
+        </article>
+        <article class="price-card featured reveal">
+          <div class="price-name">Growth</div>
+          <div class="price">$49 <small>/ mo</small></div>
+          <p>For beauty teams actively shortlisting, reaching out, and tracking campaigns.</p>
+          <ul>
+            <li>75 analyses per month</li>
+            <li>Campaign result tracking</li>
+            <li>Referral bonuses</li>
+          </ul>
+          <a class="btn btn-primary" href="/auth.html?plan=growth">Choose Growth</a>
+        </article>
+        <article class="price-card reveal">
+          <div class="price-name">Pro</div>
+          <div class="price">$99 <small>/ mo</small></div>
+          <p>For teams turning creator selection into a repeatable operating system.</p>
+          <ul>
+            <li>200 analyses per month</li>
+            <li>Unlimited campaign memory</li>
+            <li>Priority workflow support</li>
+          </ul>
+          <a class="btn btn-ghost" href="/auth.html?plan=pro">Choose Pro</a>
+        </article>
       </div>
     </div>
-    <div class="stat-sep"></div>
-    <div class="stat-item reveal reveal-d1">
-      <div class="stat-icon" style="background:var(--green-lo)">
-        <div class="si-signal">
-          <div class="si-signal-ring"></div>
-          <div class="si-signal-ring"></div>
-          <div class="si-signal-dot"></div>
-        </div>
-      </div>
-      <div>
-        <div class="stat-num">Real</div>
-        <div class="stat-lbl">Instagram data</div>
-      </div>
-    </div>
-    <div class="stat-sep"></div>
-    <div class="stat-item reveal reveal-d2">
-      <div class="stat-icon" style="background:rgba(139,92,246,.08)">
-        <div class="si-scan">
-          <div class="si-scan-line"></div>
-        </div>
-      </div>
-      <div>
-        <div class="stat-num">AI</div>
-        <div class="stat-lbl">Fraud detection</div>
-      </div>
-    </div>
-    <div class="stat-sep"></div>
-    <div class="stat-item reveal reveal-d3">
-      <div class="stat-icon" style="background:rgba(236,72,153,.08)">
-        <div class="si-check">
-          <svg width="20" height="18" viewBox="0 0 20 18">
-            <path d="M3 9 L8 14 L17 4" />
-          </svg>
-        </div>
-      </div>
-      <div>
-        <div class="stat-num">Free</div>
-        <div class="stat-lbl">To get started</div>
-      </div>
-    </div>
-    <div class="stat-sep"></div>
-    <div class="stat-item reveal reveal-d4">
-      <div class="stat-icon" style="background:var(--amber-lo)">
-        <div style="font-size:13px;font-weight:800;color:var(--amber);letter-spacing:-.03em;line-height:1">10K<br>500K</div>
-      </div>
-      <div>
-        <div class="stat-num" style="font-size:13px;letter-spacing:-.02em">10K–500K</div>
-        <div class="stat-lbl">Optimal creator range</div>
-      </div>
-    </div>
-  </div>
-</div>
+  </section>
 
-<!-- FEATURES -->
-<div class="features-wrap" id="features">
-
-  <!-- Feature 1: Scoring -->
-  <div class="feat-split">
-    <div class="feat-text reveal">
-      <div class="feat-label"><span class="feat-label-dot"></span>Instant Decision</div>
-      <h2>Gift, Paid, or Avoid —<br>in 30 seconds.</h2>
-      <p class="feat-sub">Follower count tells you nothing. Inflaid measures what actually drives sales for beauty brands — comment purchase intent, niche depth, content consistency, and fraud signals — and turns it into a single clear decision.</p>
-      <ul class="feat-points">
-        <li><span class="feat-check">✓</span>Engagement quality, not just rate</li>
-        <li><span class="feat-check">✓</span>Beauty keyword depth and recency</li>
-        <li><span class="feat-check">✓</span>Authenticity penalty for over-sponsored accounts</li>
-        <li><span class="feat-check">✓</span>Growth momentum — trending up or down?</li>
-        <li><span style="width:18px;height:18px;border-radius:5px;background:var(--amber-lo);border:1px solid var(--amber-mid);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:10px;color:var(--amber)">→</span>Precision-tuned for micro and mid-tier creators (10K–500K)</li>
-      </ul>
+  <section class="final">
+    <div class="final-inner reveal">
+      <div class="section-label">Inflaid</div>
+      <h2>Stop paying creators because the profile looked expensive.</h2>
+      <p>Run the read first. Keep the learning after. Make every next creator call with more context.</p>
+      <a class="btn btn-primary" href="/auth.html">Start free</a>
     </div>
-    <div class="feat-visual reveal reveal-d2">
-      <div class="score-card-wrap">
-        <div class="float-tag float-tag-1">
-          <span class="float-tag-val">44%</span>
-          <span class="float-tag-lbl"> purchase-intent comments</span>
-        </div>
-        <div class="float-tag float-tag-2">
-          <span class="float-tag-val">Top 12%</span>
-          <span class="float-tag-lbl"> in skincare</span>
-        </div>
-        <div class="score-card" id="score-demo-card">
-          <div class="score-card-head">
-            <div class="score-profile">
-              <div class="score-av">SR</div>
-              <div>
-                <div class="score-name">Sophia Reeves</div>
-                <div class="score-handle">@sophiareeves · 15.1K followers</div>
-              </div>
-            </div>
-            <div class="score-big-wrap">
-              <div class="score-big" id="score-number">0</div>
-              <div class="score-verdict">Elite ROI</div>
-            </div>
-          </div>
-          <div class="factor-list">
-            <div class="fac">
-              <div class="fac-top"><span class="fac-name">Engagement Quality <span style="color:var(--text3)">·30%</span></span><span class="fac-val">92</span></div>
-              <div class="fac-track"><div class="fac-fill" id="f1" style="width:0%;background:#16A34A"></div></div>
-            </div>
-            <div class="fac">
-              <div class="fac-top"><span class="fac-name">Posting Rhythm <span style="color:var(--text3)">·20%</span></span><span class="fac-val">88</span></div>
-              <div class="fac-track"><div class="fac-fill" id="f2" style="width:0%;background:#16A34A"></div></div>
-            </div>
-            <div class="fac">
-              <div class="fac-top"><span class="fac-name">Audience Fit <span style="color:var(--text3)">·20%</span></span><span class="fac-val">85</span></div>
-              <div class="fac-track"><div class="fac-fill" id="f3" style="width:0%;background:#16A34A"></div></div>
-            </div>
-            <div class="fac">
-              <div class="fac-top"><span class="fac-name">Niche Consistency <span style="color:var(--text3)">·15%</span></span><span class="fac-val">95</span></div>
-              <div class="fac-track"><div class="fac-fill" id="f4" style="width:0%;background:#16A34A"></div></div>
-            </div>
-            <div class="fac">
-              <div class="fac-top"><span class="fac-name">Authenticity <span style="color:var(--text3)">·10%</span></span><span class="fac-val">100</span></div>
-              <div class="fac-track"><div class="fac-fill" id="f5" style="width:0%;background:#16A34A"></div></div>
-            </div>
-            <div class="fac">
-              <div class="fac-top"><span class="fac-name">Momentum <span style="color:var(--text3)">·5%</span></span><span class="fac-val">78</span></div>
-              <div class="fac-track"><div class="fac-fill" id="f6" style="width:0%;background:#16A34A"></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  </section>
+</main>
 
-  <!-- Feature 2: Real Data -->
-  <div class="feat-split flip">
-    <div class="feat-text reveal">
-      <div class="feat-label"><span class="feat-label-dot"></span>Real Instagram Data</div>
-      <h2>Actual posts. Actual comments.<br>No estimates.</h2>
-      <p class="feat-sub">We pull real data directly from Instagram — recent posts, engagement numbers, comment patterns, hashtags. Every score is based on what's actually happening on the account right now.</p>
-      <ul class="feat-points">
-        <li><span class="feat-check">✓</span>Up-to-date post and engagement data</li>
-        <li><span class="feat-check">✓</span>AI analyzes comment sentiment for purchase intent</li>
-        <li><span class="feat-check">✓</span>Fraud signals: ghost followers, engagement spikes, hashtag spam</li>
-        <li><span class="feat-check">✓</span>Results cached 7 days so you don't re-spend API calls</li>
-      </ul>
-    </div>
-    <div class="feat-visual reveal reveal-d2">
-      <div class="data-visual">
-        <div class="dv-header">
-          <div class="dv-av">SR</div>
-          <div>
-            <div class="dv-name">@sophiareeves</div>
-            <div class="dv-handle">Skincare · Instagram</div>
-          </div>
-          <div class="dv-live"><span class="dv-live-dot"></span>Live data</div>
-        </div>
-        <div class="dv-body">
-          <div class="dv-row"><span class="dv-lbl">Followers</span><span class="dv-val">15,100</span></div>
-          <div class="dv-row"><span class="dv-lbl">Avg engagement rate</span><span class="dv-val green">6.2%</span></div>
-          <div class="dv-row"><span class="dv-lbl">Purchase-intent comments</span><span class="dv-val green">44%</span></div>
-          <div class="dv-row"><span class="dv-lbl">Spam ratio</span><span class="dv-val green">3%</span></div>
-          <div class="dv-row"><span class="dv-lbl">Fraud risk</span><span class="dv-val green">None detected</span></div>
-          <div class="dv-row"><span class="dv-lbl">Avg posts per week</span><span class="dv-val">4.2</span></div>
-          <div class="dv-posts">
-            <div class="dv-post" style="background:linear-gradient(135deg,#f9a8d4,#e879f9)"></div>
-            <div class="dv-post" style="background:linear-gradient(135deg,#fde68a,#f59e0b)"></div>
-            <div class="dv-post" style="background:linear-gradient(135deg,#a5f3fc,#3b82f6)"></div>
-            <div class="dv-post" style="background:linear-gradient(135deg,#bbf7d0,#16a34a)"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Feature 3: Outreach -->
-  <div class="feat-split">
-    <div class="feat-text reveal">
-      <div class="feat-label"><span class="feat-label-dot"></span>Outreach Templates</div>
-      <h2>From score to DM<br>in one click.</h2>
-      <p class="feat-sub">After scoring, Inflaid generates a personalized outreach template based on the influencer's niche and content style. Copy, send, done.</p>
-      <ul class="feat-points">
-        <li><span class="feat-check">✓</span>Auto-generated based on their actual content</li>
-        <li><span class="feat-check">✓</span>Track sent / replied status</li>
-        <li><span class="feat-check">✓</span>Outreach history across all analyzed influencers</li>
-      </ul>
-    </div>
-    <div class="feat-visual reveal reveal-d2">
-      <div class="outreach-visual">
-        <div class="ov-header">
-          <div class="ov-dot"></div>
-          Outreach template — Sophia Reeves
-        </div>
-        <div class="ov-body">
-          <div class="ov-to">
-            <span class="ov-to-label">To</span>
-            <div class="ov-to-chip">@sophiareeves</div>
-            <span style="font-size:11px;color:var(--text3);margin-left:4px">· 15.1K · Skincare</span>
-          </div>
-          <div class="ov-text">
-            <p>Hi <span class="ov-highlight">Sophia</span>,</p>
-            <p>I've been following your <span class="ov-highlight">skincare</span> content and it genuinely stood out to me.</p>
-            <p><span class="ov-highlight">[Brand name]</span> creates skincare products, and I think your audience would love what we make.</p>
-            <p>Would you be open to a complimentary product? No obligations — share only if you love it.</p>
-            <p style="color:var(--text3)">[Your name]</p>
-          </div>
-          <div class="ov-btns">
-            <div class="ov-btn ov-btn-pri">Copy to clipboard</div>
-            <div class="ov-btn ov-btn-sec">Mark as sent</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Feature 4: Campaign Tracker -->
-  <div class="feat-split flip">
-    <div class="feat-text reveal">
-      <div class="feat-label" style="color:var(--amber);gap:7px"><span style="width:5px;height:5px;border-radius:50%;background:var(--amber);display:inline-block"></span>Campaign Tracker <span style="background:var(--amber-lo);color:var(--amber);border:1px solid var(--amber-mid);border-radius:5px;padding:1px 8px;font-size:10px;font-weight:700;letter-spacing:.04em">COMING SOON</span></div>
-      <h2>Track what worked.<br>Spend smarter next time.</h2>
-      <p class="feat-sub">Log a campaign in 10 seconds — how much you spent, how it went. Inflaid tracks your actual results and uses them to make every future recommendation more accurate.</p>
-      <ul class="feat-points">
-        <li><span class="feat-check">✓</span>3-field quick log — spend range, outcome, done</li>
-        <li><span class="feat-check">✓</span>Auto-calculates ROAS and CAC from your inputs</li>
-        <li><span class="feat-check">✓</span>Your past results improve future ROI estimates</li>
-        <li><span class="feat-check">✓</span>See which influencer tier actually converts for you</li>
-      </ul>
-    </div>
-    <div class="feat-visual reveal">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;box-shadow:var(--shadow-lg);max-width:380px;margin:0 auto">
-        <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:16px">Log Campaign Result</div>
-        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
-          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 14px;font-size:13px;color:var(--text)">@sophiareeves</div>
-          <div style="display:flex;gap:8px">
-            <div style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 14px;font-size:12px;color:var(--text3)">Spend range</div>
-            <div style="background:var(--accent-lo);border:1px solid var(--accent-mid);border-radius:9px;padding:11px 14px;font-size:12px;color:var(--accent);font-weight:600">$100–500</div>
-          </div>
-          <div style="display:flex;gap:8px">
-            <div style="flex:1;background:var(--green-lo);border:1.5px solid var(--green-mid);border-radius:9px;padding:11px 14px;font-size:13px;color:var(--green);font-weight:600;text-align:center">🔥 Worth it</div>
-            <div style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 14px;font-size:13px;color:var(--text3);text-align:center">😐 Meh</div>
-            <div style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 14px;font-size:13px;color:var(--text3);text-align:center">💀 Waste</div>
-          </div>
-        </div>
-        <div style="background:var(--accent);color:#fff;border-radius:9px;padding:11px;text-align:center;font-size:13px;font-weight:600;cursor:pointer">Log campaign →</div>
-        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;color:var(--text3)">
-          <span>3 campaigns logged</span>
-          <span style="color:var(--green);font-weight:600">Avg ROAS: 2.4×</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- HOW IT WORKS -->
-<section class="how-section" id="how">
-  <div class="how-inner">
-    <div class="reveal">
-      <h2>How it works</h2>
-      <p class="how-sub">From Instagram handle to campaign decision in 30 seconds.</p>
-    </div>
-    <div class="how-steps">
-      <div class="how-step reveal reveal-d1">
-        <div class="how-num">1</div>
-        <div class="how-step-title">Enter an Instagram handle</div>
-        <div class="how-step-desc">Type any public Instagram account. Inflaid pulls their recent posts, engagement, and comment data in real time.</div>
-      </div>
-      <div class="how-step reveal reveal-d2">
-        <div class="how-num">2</div>
-        <div class="how-step-title">Get a clear decision</div>
-        <div class="how-step-desc">Not just a score — a verdict. Gift, Paid Campaign, or Avoid. With budget range, risk level, and estimated sales.</div>
-      </div>
-      <div class="how-step reveal reveal-d3">
-        <div class="how-num">3</div>
-        <div class="how-step-title">Send the outreach, track the result</div>
-        <div class="how-step-desc">Copy the AI-generated DM, reach out, and log the campaign outcome. Every result makes your next decision smarter.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PROOF -->
-<section class="testi-section">
-  <div class="testi-label reveal"><span class="feat-label-dot"></span>Common reactions to the workflow</div>
-  <h2 class="testi-heading reveal">Built for the decision before budget leaves your account.</h2>
-  <div class="testi-grid">
-
-    <div class="testi-card reveal reveal-d1">
-      <div class="testi-mark">“</div>
-      <div class="testi-kicker"><span class="testi-kicker-dot"></span>Clearer paid calls</div>
-      <div class="testi-title">“We stopped second-guessing who was actually worth paying.”</div>
-      <p class="testi-quote">It made paid creator decisions feel less random and gave the shortlist more conviction.</p>
-      <div class="testi-foot">Before outreach</div>
-    </div>
-
-    <div class="testi-card reveal reveal-d2">
-      <div class="testi-mark">“</div>
-      <div class="testi-kicker"><span class="testi-kicker-dot"></span>Faster shortlist</div>
-      <div class="testi-title">“The shortlist got tighter much faster than our usual process.”</div>
-      <p class="testi-quote">Instead of debating every handle, we got to a clearer next set of outreach priorities in one sitting.</p>
-      <div class="testi-foot">In one session</div>
-    </div>
-
-    <div class="testi-card reveal reveal-d3">
-      <div class="testi-mark">“</div>
-      <div class="testi-kicker"><span class="testi-kicker-dot"></span>Better campaign memory</div>
-      <div class="testi-title">“Tracking outcomes made the next sponsorship call easier.”</div>
-      <p class="testi-quote">What worked, what missed, and what deserved a second look finally lived in one place instead of scattered notes.</p>
-      <div class="testi-foot">Across campaigns</div>
-    </div>
-
-  </div>
-</section>
-
-<!-- PRICING -->
-<section id="pricing">
-  <div class="reveal">
-    <h2>Stop wasting money on the wrong beauty influencers.</h2>
-    <p class="pricing-sub">Built exclusively for beauty & skincare brands.<br>One bad collab costs more than a year of Inflaid.</p>
-  </div>
-  <div class="pricing-strip reveal reveal-d1">
-    <span>✓ 2 free analyses included</span>
-    <span>✓ No credit card required</span>
-    <span>✓ Cancel any time</span>
-  </div>
-  <div class="pricing-grid">
-
-    <!-- STARTER -->
-    <div class="plan reveal reveal-d1">
-      <div class="plan-badge starter">Starter</div>
-      <div class="plan-name">Starter</div>
-      <div class="plan-desc">For brands starting to vet influencers.</div>
-      <div class="plan-usage">20 <span>analyses / mo</span></div>
-      <div class="plan-price">$19</div>
-      <div class="plan-period">per month</div>
-      <div class="plan-sep"></div>
-      <ul class="plan-features">
-        <li>Verdict — Test / Avoid / Scale</li>
-        <li>ROI estimation</li>
-        <li>Campaign type recommendation</li>
-        <li>Outreach template</li>
-      </ul>
-      <a href="/auth.html?plan=starter" class="plan-cta plan-cta-outline">Start Free Trial</a>
-    </div>
-
-    <!-- GROWTH (featured) -->
-    <div class="plan featured reveal reveal-d2">
-      <div class="plan-badge popular">Most Popular</div>
-      <div class="plan-name">Growth</div>
-      <div class="plan-desc">The full decision system. Know exactly what to do and why.</div>
-      <div class="plan-usage">75 <span>analyses / mo</span></div>
-      <div class="plan-price">$49</div>
-      <div class="plan-period">per month</div>
-      <div class="plan-sep"></div>
-      <ul class="plan-features">
-        <li>Full decision output (ROI + Signals + Plan)</li>
-        <li>Break-even + worst-case analysis</li>
-        <li>Key signals with performance benchmarks</li>
-        <li>3-week campaign execution checklist</li>
-        <li>Priority processing</li>
-      </ul>
-      <div class="plan-value">Avg. brand avoids $400+ in bad collabs per month</div>
-      <a href="/auth.html?plan=growth" class="plan-cta plan-cta-white">Start Free Trial →</a>
-    </div>
-
-    <!-- PRO -->
-    <div class="plan reveal reveal-d3">
-      <div class="plan-badge growth">Pro</div>
-      <div class="plan-name">Pro</div>
-      <div class="plan-desc">For agencies running multiple brand campaigns.</div>
-      <div class="plan-usage">200 <span>analyses / mo</span></div>
-      <div class="plan-price">$99</div>
-      <div class="plan-period">per month</div>
-      <div class="plan-sep"></div>
-      <ul class="plan-features">
-        <li>Everything in Growth</li>
-        <li>Batch analysis — multiple handles at once</li>
-        <li>Export results to CSV</li>
-        <li>Advanced insights</li>
-        <li>Priority support</li>
-      </ul>
-      <a href="/auth.html?plan=pro" class="plan-cta plan-cta-accent">Start Free Trial →</a>
-    </div>
-
-  </div>
-  <p class="pricing-fine reveal reveal-d4">Try free with 2 analyses — no credit card required.</p>
-</section>
-
-<!-- CTA -->
-<section class="cta-section">
-  <h2 class="reveal">Start vetting smarter today.</h2>
-  <p class="reveal reveal-d1">Two free analyses. No credit card. No guesswork.</p>
-  <a href="/auth.html" class="btn btn-white btn-lg reveal reveal-d2">Create free account <span class="arrow-icon">→</span></a>
-  <p class="cta-fine reveal reveal-d3">Takes 30 seconds to sign up.</p>
-</section>
-
-<!-- FOOTER -->
 <footer>
-  <a href="/" class="footer-logo">
-    <div class="footer-mark">
-      <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
-        <circle cx="7" cy="7" r="3" fill="white"/>
-        <circle cx="7" cy="7" r="6" stroke="white" stroke-width="1.5" fill="none"/>
-      </svg>
-    </div>
-    <span class="footer-brand">Inflaid</span>
-  </a>
+  <div>Inflaid - creator intelligence for beauty brands</div>
   <div class="footer-links">
-    <a href="#features" class="footer-link">Features</a>
-    <a href="#pricing" class="footer-link">Pricing</a>
-    <a href="/auth.html" class="footer-link">Sign in</a>
+    <a href="/terms.html">Terms</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/auth.html">Log in</a>
   </div>
-  <span class="footer-copy">© 2026 Inflaid. All rights reserved. · <a href="/terms" class="footer-link">Terms</a> · <a href="/privacy" class="footer-link">Privacy</a></span>
 </footer>
 
 <script>
-// Password recovery links can land on the homepage with a hash token.
-// Forward them to the auth reset screen so the user sees the new password form.
-if (window.location.hash.includes("access_token=") && window.location.hash.includes("type=recovery")) {
-  window.location.replace(`/auth.html?mode=update${window.location.hash}`);
-}
-
-// ── SCROLL REVEAL ────────────────────────────────────────────────────────────
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('in');
-    }
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) entry.target.classList.add("in");
   });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+}, { threshold: 0.16 });
+document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-// ── SCORE CARD ANIMATION ─────────────────────────────────────────────────────
-const scoreCard = document.getElementById('score-demo-card');
-let scoreAnimated = false;
-
-const scoreObserver = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting && !scoreAnimated) {
-      scoreAnimated = true;
-      animateScore();
-    }
-  });
-}, { threshold: 0.4 });
-
-if (scoreCard) scoreObserver.observe(scoreCard);
-
-function animateScore() {
-  // Count up score
-  const el = document.getElementById('score-number');
-  const target = 89;
-  const duration = 900;
-  const start = performance.now();
-
-  function step(now) {
-    const elapsed = now - start;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    el.textContent = Math.round(eased * target);
-    if (progress < 1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-
-  // Fill factor bars with stagger
-  const bars = [
-    { id: 'f1', width: 92, delay: 100 },
-    { id: 'f2', width: 88, delay: 200 },
-    { id: 'f3', width: 85, delay: 300 },
-    { id: 'f4', width: 95, delay: 400 },
-    { id: 'f5', width: 100, delay: 500 },
-    { id: 'f6', width: 78, delay: 600 },
-  ];
-
-  bars.forEach(({ id, width, delay }) => {
-    setTimeout(() => {
-      const bar = document.getElementById(id);
-      if (bar) bar.style.width = width + '%';
-    }, delay);
-  });
+const stage = document.querySelector("[data-parallax]");
+if (stage && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  window.addEventListener("mousemove", (event) => {
+    const x = (event.clientX / window.innerWidth - .5) * 16;
+    const y = (event.clientY / window.innerHeight - .5) * 16;
+    stage.style.transform = `rotateY(${x * .35}deg) rotateX(${-y * .25}deg)`;
+  }, { passive: true });
 }
 </script>
 </body>
