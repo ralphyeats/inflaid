@@ -18,7 +18,7 @@
 <meta name="twitter:image" content="https://inflaid.com/og-image.png">
 <link rel="canonical" href="https://inflaid.com/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,500..800,40,1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#050609;
@@ -33,7 +33,7 @@
   --blue:#8EA5FF;
   --amber:#FFC06D;
   --red:#FF7182;
-  --display:"Fraunces",serif;
+  --display:"Outfit",sans-serif;
   --sans:"Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,sans-serif;
   --shadow:0 34px 110px rgba(0,0,0,.48);
 }
@@ -74,7 +74,7 @@ button,input{font:inherit}
 }
 
 .nav{
-  position:fixed;
+  position:absolute;
   top:18px;
   left:22px;
   right:22px;
@@ -103,7 +103,7 @@ button,input{font:inherit}
 }
 .mark svg{display:block}
 .brand span{font-family:var(--sans);font-weight:800;font-size:18px;letter-spacing:-.04em}
-.nav-mid{display:none;align-items:center;justify-content:center;gap:4px;flex:1}
+.nav-mid{display:flex;align-items:center;justify-content:center;gap:4px;flex:1}
 .nav-mid a{
   color:var(--dim);
   font-size:13px;
@@ -170,13 +170,14 @@ button,input{font:inherit}
 }
 h1{
   font-family:var(--display);
-  font-size:clamp(58px,8vw,122px);
-  font-weight:760;
-  line-height:.90;
-  letter-spacing:-.062em;
-  max-width:800px;
+  font-size:clamp(54px,7.1vw,106px);
+  font-weight:700;
+  line-height:.94;
+  letter-spacing:-.058em;
+  max-width:760px;
   text-wrap:balance;
 }
+.hero-line{display:block}
 .gradient{
   background:linear-gradient(112deg,#fff 0%,var(--acid) 42%,var(--blue) 100%);
   -webkit-background-clip:text;
@@ -500,7 +501,7 @@ h1{
 h2{
   font-family:var(--display);
   font-size:clamp(42px,5.6vw,86px);
-  font-weight:740;
+  font-weight:700;
   line-height:.96;
   letter-spacing:-.052em;
   text-wrap:balance;
@@ -571,7 +572,7 @@ h2{
   background:radial-gradient(circle,rgba(142,165,255,.24),transparent 68%);
 }
 .work-card span{color:var(--acid);font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
-.work-card h3{font-family:var(--display);font-size:34px;font-weight:720;line-height:1;letter-spacing:-.05em;margin-top:52px}
+.work-card h3{font-family:var(--display);font-size:34px;font-weight:700;line-height:1;letter-spacing:-.05em;margin-top:52px}
 .work-card p{color:var(--muted);line-height:1.65;margin-top:16px}
 
 .pricing{
@@ -632,7 +633,7 @@ footer{
 .reveal.in{opacity:1;transform:none}
 
 @media(max-width:980px){
-  .nav{top:0;left:0;right:0;border-radius:0}
+  .nav{top:0;left:0;right:0;border-radius:0;position:absolute}
   .nav-mid{display:none}
   .hero{grid-template-columns:1fr;min-height:auto;padding:128px 20px 70px;text-align:center}
   .hero-copy,.hero h1{margin-left:auto;margin-right:auto}
@@ -689,7 +690,7 @@ footer{
   <section class="hero">
     <div class="hero-text reveal">
       <div class="eyebrow">Creator spend, decided</div>
-      <h1>Know who to pay. <span class="gradient">Before you pay.</span></h1>
+      <h1><span class="hero-line">Know who to pay.</span><span class="hero-line gradient">Before you pay.</span></h1>
       <p class="hero-copy">Inflaid scores creator fit, risk, and upside in one clean read.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="/auth.html">Run a creator</a>
