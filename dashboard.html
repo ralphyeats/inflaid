@@ -359,6 +359,66 @@ body{background:
 .checkout-status{min-height:22px;font-size:12px;font-weight:600;color:var(--ink);letter-spacing:.01em}
 @keyframes analysisSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes analysisPulse{0%,100%{opacity:.45;transform:scale(.9)}50%{opacity:1;transform:scale(1.08)}}
+
+/* PREMIUM DIRECTION PASS — Beauty Intelligence Lab */
+:root{
+  --bg:#F4EFE6;--s1:rgba(255,252,246,.92);--s2:#EEE6D9;--s3:#E4DACB;
+  --b1:rgba(53,43,33,.10);--b2:rgba(53,43,33,.18);--b3:rgba(53,43,33,.28);
+  --accent:#315CFF;--accent-lo:rgba(49,92,255,.08);--accent-mid:rgba(49,92,255,.18);
+  --ink:#181411;--ink2:#6F6255;--ink3:#A99E91;
+  --shadow:0 18px 46px rgba(51,39,25,.08),0 1px 2px rgba(51,39,25,.08);
+  --shadow-lg:0 30px 80px rgba(51,39,25,.15),0 4px 16px rgba(51,39,25,.08);
+}
+body{
+  background:
+    radial-gradient(circle at 8% 0%, rgba(49,92,255,.12), transparent 28%),
+    radial-gradient(circle at 86% 8%, rgba(217,119,6,.10), transparent 26%),
+    linear-gradient(135deg, rgba(24,20,17,.035) 0 1px, transparent 1px) 0 0/28px 28px,
+    linear-gradient(180deg,#FBF7EF 0%,#F1EADF 100%);
+}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:linear-gradient(90deg,rgba(255,255,255,.52),transparent 22%,transparent 78%,rgba(255,255,255,.48))}
+.sidebar{width:252px;background:radial-gradient(circle at 20% 8%, rgba(255,255,255,.12), transparent 30%),linear-gradient(180deg,#181411 0%,#231D18 52%,#171310 100%);border-right:1px solid rgba(255,255,255,.08);box-shadow:14px 0 44px rgba(37,28,20,.14)}
+.sb-logo{border-bottom:1px solid rgba(255,255,255,.08);padding:25px 22px 22px}
+.logo-mark{background:#F7F0E5;color:#181411;box-shadow:0 18px 40px rgba(0,0,0,.25)}
+.logo-mark svg circle:first-child{fill:#181411}.logo-mark svg circle:last-child{stroke:#181411}
+.logo-text{color:#FFF8EE;font-size:18px}
+.sb-nav{padding:18px 12px}.sb-nav>div:first-child{color:rgba(255,248,238,.42)!important}
+.nav-item{color:rgba(255,248,238,.54);border-radius:14px;padding:11px 12px}
+.nav-item:hover{background:rgba(255,248,238,.07);color:rgba(255,248,238,.86);border-color:rgba(255,255,255,.07)}
+.nav-item.active{color:#FFF8EE;background:linear-gradient(180deg,rgba(255,248,238,.14),rgba(255,248,238,.08));border-color:rgba(255,248,238,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 12px 28px rgba(0,0,0,.16)}
+.nav-badge{background:#FFF8EE;color:#181411;box-shadow:none}
+.sb-footer{border-top:1px solid rgba(255,255,255,.08);padding:16px 12px 18px}
+.usage-box,.referral-box,.user-row{background:rgba(255,248,238,.08);border-color:rgba(255,248,238,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.usage-top,.referral-desc,.referral-note,.user-plan{color:rgba(255,248,238,.48)!important}
+.referral-title,.user-name{color:#FFF8EE}
+.ref-stat,.referral-badge-pill,.referral-link-input{background:rgba(255,248,238,.08);border-color:rgba(255,248,238,.12);color:rgba(255,248,238,.7)}
+.ref-stat-label{color:rgba(255,248,238,.42)}.ref-stat-value{color:#FFF8EE}
+.user-av{background:rgba(255,248,238,.12);border-color:rgba(255,248,238,.15);color:#FFF8EE}
+.upgrade-btn,.referral-copy-btn{background:#FFF8EE;border-color:#FFF8EE;color:#181411}
+.upgrade-btn:hover,.referral-copy-btn:hover{background:#fff;box-shadow:0 12px 28px rgba(0,0,0,.18)}
+.main{position:relative}
+.topbar{height:86px;padding:0 36px;background:rgba(251,247,239,.72);border-bottom:1px solid rgba(53,43,33,.08)}
+.topbar-title{font-size:20px;letter-spacing:-.045em}
+.topbar-title::after{content:"Beauty intelligence lab";display:block;margin-top:3px;font-family:var(--sans);font-size:11px;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.search-box,#analyze-box{background:rgba(255,252,246,.86)!important;border-color:rgba(53,43,33,.12)!important;border-radius:999px!important;box-shadow:0 14px 36px rgba(51,39,25,.08)!important}
+#analyze-btn{border-radius:999px!important;background:linear-gradient(180deg,#1E1A16 0%,#312820 100%)!important;box-shadow:0 16px 34px rgba(24,20,17,.18)!important}
+.content{padding:34px 42px 46px}.tab-page{max-width:1220px}
+#tab-discovery::before{content:"A live read on who deserves budget, who needs caution, and which creator calls are worth moving forward.";display:block;max-width:620px;margin:-2px 0 22px;color:var(--ink2);font-size:15px;line-height:1.6}
+.filter-row{margin-bottom:18px}.fpill,.sort-pill{background:rgba(255,252,246,.74);border-color:rgba(53,43,33,.10);box-shadow:0 8px 20px rgba(51,39,25,.05)}
+.stats-row{gap:14px;margin-bottom:24px}
+.stat-card{min-height:108px;border-radius:24px;padding:21px 22px;background:linear-gradient(180deg,rgba(255,252,246,.94),rgba(247,239,228,.88));border-color:rgba(53,43,33,.10)}
+.stat-card::before{content:"";position:absolute;top:16px;right:18px;width:42px;height:42px;border-radius:50%;background:radial-gradient(circle,rgba(49,92,255,.18),rgba(49,92,255,0) 66%)}
+.stat-n{font-size:34px}.stat-l{letter-spacing:.11em;color:var(--ink3)}
+.inf-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.inf-card{position:relative;min-height:236px;padding:22px;border-radius:26px;overflow:hidden;background:radial-gradient(circle at 90% 0%, rgba(49,92,255,.10), transparent 32%),linear-gradient(180deg,rgba(255,252,246,.96),rgba(248,240,229,.92));border:1px solid rgba(53,43,33,.11)!important;box-shadow:0 20px 50px rgba(51,39,25,.09),inset 0 1px 0 rgba(255,255,255,.72)}
+.inf-card::before{content:"";position:absolute;left:18px;right:18px;top:72px;height:1px;background:linear-gradient(90deg,transparent,rgba(53,43,33,.10),transparent)}
+.inf-card:hover{transform:translateY(-5px) rotateX(.8deg);box-shadow:0 34px 90px rgba(51,39,25,.16),inset 0 1px 0 rgba(255,255,255,.74)}
+.inf-av{width:42px;height:42px;border-radius:15px}.inf-name{font-family:var(--syne);font-size:16px;font-weight:700;letter-spacing:-.035em}.inf-meta{font-size:11px}
+.inf-score{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,252,246,.78);border:1px solid rgba(53,43,33,.10);box-shadow:inset 0 0 0 6px rgba(49,92,255,.06);font-size:24px}
+.verdict-badge{border-radius:999px;padding:5px 11px;letter-spacing:.02em}.inf-insight{font-size:13px;line-height:1.62;color:var(--ink2);margin-top:4px}
+.card-btns{border-top-color:rgba(53,43,33,.09);gap:8px;padding-top:12px}.card-btn{border-radius:999px;padding:8px 0;background:rgba(255,252,246,.68);border-color:rgba(53,43,33,.10);color:var(--ink2)}.card-btn.pri{background:#181411;border-color:#181411;color:#FFF8EE}.card-btn:hover{transform:translateY(-1px)}
+.anl-card,.founder-mini,.tpl-panel,.oi{border-radius:24px;background:linear-gradient(180deg,rgba(255,252,246,.94),rgba(248,240,229,.9));border-color:rgba(53,43,33,.10)}
+.camp-card{border-radius:24px;background:linear-gradient(180deg,rgba(255,252,246,.95),rgba(248,240,229,.9));border-color:rgba(53,43,33,.10);box-shadow:var(--shadow)}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27><rect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%234F8CF5%27/><text x=%2716%27 y=%2723%27 text-anchor=%27middle%27 font-size=%2720%27 font-family=%27system-ui%27 font-weight=%27bold%27 fill=%27white%27>V</text></svg>">
@@ -444,7 +504,7 @@ body{background:
 <!-- MAIN -->
 <div class="main">
   <div class="topbar">
-    <div class="topbar-title" id="topbar-title">Influencer Discovery</div>
+    <div class="topbar-title" id="topbar-title">Creator Decision Studio</div>
     <div style="display:flex;align-items:center;gap:8px">
       <div class="search-box" id="search-box-wrap">
         <div class="search-circ"></div>
@@ -1103,7 +1163,7 @@ function switchTab(name,el){
   document.getElementById("tab-"+name).classList.add("active");
   document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
   el.classList.add("active");
-  const titles={discovery:"Influencer Discovery",outreach:"Outreach",analytics:"Analytics",campaigns:"Campaign Tracker"};
+  const titles={discovery:"Creator Decision Studio",outreach:"Outreach Studio",analytics:"Signal Analytics",campaigns:"Campaign Memory"};
   document.getElementById("topbar-title").textContent=titles[name];
   if(name==="outreach")renderOutreach();
   if(name==="analytics"){renderAnalytics(); loadFounderMetrics();}
