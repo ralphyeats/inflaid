@@ -1089,6 +1089,132 @@ nav{
   .hero-fine{text-align:center}
   .hero-mockup-wrap{margin-top:0!important}
 }
+
+/* REFERENCE REDESIGN PASS — Voxr x Raben x Oryzo */
+:root{
+  --bg:#06070B;
+  --surface:rgba(255,255,255,.075);
+  --surface2:rgba(255,255,255,.045);
+  --border:rgba(255,255,255,.12);
+  --border2:rgba(255,255,255,.075);
+  --text:#F7F4EE;
+  --text2:rgba(247,244,238,.68);
+  --text3:rgba(247,244,238,.42);
+  --accent:#7CFFB2;
+  --accent-lo:rgba(124,255,178,.12);
+  --accent-mid:rgba(124,255,178,.26);
+  --shadow:0 22px 70px rgba(0,0,0,.34);
+  --shadow-lg:0 42px 120px rgba(0,0,0,.46);
+}
+body{
+  background:
+    radial-gradient(circle at 72% 8%, rgba(124,255,178,.18), transparent 22%),
+    radial-gradient(circle at 12% 18%, rgba(91,121,255,.20), transparent 24%),
+    linear-gradient(135deg, rgba(255,255,255,.055) 0 1px, transparent 1px) 0 0/42px 42px,
+    #06070B;
+  color:var(--text);
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),transparent 28%,rgba(124,255,178,.045));
+}
+nav{
+  top:18px;left:24px;right:24px;height:70px;border-radius:24px;
+  background:rgba(8,10,16,.62);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 24px 80px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08);
+}
+.nav-brand,.nav-link,.footer-brand,.footer-link,.footer-copy{color:var(--text)}
+.nav-link{color:rgba(247,244,238,.62)}
+.nav-link:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav-mark,.footer-mark{background:#F7F4EE}.nav-mark svg circle:first-child,.footer-mark svg circle:first-child{fill:#06070B}.nav-mark svg circle:last-child,.footer-mark svg circle:last-child{stroke:#06070B}
+.btn{border-radius:999px}
+.btn-dark,.btn-white{
+  background:#F7F4EE;color:#06070B;
+  box-shadow:0 18px 46px rgba(247,244,238,.16);
+}
+.btn-dark:hover,.btn-white:hover{background:#fff;box-shadow:0 22px 60px rgba(247,244,238,.22)}
+.btn-ghost{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.14);color:rgba(247,244,238,.74)}
+.btn-ghost:hover{background:rgba(255,255,255,.10);color:#fff;border-color:rgba(255,255,255,.22)}
+.hero{
+  max-width:1240px;min-height:860px;padding:190px 54px 120px;text-align:left;
+  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+}
+.hero::before{
+  content:"";position:absolute;right:1%;top:150px;width:520px;height:520px;border-radius:42%;
+  background:
+    radial-gradient(circle at 34% 24%, rgba(255,255,255,.95), rgba(255,255,255,.28) 8%, transparent 18%),
+    conic-gradient(from 220deg, rgba(124,255,178,.88), rgba(91,121,255,.78), rgba(255,255,255,.12), rgba(124,255,178,.88));
+  filter:saturate(1.12);
+  box-shadow:0 60px 160px rgba(0,0,0,.50),0 0 110px rgba(124,255,178,.16),inset 0 1px 40px rgba(255,255,255,.42);
+  transform:perspective(900px) rotateY(-20deg) rotateX(10deg) rotateZ(-8deg);
+  animation:floatSlow 7s ease-in-out infinite;
+  z-index:-1;
+}
+.hero::after{
+  content:"";position:absolute;right:8%;top:282px;width:330px;height:330px;border-radius:38px;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.18),rgba(255,255,255,.035)),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.09) 0 1px,transparent 1px 62px);
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 36px 90px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.16);
+  backdrop-filter:blur(20px);
+  transform:perspective(900px) rotateY(-22deg) rotateX(8deg) rotateZ(6deg);
+}
+.hero-badge{
+  background:rgba(255,255,255,.075);border-color:rgba(255,255,255,.14);color:rgba(247,244,238,.78);
+  box-shadow:0 18px 60px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.10);
+}
+.badge-dot{background:var(--accent);box-shadow:0 0 22px rgba(124,255,178,.8)}
+.hero h1{
+  max-width:780px;font-size:clamp(58px,7.4vw,112px);line-height:.88;letter-spacing:-.082em;color:#F7F4EE;
+  text-wrap:balance;
+}
+.grad-text{
+  background:linear-gradient(110deg,#F7F4EE 0%,#7CFFB2 48%,#7EA1FF 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{max-width:610px;margin-left:0;color:rgba(247,244,238,.68);font-size:18px;line-height:1.72}
+.hero-actions{justify-content:flex-start}.hero-fine{color:rgba(247,244,238,.42);text-align:left}
+.hero-mockup-wrap{margin-top:-130px!important;max-width:1120px!important}
+.ad-browser,.browser-frame{
+  background:rgba(255,255,255,.055)!important;
+  border:1px solid rgba(255,255,255,.13)!important;
+  border-radius:30px!important;
+  box-shadow:0 55px 150px rgba(0,0,0,.56),inset 0 1px 0 rgba(255,255,255,.10)!important;
+  backdrop-filter:blur(20px);
+}
+.ad-bar,.browser-bar,.ad-sidebar,.ad-main,.ad-topbar,.ad-content,.ad-detail-section{
+  background:rgba(8,10,16,.42)!important;
+  border-color:rgba(255,255,255,.09)!important;
+}
+.ad-url,.ad-topbar-search,.ad-topbar-input,.ad-inf-card,.ad-signal-card,.ad-action-card,.ad-report-card{
+  background:rgba(255,255,255,.075)!important;
+  border-color:rgba(255,255,255,.12)!important;
+  color:#F7F4EE!important;
+}
+.ad-inf-name,.ad-user-name{color:#F7F4EE!important}
+.ad-inf-handle,.ad-inf-insight,.ad-user-plan,.ad-section-label{color:rgba(247,244,238,.54)!important}
+.ad-topbar-btn,.ad-inf-btn-pri{background:#F7F4EE!important;color:#06070B!important}
+section{background:transparent!important}
+.feature-card,.price-card,.testi-card,.how-step,.faq-item{
+  background:rgba(255,255,255,.06)!important;
+  border-color:rgba(255,255,255,.12)!important;
+  box-shadow:0 24px 70px rgba(0,0,0,.25)!important;
+  backdrop-filter:blur(18px);
+}
+.feature-card h3,.price-card h3,.how-step h3,.testi-heading,.section-head h2,.how-head h2,#pricing h2{color:#F7F4EE!important}
+.feature-card p,.price-card p,.how-step p,.testi-card p,.section-head p,.how-head p{color:rgba(247,244,238,.64)!important}
+.cta-section{background:radial-gradient(circle at 30% 0%,rgba(124,255,178,.18),transparent 30%),#030406!important}
+footer{background:#030406;border-color:rgba(255,255,255,.09)}
+@media(max-width:900px){
+  nav{top:0;left:0;right:0;border-radius:0}
+  .hero{min-height:auto;text-align:center;align-items:center;padding:128px 20px 72px}
+  .hero::before,.hero::after{display:none}
+  .hero h1,.hero-sub{margin-left:auto;margin-right:auto}
+  .hero-actions{justify-content:center}.hero-fine{text-align:center}
+  .hero-mockup-wrap{margin-top:0!important}
+}
 </style>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27><rect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%234F8CF5%27/><text x=%2716%27 y=%2723%27 text-anchor=%27middle%27 font-size=%2720%27 font-family=%27system-ui%27 font-weight=%27bold%27 fill=%27white%27>V</text></svg>">
 </head>
