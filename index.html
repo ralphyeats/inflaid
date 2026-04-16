@@ -18,7 +18,7 @@
 <meta name="twitter:image" content="https://inflaid.com/og-image.png">
 <link rel="canonical" href="https://inflaid.com/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,500..800,40,1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#050609;
@@ -33,8 +33,8 @@
   --blue:#8EA5FF;
   --amber:#FFC06D;
   --red:#FF7182;
-  --display:"Space Grotesk",sans-serif;
-  --sans:"Manrope",-apple-system,BlinkMacSystemFont,sans-serif;
+  --display:"Fraunces",serif;
+  --sans:"Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,sans-serif;
   --shadow:0 34px 110px rgba(0,0,0,.48);
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -102,8 +102,8 @@ button,input{font:inherit}
   box-shadow:0 0 34px rgba(247,241,232,.18);
 }
 .mark svg{display:block}
-.brand span{font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:-.04em}
-.nav-mid{display:flex;align-items:center;justify-content:center;gap:4px;flex:1}
+.brand span{font-family:var(--sans);font-weight:800;font-size:18px;letter-spacing:-.04em}
+.nav-mid{display:none;align-items:center;justify-content:center;gap:4px;flex:1}
 .nav-mid a{
   color:var(--dim);
   font-size:13px;
@@ -113,7 +113,7 @@ button,input{font:inherit}
   transition:.2s ease;
 }
 .nav-mid a:hover{color:var(--ink);background:rgba(255,255,255,.07)}
-.nav-actions{display:flex;align-items:center;gap:8px}
+.nav-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
 .btn{
   border:none;
   border-radius:999px;
@@ -171,8 +171,9 @@ button,input{font:inherit}
 h1{
   font-family:var(--display);
   font-size:clamp(58px,8vw,122px);
-  line-height:.88;
-  letter-spacing:-.07em;
+  font-weight:760;
+  line-height:.90;
+  letter-spacing:-.062em;
   max-width:800px;
   text-wrap:balance;
 }
@@ -303,7 +304,7 @@ h1{
   animation:scanBeam 4.8s cubic-bezier(.65,0,.35,1) infinite;
 }
 .slab-kicker{font-size:11px;font-weight:900;color:var(--acid);letter-spacing:.12em;text-transform:uppercase}
-.slab-score{font-family:var(--display);font-size:118px;line-height:.82;letter-spacing:-.08em;margin-top:24px;text-shadow:0 0 48px rgba(247,241,232,.14)}
+.slab-score{font-family:var(--sans);font-size:118px;font-weight:800;line-height:.82;letter-spacing:-.08em;margin-top:24px;text-shadow:0 0 48px rgba(247,241,232,.14)}
 .slab-label{font-size:13px;color:var(--muted);margin-top:8px}
 .mini-bars{display:grid;gap:8px;margin-top:28px}
 .mini-bar{height:8px;border-radius:999px;background:rgba(255,255,255,.10);overflow:hidden}
@@ -409,7 +410,7 @@ h1{
   transform:rotateY(18deg) rotateZ(-5deg) translateZ(118px);
   animation:cardHover 7s ease-in-out infinite;
 }
-.float-card b{display:block;font-family:var(--display);font-size:26px;letter-spacing:-.05em}
+.float-card b{display:block;font-family:var(--sans);font-size:26px;letter-spacing:-.05em}
 .float-card p{color:var(--muted);font-size:13px;line-height:1.5;margin-top:8px}
 @keyframes orbMorph{
   0%,100%{border-radius:43% 57% 48% 52%;transform:rotateY(-24deg) rotateX(12deg) rotateZ(-11deg) translateY(0) translateZ(-28px)}
@@ -445,26 +446,45 @@ h1{
   50%{opacity:.68;transform:rotateX(68deg) rotateZ(-18deg) translateZ(-70px) translateY(12px)}
 }
 
-.ticker{
-  border-top:1px solid var(--line);
-  border-bottom:1px solid var(--line);
+.signal-rail{
+  max-width:1320px;
+  margin:0 auto;
+  padding:10px 48px 92px;
+}
+.rail-inner{
+  display:grid;
+  grid-template-columns:1.05fr .95fr 1.05fr;
+  gap:14px;
+  border:1px solid var(--line);
+  border-radius:34px;
+  background:
+    radial-gradient(circle at 18% 0%,rgba(157,255,179,.11),transparent 34%),
+    linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.026));
+  box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.08);
+  padding:16px;
+}
+.rail-item{
+  min-height:142px;
+  border:1px solid rgba(247,241,232,.11);
+  border-radius:24px;
+  background:rgba(5,6,9,.28);
+  padding:20px;
+  position:relative;
   overflow:hidden;
-  color:rgba(247,241,232,.34);
-  font-family:var(--display);
-  font-weight:800;
-  letter-spacing:-.06em;
-  font-size:clamp(42px,7vw,110px);
-  line-height:1;
-  white-space:nowrap;
 }
-.ticker-track{
-  display:flex;
-  gap:34px;
-  width:max-content;
-  padding:22px 0 30px;
-  animation:marquee 24s linear infinite;
+.rail-item::after{
+  content:"";
+  position:absolute;
+  width:130px;
+  height:130px;
+  right:-58px;
+  bottom:-72px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(142,165,255,.24),transparent 70%);
 }
-@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.rail-item small{display:block;color:var(--dim);font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+.rail-item strong{display:block;font-family:var(--display);font-size:clamp(28px,3vw,44px);font-weight:720;letter-spacing:-.04em;line-height:.96;margin-top:18px}
+.rail-item p{color:var(--muted);font-size:13px;line-height:1.55;margin-top:10px;max-width:260px}
 
 .scroll-story{
   position:relative;
@@ -480,8 +500,9 @@ h1{
 h2{
   font-family:var(--display);
   font-size:clamp(42px,5.6vw,86px);
-  line-height:.94;
-  letter-spacing:-.062em;
+  font-weight:740;
+  line-height:.96;
+  letter-spacing:-.052em;
   text-wrap:balance;
 }
 .story-copy p{color:var(--muted);font-size:17px;line-height:1.72;margin-top:22px;max-width:470px}
@@ -506,7 +527,7 @@ h2{
   border-radius:50%;
   background:radial-gradient(circle,rgba(157,255,179,.18),transparent 68%);
 }
-.panel-num{font-family:var(--display);font-size:88px;line-height:.8;letter-spacing:-.08em;color:rgba(247,241,232,.18)}
+.panel-num{font-family:var(--sans);font-size:88px;font-weight:800;line-height:.8;letter-spacing:-.08em;color:rgba(247,241,232,.18)}
 .panel h3{font-family:var(--display);font-size:40px;letter-spacing:-.055em;line-height:1;margin-top:34px;max-width:420px}
 .panel p{color:var(--muted);font-size:16px;line-height:1.7;margin-top:18px;max-width:430px}
 .signal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:32px}
@@ -517,7 +538,7 @@ h2{
   padding:16px;
 }
 .signal small{color:var(--dim);font-weight:800;text-transform:uppercase;letter-spacing:.10em}
-.signal strong{display:block;font-family:var(--display);font-size:28px;letter-spacing:-.05em;margin-top:8px}
+.signal strong{display:block;font-family:var(--sans);font-size:28px;font-weight:800;letter-spacing:-.05em;margin-top:8px}
 
 .product-strip{
   padding:80px 48px 126px;
@@ -550,7 +571,7 @@ h2{
   background:radial-gradient(circle,rgba(142,165,255,.24),transparent 68%);
 }
 .work-card span{color:var(--acid);font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
-.work-card h3{font-family:var(--display);font-size:34px;line-height:1;letter-spacing:-.055em;margin-top:52px}
+.work-card h3{font-family:var(--display);font-size:34px;font-weight:720;line-height:1;letter-spacing:-.05em;margin-top:52px}
 .work-card p{color:var(--muted);line-height:1.65;margin-top:16px}
 
 .pricing{
@@ -568,7 +589,7 @@ h2{
 }
 .price-card.featured{background:linear-gradient(145deg,rgba(157,255,179,.16),rgba(255,255,255,.055));border-color:rgba(157,255,179,.28)}
 .price-name{font-weight:900;color:var(--dim);text-transform:uppercase;letter-spacing:.13em;font-size:12px}
-.price{font-family:var(--display);font-size:58px;letter-spacing:-.07em;margin-top:16px}
+.price{font-family:var(--sans);font-size:58px;font-weight:800;letter-spacing:-.07em;margin-top:16px}
 .price small{font-family:var(--sans);font-size:14px;color:var(--dim);letter-spacing:0}
 .price-card p{color:var(--muted);line-height:1.6;margin-top:12px;min-height:52px}
 .price-card ul{list-style:none;margin:24px 0;display:grid;gap:11px;color:var(--muted);font-size:14px}
@@ -628,6 +649,8 @@ footer{
   .orbit-b{display:none}
   .float-card{display:none}
   .scroll-story{grid-template-columns:1fr;padding:82px 20px}
+  .signal-rail{padding:0 20px 70px}
+  .rail-inner{grid-template-columns:1fr}
   .story-copy{position:relative;top:auto}
   .cards,.pricing-grid{grid-template-columns:1fr}
   .work-card:nth-child(n){margin-top:0}
@@ -718,12 +741,25 @@ footer{
     </div>
   </section>
 
-  <div class="ticker" aria-hidden="true">
-    <div class="ticker-track">
-      <span>PAY</span><span>GIFT</span><span>AVOID</span><span>REMEMBER</span>
-      <span>PAY</span><span>GIFT</span><span>AVOID</span><span>REMEMBER</span>
+  <section class="signal-rail" aria-label="Inflaid decision outcomes">
+    <div class="rail-inner reveal">
+      <div class="rail-item">
+        <small>01 / Read</small>
+        <strong>Fit before fame.</strong>
+        <p>Audience quality beats surface hype.</p>
+      </div>
+      <div class="rail-item">
+        <small>02 / Decide</small>
+        <strong>Pay, gift, or pass.</strong>
+        <p>A clear call before outreach starts.</p>
+      </div>
+      <div class="rail-item">
+        <small>03 / Remember</small>
+        <strong>Every result compounds.</strong>
+        <p>Your next creator call gets sharper.</p>
+      </div>
     </div>
-  </div>
+  </section>
 
   <section class="scroll-story" id="system">
     <div class="story-copy reveal">
@@ -780,17 +816,17 @@ footer{
       <article class="work-card reveal">
         <span>Analyze</span>
         <h3>Paste a handle.</h3>
-        <p>Get the read in seconds.</p>
+        <p>Get the read in seconds. No research rabbit holes.</p>
       </article>
       <article class="work-card reveal">
         <span>Decide</span>
         <h3>Pay, gift, or pass.</h3>
-        <p>One card. One call.</p>
+        <p>One card. One call. No committee chaos.</p>
       </article>
       <article class="work-card reveal">
         <span>Remember</span>
         <h3>Save the outcome.</h3>
-        <p>Every campaign teaches the next one.</p>
+        <p>Every campaign teaches the next one. The system gets smarter with you.</p>
       </article>
     </div>
   </section>
