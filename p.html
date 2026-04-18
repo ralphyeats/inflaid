@@ -98,7 +98,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
     </div>
     <span class="logo-text">Inflaid</span>
   </a>
-  <a class="nav-cta" href="/auth.html">Analyze influencers free →</a>
+  <a class="nav-cta" href="/auth">Analyze influencers free →</a>
 </nav>
 
 <div class="page" id="page" style="display:none"></div>
@@ -106,7 +106,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14p
   <div style="font-size:32px">⚠</div>
   <div style="font-size:15px;font-weight:500;color:var(--ink)">Profile not found</div>
   <div style="font-size:13px" id="error-msg">This influencer hasn't been analyzed yet.</div>
-  <a href="/auth.html" class="cta-btn" style="margin-top:8px">Analyze them now →</a>
+  <a href="/auth" class="cta-btn" style="margin-top:8px">Analyze them now →</a>
 </div>
 
 <script>
@@ -220,7 +220,7 @@ function render(d){
   html+=`<div class="cta-banner fadeup d3">
     <div class="cta-title">Analyze your own influencers</div>
     <div class="cta-sub">Inflaid scores any Instagram profile in seconds — engagement, niche alignment, authenticity, and ROI forecast. Free to start.</div>
-    <a class="cta-btn" href="/auth.html">Start for free →</a>
+    <a class="cta-btn" href="/auth">Start for free →</a>
   </div>`;
 
   if(d.cached_at){

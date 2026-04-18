@@ -1,16 +1,22 @@
 {
-  "version": 2,
-  "routes": [
-    { "src": "/dashboard", "dest": "/dashboard.html" },
-    { "src": "/influencer", "dest": "/influencer.html" },
-    { "src": "/auth", "dest": "/auth.html" },
-    { "src": "/terms", "dest": "/terms.html" },
-    { "src": "/privacy", "dest": "/privacy.html" },
-    { "src": "/dashboard.html", "dest": "/dashboard.html" },
-    { "src": "/influencer.html", "dest": "/influencer.html" },
-    { "src": "/auth.html", "dest": "/auth.html" },
-    { "src": "/terms.html", "dest": "/terms.html" },
-    { "src": "/privacy.html", "dest": "/privacy.html" },
-    { "src": "/", "dest": "/index.html" }
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/auth.html", "destination": "/auth", "permanent": true },
+    { "source": "/dashboard.html", "destination": "/dashboard", "permanent": true },
+    { "source": "/influencer.html", "destination": "/influencer", "permanent": true },
+    { "source": "/terms.html", "destination": "/terms", "permanent": true },
+    { "source": "/privacy.html", "destination": "/privacy", "permanent": true },
+    { "source": "/legal.html", "destination": "/legal", "permanent": true },
+    { "source": "/p.html", "destination": "/p", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/auth", "destination": "/auth.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/influencer", "destination": "/influencer.html" },
+    { "source": "/terms", "destination": "/terms.html" },
+    { "source": "/privacy", "destination": "/privacy.html" },
+    { "source": "/legal", "destination": "/legal.html" },
+    { "source": "/p", "destination": "/p.html" }
   ]
 }

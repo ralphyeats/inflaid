@@ -1018,7 +1018,7 @@ function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.v
       const err = await res.json().catch(()=>({}));
       const detail = err.detail || "";
       if(res.status === 401) {
-        window.location.href = "/auth.html"; return;
+        window.location.href = "/auth"; return;
       }
       if(res.status === 429 && detail.startsWith("limit_reached")) {
         showToast("Analysis limit reached — upgrade your plan to continue.", "error");
@@ -1068,7 +1068,7 @@ function analyzeHandle(){var i=document.getElementById("handle-input");var r=i.v
 
     input.value = "";
     renderGrid();
-    window.location.href = `/influencer.html?handle=${encodeURIComponent(inf.handle)}&from=dashboard`;
+    window.location.href = `/influencer?handle=${encodeURIComponent(inf.handle)}&from=dashboard`;
 
   } catch(e) {
     showToast("API unavailable — is the backend running?", "error");
@@ -1168,7 +1168,7 @@ function renderCard(inf, i){
   const apiTag = inf.fromApi
     ? `<span style="font-size:9px;padding:2px 6px;border-radius:3px;background:var(--accent-lo);border:1px solid var(--accent-mid);color:var(--accent);letter-spacing:.04em">LIVE API</span>`
     : '';
-  const detailHref = `/influencer.html?handle=${encodeURIComponent(inf.handle)}`;
+  const detailHref = `/influencer?handle=${encodeURIComponent(inf.handle)}`;
   const nicheScore = (inf.breakdown||[]).find(b=>b.key==="niche")?.value ?? 50;
   const nicheNote = nicheScore < 30 ? `<div style="font-size:10px;color:var(--accent);background:var(--accent-lo);border:1px solid var(--accent-mid);border-radius:5px;padding:4px 8px;margin-top:6px">Low beauty niche alignment — results may not reflect beauty brand ROI</div>` : '';
   const isSaved = !!inf.saved;
@@ -1246,7 +1246,7 @@ function filterCards(){
   document.querySelectorAll(".inf-card").forEach(c=>{c.style.display=c.textContent.toLowerCase().includes(q)?"":"none";});
 }
 
-function openDetail(id){window.location.href=`/influencer.html?id=${id}`;}
+function openDetail(id){window.location.href=`/influencer?id=${id}`;}
 
 function goOutreach(id){
   selOutreach=id;
@@ -1468,7 +1468,7 @@ function renderAnalytics(){
 
   // Recent list
   document.getElementById("recent-list").innerHTML=all.slice(0,6).map(inf=>`
-    <div class="recent-row" onclick="window.location.href='/influencer.html?handle=${encodeURIComponent(inf.handle)}'" style="cursor:pointer">
+    <div class="recent-row" onclick="window.location.href='/influencer?handle=${encodeURIComponent(inf.handle)}'" style="cursor:pointer">
       <div class="rec-av" style="background:${inf.color}18;border:1px solid ${inf.color}30;color:${inf.color}">${inf.av}</div>
       <div class="rec-name">${inf.name}<div style="font-size:10px;color:var(--ink3)">${inf.handle}${inf.followers!=="—"?" · "+inf.followers:""}</div></div>
       <div class="rec-score" style="color:${sc(inf.score)}">${inf.score}</div>
@@ -1517,7 +1517,7 @@ function applyUsageState(u){
 
 sb.auth.getSession().then(({ data }) => {
   if (!data.session) {
-    window.location.href = "/auth.html";
+    window.location.href = "/auth";
     return;
   }
   const user = data.session.user;
@@ -1543,7 +1543,7 @@ sb.auth.getSession().then(({ data }) => {
 
   // Referral link
   const refCode = btoa(email);
-  const refLink = `${APP_ORIGIN}/auth.html?ref=${refCode}`;
+  const refLink = `${APP_ORIGIN}/auth?ref=${refCode}`;
   const refInput = document.getElementById("referral-link-input");
   if(refInput){
     refInput.value = refLink;
@@ -1572,14 +1572,14 @@ sb.auth.getSession().then(({ data }) => {
   if (params.get("upgraded") === "1") {
     showToast("Plan upgraded successfully! Your new analyses are ready.", "info");
     document.querySelector(".upgrade-btn").style.display = "none";
-    history.replaceState({}, "", "/dashboard.html");
+    history.replaceState({}, "", "/dashboard");
   }
 });
 
 async function upgradePlan(plan) {
   const upgradeBtn = document.getElementById("upgrade-btn");
   const { data } = await sb.auth.getSession();
-  if (!data.session) { window.location.href = "/auth.html"; return; }
+  if (!data.session) { window.location.href = "/auth"; return; }
   const token = data.session.access_token;
   setBtnBusy(upgradeBtn, "Opening checkout...");
   showCheckoutOverlay("checkout");
@@ -1613,7 +1613,7 @@ async function upgradePlan(plan) {
 async function manageSubscription() {
   const manageBtn = document.getElementById("manage-btn");
   const { data } = await sb.auth.getSession();
-  if (!data.session) { window.location.href = "/auth.html"; return; }
+  if (!data.session) { window.location.href = "/auth"; return; }
   const token = data.session.access_token;
   setBtnBusy(manageBtn, "Opening portal...");
   showCheckoutOverlay("portal");
@@ -1647,7 +1647,7 @@ function nextPlan() {
 }
 
 function logout() {
-  sb.auth.signOut().then(() => window.location.href = "/auth.html");
+  sb.auth.signOut().then(() => window.location.href = "/auth");
 }
 
 // ── CAMPAIGN TRACKER ─────────────────────────────────────────────────────────
