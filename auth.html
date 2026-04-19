@@ -250,7 +250,7 @@ async function sendReset() {
   const btn = event.target;
   btn.disabled = true; btn.textContent = "Sending...";
   const { error } = await sb.auth.resetPasswordForEmail(email, {
-    redirectTo: APP_ORIGIN + "/auth?mode=update"
+    redirectTo: APP_ORIGIN + "/auth.html?mode=update"
   });
   btn.disabled = false; btn.textContent = "Send reset link";
   if (error) showMsg(error.message, "error");
