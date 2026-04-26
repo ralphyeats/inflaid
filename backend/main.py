@@ -21,6 +21,7 @@ FRONTEND_URL = os.getenv("FRONTEND_URL", DEFAULT_FRONTEND_URL).rstrip("/")
 
 ALLOWED_ORIGINS = [
     "https://inflaid.com",
+    "https://www.inflaid.com",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
