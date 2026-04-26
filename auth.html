@@ -303,6 +303,34 @@ function resetBtnBusy(btn) {
   if (btn.dataset.prevHtml) btn.innerHTML = btn.dataset.prevHtml;
 }
 
+async function continueAfterAuth(session, btn) {
+  const params = new URLSearchParams(window.location.search);
+  const plan = params.get("plan");
+  if (plan) {
+    setBtnBusy(btn, "Opening checkout...");
+    const token = session?.access_token;
+    const res = await fetch(`${API}/create-checkout`, {
+      method: "POST",
+      headers: {"Content-Type":"application/json", "Authorization": `Bearer ${token}`},
+      body: JSON.stringify({plan})
+    });
+    const d = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      showMsg(d.detail || "Could not start checkout.", "error");
+      resetBtnBusy(btn);
+      return;
+    }
+    if (d.url) {
+      window.location.href = d.url;
+      return;
+    }
+    showMsg("Checkout link was not returned.", "error");
+    resetBtnBusy(btn);
+    return;
+  }
+  window.location.href = "/dashboard";
+}
+
 async function signIn() {
   const email = document.getElementById("signin-email").value.trim();
   const password = document.getElementById("signin-password").value;
@@ -312,27 +340,7 @@ async function signIn() {
   const { data: signInData, error } = await sb.auth.signInWithPassword({ email, password });
   if (error) { showMsg(error.message, "error"); resetBtnBusy(btn); }
   else {
-    const params = new URLSearchParams(window.location.search);
-    const plan = params.get("plan");
-    if (plan) {
-      setBtnBusy(btn, "Opening checkout...");
-      const token = signInData.session?.access_token;
-      const res = await fetch(`${API}/create-checkout`, {
-        method: "POST", headers: {"Content-Type":"application/json", "Authorization": `Bearer ${token}`},
-        body: JSON.stringify({plan})
-      });
-      const d = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        showMsg(d.detail || "Could not start checkout.", "error");
-        resetBtnBusy(btn);
-        return;
-      }
-      if (d.url) { window.location.href = d.url; return; }
-      showMsg("Checkout link was not returned.", "error");
-      resetBtnBusy(btn);
-      return;
-    }
-    window.location.href = "/dashboard";
+    await continueAfterAuth(signInData.session, btn);
   }
 }
 
@@ -342,9 +350,9 @@ async function signUp() {
   if (!email || !password) return showMsg("Please fill in all fields.", "error");
   if (password.length < 8) return showMsg("Password must be at least 8 characters.", "error");
   const btn = event.target;
-  btn.disabled = true; btn.textContent = "Starting...";
-  const { error } = await sb.auth.signUp({ email, password });
-  if (error) { showMsg(error.message, "error"); btn.disabled = false; btn.textContent = "Start free"; return; }
+  setBtnBusy(btn, "Starting...");
+  const { data: signUpData, error } = await sb.auth.signUp({ email, password });
+  if (error) { showMsg(error.message, "error"); resetBtnBusy(btn); return; }
 
   // Apply referral bonus if ?ref= present
   const refCode = new URLSearchParams(window.location.search).get("ref");
@@ -357,7 +365,18 @@ async function signUp() {
     } catch(e) { /* non-blocking */ }
   }
 
-  showMsg("Check your email to confirm your account." + (refCode ? " Your referral bonus will be applied on first login." : ""), "success");
+  if (signUpData.session?.access_token) {
+    showMsg("Account ready. Redirecting..." + (refCode ? " Your referral bonus is queued." : ""), "success");
+    await continueAfterAuth(signUpData.session, btn);
+    return;
+  }
+
+  showMsg(
+    "Account created, but email confirmation is still enabled in Supabase. Turn off Confirm email in Authentication > Providers > Email to allow instant access." +
+    (refCode ? " Your referral bonus will apply on first login." : ""),
+    "success"
+  );
+  resetBtnBusy(btn);
 }
 
 // Pre-fill signup tab if referred
